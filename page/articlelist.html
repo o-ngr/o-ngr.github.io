@@ -49,7 +49,7 @@
 
   <!-- All tools grid -->
   <section class="tools-section">
-    <p class="section-label" id="mainLabel">すべてのツール</p>
+    <p class="section-label" id="mainLabel">すべての記事</p>
     <div class="tools-grid" id="toolsGrid">
       <div class="empty"><p class="empty-text">読み込み中...</p></div>
     </div>
@@ -58,7 +58,7 @@
 </main>
 
 <script>
-const TOOLS_XML_PATH = '/ms05/page/article.xml';
+const TOOLS_XML_PATH = '/ms05/page/articles.xml';
 let TOOLS = [];
 
 /* STATE */
@@ -120,7 +120,7 @@ function text(node, selector) {
 function parseToolsXML(xmlText) {
   const xml = new DOMParser().parseFromString(xmlText, 'application/xml');
   if (xml.querySelector('parsererror')) {
-    throw new Error('article.xml の解析に失敗しました');
+    throw new Error('articles.xml の解析に失敗しました');
   }
   return Array.from(xml.querySelectorAll('tools > tool')).map(node => ({
     id: parseInt(node.getAttribute('id'), 10),
@@ -134,7 +134,7 @@ function parseToolsXML(xmlText) {
 async function loadTools() {
   try {
     const res = await fetch(TOOLS_XML_PATH, { cache: 'no-store' });
-    if (!res.ok) throw new Error('article.xml の取得に失敗しました (' + res.status + ')');
+    if (!res.ok) throw new Error('articles.xml の取得に失敗しました (' + res.status + ')');
     const xmlText = await res.text();
     TOOLS = parseToolsXML(xmlText);
   } catch (err) {
