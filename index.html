@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<!---　　　　 　 _,,,....,,,___
+　　　　　 　,.:'"ﾄ ､:::::::｀ンヽ.
+　　　　　　/:::i　　ヽr-r'´　　/ヽ.
+　 　 　 　/:::_く＞--'‐ '‐-＜」::';
+　　　 　,/::'´ _,,.. --‐─- ､.,_ ｀` ､!           
+　　 ,:'´,..ｧ''"´::::;::;::;!::ヽ;｀. ヽ.     mysterious square
+　 ,:'　,.:'´::/､_;';ｨ:`:!:;!:`ﾒ-!-ｨ::';:';i  　┏━━┓┏━┓┏━┓┏━┓
+ 　/Y:::::::!::/_」　､/|:/!ｧ;'‐‐､ﾊ::::!::::i   ┃┃┃┃┃━┫┃┃┃┃━┫
+　 '､」:::::!:/7i ﾉi 　ﾚ'　!ⅸﾉ!〉ﾚﾍ!::i::::!    ┃┃┃┃┣━┃┃┃┃┣┓┃
+　　 Vヽ;ﾊ ' ゝ-'　,　 　　`"´ .ﾊ:::!:::';:!    ┗┻┻┛┗━┛┗━┛┗━┛
+　　　　 !:::!"　　　　　　 　 ",':::!V:::!::!
+　　　　 !:::!＞.､,　　` 　　 ,.ｲ:::::!::ﾊ:::!
+　　　　 '､/ヽ:: ン´）r‐ ´ i:;ﾊ:::/ヽ  ﾚ'^
+　　　　　　 'ｧ/´`く_i !_／´!／;'´￣ヽ
+　　　　　　 ,/ 　 /ｿハ:::｀:::/ 　　   ',
+　　　　　 ,/!､___r/i7::',レ::ヽ　 　　　ﾉ
+　　　　　,'ヽ､____ｿi;':i　 ﾊ::!､_,.､-‐'ヾ
+　 　　　,i　 　　　 !::r!　 !:! 　',　　  !
+　　　 　!､ 　　　,ｲ!::::/　 レ' 　 ';　　  ;      welcome to ms05
+
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Onogoro 弾幕シューティングなどを公開中。">
+<meta property="og:title" content="Onogoro">
+<meta property="og:description" content="Onogoro 弾幕シューティングなどを公開中。">
+<meta property="og:image" content="https:/ms05/image/ms0101-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://onogoro1500.github.io/ms05/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Onogoro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Onogoro">
+<meta name="twitter:description" content="Onogoro 弾幕シューティングなどを公開中。">
+<meta name="twitter:image" content="/ms05/image/ms0101-image.png">
+<title>Onogoro | TOP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+<script>document.addEventListener("DOMContentLoaded",()=>{document.addEventListener("contextmenu",e=>e.preventDefault());});</script>
+<link rel="stylesheet" href="/ms05/indexstyle.css">
+</head>
+<body>
+
+<!-- ═══ OVERLAY (mobile) ═══ -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+  <div class="logo" id="logoBtn">O-ngr</div>
+  <div class="search-wrap">
+    <span class="search-icon">&#x2315;</span>
+    <input class="search-input" id="searchInput" type="text" placeholder="検索... ( / でフォーカス)" autocomplete="off">
+  </div>
+  <div class="hdr-actions">
+    <button class="hbtn icon-only" id="themeBtn" title="テーマ切替">&#x25D0;</button>
+    <button class="hbtn" id="favPanelBtn" title="お気に入り">&#x2605; お気に入り</button>
+  </div>
+</header>
+
+<!-- ═══ SHELL ═══ -->
+<div class="shell">
+
+  <!-- LEFT SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="cta-wrap">
+      <a class="cta-link" href="/play/STG.html" target="_blank">
+        <span class="cta-tag">NEW</span><br>
+        弾幕STG 最新作
+        <span class="cta-sub">Click to Play</span>
+      </a>
+    </div>
+
+    <div class="sidebar-sep"></div>
+
+    <span class="sidebar-label">カテゴリ</span>
+    <button class="nav-btn active" data-tab="all">
+      すべて <span class="nav-count" data-count="all">0</span>
+    </button>
+    <button class="nav-btn" data-tab="tools">
+      ツール <span class="nav-count" data-count="tools">0</span>
+    </button>
+    <button class="nav-btn" data-tab="extra">
+      その他 <span class="nav-count" data-count="extra">0</span>
+    </button>
+    <button class="nav-btn" data-tab="design">
+      デザイン <span class="nav-count" data-count="design">0</span>
+    </button>
+
+    <div class="sidebar-sep"></div>
+
+    <div class="sort-wrap">
+      <div class="sort-lbl">並び替え</div>
+      <select class="sort-sel" id="sortSel">
+        <option value="default">デフォルト順</option>
+        <option value="name">名前順</option>
+        <option value="recent">新着順</option>
+      </select>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="cta-wrap mobile-cta">
+      <a class="cta-link" href="/play/STGm.html" target="_blank">
+        <span class="cta-tag">NEW</span><br>
+        弾幕STG 最新作
+        <span class="cta-sub">スマホ用/Click to Play</span>
+      </a>
+    </div>
+    <div class="main-head">
+      <h1 class="main-title" id="mainTitle">すべて</h1>
+      <span class="result-count" id="resultCount"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <!-- RIGHT PANEL (desktop) -->
+  <aside class="rpanel" id="rpanel">
+    <div class="rpanel-title">&#x2605; お気に入り</div>
+    <div class="rp-stat" id="rpStat">
+      <div class="rp-stat-item">
+        <span class="rp-stat-num" id="rpCount">0</span>
+        <span class="rp-stat-lbl">登録数</span>
+      </div>
+      <div class="rp-stat-item">
+        <span class="rp-stat-num" id="rpTotal">0</span>
+        <span class="rp-stat-lbl">総リンク数</span>
+      </div>
+    </div>
+    <div class="fav-list" id="rpFavList"></div>
+  </aside>
+</div>
+
+<!-- MOBILE FAV PANEL -->
+<aside class="mpanel" id="mpanel">
+  <div class="mpanel-head">
+    <span class="mpanel-title">&#x2605; お気に入り</span>
+    <button class="hbtn icon-only" id="mpCloseBtn">&#x00D7;</button>
+  </div>
+  <div class="rp-stat" id="mpStat">
+    <div class="rp-stat-item">
+      <span class="rp-stat-num" id="mpCount">0</span>
+      <span class="rp-stat-lbl">登録数</span>
+    </div>
+  </div>
+  <div class="fav-list" id="mpFavList"></div>
+</aside>
+
+<!-- MOBILE BOTTOM TABS -->
+<div class="mob-tabs" id="mobTabs">
+  <button class="mob-tab active" data-tab="all">すべて</button>
+  <button class="mob-tab" data-tab="tools">ツール</button>
+  <button class="mob-tab" data-tab="extra">その他</button>
+  <button class="mob-tab" data-tab="design">デザイン</button>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <span class="footer-logo">O-ngr</span>
+      <img src="https://counter.256server.com/@:ms05?theme=rule34" alt="アクセスカウンター" width="180" height="54" style="display:block;margin-bottom:.8rem">
+      <p class="ft">カウンターを使わせていただいている <a href="https://256server.com" target="_blank">256さん</a>ありがとうございます</p>
+    </div>
+    <div>
+      <p class="ft-title">概要</p>
+      <p class="ft">弾幕シューティングゲームなどを公開しているサイトです。</p>
+    </div>
+    <div>
+      <p class="ft-title">ショートカット</p>
+      <p class="ft">
+        / — 検索フォーカス<br>
+        Esc — パネルを閉じる
+      </p>
+    </div>
+    <div>
+      <p class="ft-title">情報</p>
+      <p class="ft">
+        <a href="/info/privacypolicy.html">プライバシーポリシー</a><br>
+        <a href="/info/termsofuse.html">利用規約</a>
+      </p>
+    </div>
+    <div>
+      <p class="ft-title">Copyright</p>
+      <p class="ft">
+        本サービスは無料で提供され、配布プログラムはクリエイティブ・コモンズ 表示–非営利–継承 4.0 国際ライセンスに従って利用できます。<br><br>
+        &copy; 2025 o-ngr — <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>
+      </p>
+    </div>
+  </div>
+</footer>
+<script src="indexscript.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"d1d5394f0c3f4bfba52e8ef3151ab7fa","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
