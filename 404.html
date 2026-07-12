@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>404 | Page Not Found</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg: #0d0c0e;
@@ -13,13 +16,12 @@
     --line: #2a2628;
     --accent: #7a1f2b;
     --accent-soft: #a8434f;
+    --ring-size: clamp(300px, 62vw, 480px);
   }
 
   *{ box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body{
-    height: 100%;
-  }
+  html, body{ height: 100%; }
 
   body{
     background: var(--bg);
@@ -31,30 +33,6 @@
     overflow: hidden;
     position: relative;
     min-height: 100vh;
-  }
-
-  /* faint scattered points — a quiet nod to a night sky, restrained */
-  #field{
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
-  #field span{
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--accent-soft);
-    opacity: 0;
-    animation: drift 9s ease-in-out infinite;
-  }
-  @keyframes drift{
-    0%   { opacity: 0; transform: translateY(6px); }
-    12%  { opacity: .35; }
-    50%  { opacity: .55; transform: translateY(-4px); }
-    88%  { opacity: .2; }
-    100% { opacity: 0; transform: translateY(-10px); }
   }
 
   .stage{
@@ -75,6 +53,69 @@
     margin-bottom: 28px;
   }
 
+  /* --- signature element: a spell-card ring standing in for the boss
+         that never spawned. two counter-rotating bullet rings framing
+         the code, quiet enough to read as atmosphere first. --- */
+  .hero{
+    position: relative;
+    display: inline-block;
+  }
+
+  .ring-field{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--ring-size);
+    height: var(--ring-size);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .ring-field .boundary{
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+  }
+  .ring-field .boundary--outer{
+    border: 1px solid var(--line);
+  }
+  .ring-field .boundary--inner{
+    inset: 13%;
+    border: 1px dashed var(--line);
+    opacity: 0.6;
+  }
+
+  .orbit{
+    position: absolute;
+    inset: 0;
+    animation: spin linear infinite;
+  }
+  .orbit .bullet{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    margin: -2.5px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    box-shadow: 0 0 5px 0 var(--accent);
+  }
+  .orbit .bullet.dim{
+    background: var(--ink-dim);
+    box-shadow: none;
+    opacity: 0.55;
+    width: 3px;
+    height: 3px;
+    margin: -1.5px;
+  }
+
+  @keyframes spin{
+    from{ transform: rotate(0deg); }
+    to{ transform: rotate(360deg); }
+  }
+
   .code{
     position: relative;
     font-size: clamp(96px, 20vw, 168px);
@@ -82,7 +123,7 @@
     line-height: 1;
     letter-spacing: 0.02em;
     color: var(--ink);
-    margin-bottom: 8px;
+    padding: 0 12px;
   }
 
   .code::after{
@@ -156,46 +197,90 @@
     outline-offset: 3px;
   }
 
+  /* counter badge, tucked out of the way instead of sitting on the hero */
+  .counter-badge{
+    position: fixed;
+    right: 16px;
+    bottom: 14px;
+    z-index: 2;
+    opacity: 0.45;
+    transition: opacity 0.3s ease;
+    line-height: 0;
+  }
+  .counter-badge:hover{ opacity: 0.85; }
+  .counter-badge img{
+    display: block;
+    width: 140px;
+    height: auto;
+  }
+
   @media (max-width: 480px){
     .stage{ padding: 32px 24px; }
     .actions{ flex-direction: column; align-items: stretch; }
     .btn{ padding: 16px 24px; }
+    .counter-badge{ right: 10px; bottom: 10px; }
+    .counter-badge img{ width: 110px; }
   }
 
   @media (prefers-reduced-motion: reduce){
-    #field span{ animation: none; opacity: .25; }
+    .orbit{ animation: none; }
   }
 </style>
 </head>
 <body>
-<div id="field"></div>
+
 <div class="stage">
-<a href="/ms05/"><img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="180" height="54" style="display:block;margin-bottom:.8rem"></a>
   <div class="eyebrow">Onogoro</div>
-  <div class="code">404</div>
+
+  <div class="hero">
+    <div class="ring-field" id="ringField" aria-hidden="true">
+      <div class="boundary boundary--outer"></div>
+      <div class="boundary boundary--inner"></div>
+    </div>
+    <div class="code">404</div>
+  </div>
+
   <p class="message">
     <strong>The requested URL was not found on this server.</strong>
     That's all we know.
   </p>
+
   <div class="actions">
     <button class="btn" id="backBtn" type="button">前のページへ戻る</button>
     <a class="btn primary" href="/ms05/" id="homeBtn">トップページへ</a>
   </div>
 </div>
 
+<a class="counter-badge" href="/ms05/" aria-label="アクセスカウンター">
+  <img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="140" height="42">
+</a>
+
 <script>
-  // scattered ambient points
+  // spell-card ring: two counter-rotating bullet formations framing the code,
+  // built the same way a ring pattern gets laid out in the STG projects —
+  // even spacing around a radius, opposite spin directions.
   (function(){
-    var field = document.getElementById('field');
-    var count = 22;
-    for(var i = 0; i < count; i++){
-      var s = document.createElement('span');
-      s.style.left = Math.random() * 100 + '%';
-      s.style.top = Math.random() * 100 + '%';
-      s.style.animationDelay = (Math.random() * 9).toFixed(2) + 's';
-      s.style.animationDuration = (7 + Math.random() * 5).toFixed(2) + 's';
-      field.appendChild(s);
+    var field = document.getElementById('ringField');
+
+    function buildRing(count, radiusPct, duration, reverse, dim){
+      var orbit = document.createElement('div');
+      orbit.className = 'orbit';
+      orbit.style.animationDuration = duration + 's';
+      orbit.style.animationDirection = reverse ? 'reverse' : 'normal';
+
+      for(var i = 0; i < count; i++){
+        var bullet = document.createElement('span');
+        bullet.className = 'bullet' + (dim ? ' dim' : '');
+        var angle = (360 / count) * i;
+        bullet.style.transform =
+          'rotate(' + angle + 'deg) translateY(calc(var(--ring-size) * -' + radiusPct + '))';
+        orbit.appendChild(bullet);
+      }
+      field.appendChild(orbit);
     }
+
+    buildRing(10, 0.50, 52, false, false); // outer ring, slow clockwise
+    buildRing(7,  0.37, 34, true,  true);  // inner ring, faster counter-clockwise, dimmer
   })();
 
   document.getElementById('backBtn').addEventListener('click', function(){
