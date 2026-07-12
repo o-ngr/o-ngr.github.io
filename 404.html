@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 | Page Not Found</title>
+<style>
+  :root{
+    --bg: #0d0c0e;
+    --bg-soft: #141215;
+    --ink: #ece7e2;
+    --ink-dim: #948d8a;
+    --line: #2a2628;
+    --accent: #7a1f2b;
+    --accent-soft: #a8434f;
+  }
+
+  *{ box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body{
+    height: 100%;
+  }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Zen Old Mincho", "Noto Serif JP", "Hiragino Mincho ProN", serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* faint scattered points — a quiet nod to a night sky, restrained */
+  #field{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  #field span{
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    opacity: 0;
+    animation: drift 9s ease-in-out infinite;
+  }
+  @keyframes drift{
+    0%   { opacity: 0; transform: translateY(6px); }
+    12%  { opacity: .35; }
+    50%  { opacity: .55; transform: translateY(-4px); }
+    88%  { opacity: .2; }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+
+  .stage{
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 48px 40px;
+    max-width: 560px;
+    width: 100%;
+  }
+
+  .eyebrow{
+    font-family: "Inter", "Helvetica Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 28px;
+  }
+
+  .code{
+    position: relative;
+    font-size: clamp(96px, 20vw, 168px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .code::after{
+    content: "";
+    display: block;
+    width: 56px;
+    height: 1px;
+    background: var(--accent-soft);
+    margin: 30px auto 0;
+    opacity: 0.7;
+  }
+
+  .message{
+    font-family: "Inter", "Helvetica Neue", sans-serif;
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-dim);
+    letter-spacing: 0.02em;
+    margin: 34px 0 46px;
+  }
+
+  .message strong{
+    display: block;
+    color: var(--ink);
+    font-weight: 400;
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .actions{
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn{
+    font-family: "Inter", "Helvetica Neue", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 15px 30px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color 0.35s ease, color 0.35s ease, background 0.35s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn:hover{
+    border-color: var(--accent-soft);
+    color: var(--accent-soft);
+  }
+
+  .btn.primary{
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  .btn.primary:hover{
+    background: var(--accent-soft);
+    border-color: var(--accent-soft);
+    color: var(--bg);
+  }
+
+  .btn:focus-visible{
+    outline: 1px solid var(--accent-soft);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 480px){
+    .stage{ padding: 32px 24px; }
+    .actions{ flex-direction: column; align-items: stretch; }
+    .btn{ padding: 16px 24px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    #field span{ animation: none; opacity: .25; }
+  }
+</style>
+</head>
+<body>
+<div id="field"></div>
+<div class="stage">
+<a href="/ms05/"><img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="180" height="54" style="display:block;margin-bottom:.8rem"></a>
+  <div class="eyebrow">Onogoro</div>
+  <div class="code">404</div>
+  <p class="message">
+    <strong>The requested URL was not found on this server.</strong>
+    That's all we know.
+  </p>
+  <div class="actions">
+    <button class="btn" id="backBtn" type="button">前のページへ戻る</button>
+    <a class="btn primary" href="/ms05/" id="homeBtn">トップページへ</a>
+  </div>
+</div>
+
+<script>
+  // scattered ambient points
+  (function(){
+    var field = document.getElementById('field');
+    var count = 22;
+    for(var i = 0; i < count; i++){
+      var s = document.createElement('span');
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = Math.random() * 100 + '%';
+      s.style.animationDelay = (Math.random() * 9).toFixed(2) + 's';
+      s.style.animationDuration = (7 + Math.random() * 5).toFixed(2) + 's';
+      field.appendChild(s);
+    }
+  })();
+
+  document.getElementById('backBtn').addEventListener('click', function(){
+    if(window.history.length > 1){
+      window.history.back();
+    } else {
+      window.location.href = '/';
+    }
+  });
+</script>
+
+</body>
+</html>
