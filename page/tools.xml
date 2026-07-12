@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tools>
+  <tool id="1">
+    <url>/ms05/tools/mediaplayer.html</url>
+    <name>メディアプレイヤ</name>
+    <desc>メディアを再生、実行する程度の能力</desc>
+    <tags>
+      <tag>ファイル</tag>
+      <tag>メディア</tag>
+      <tag>プレイヤー</tag>
+    </tags>
+  </tool>
+  <tool id="2">
+    <url>/ms05/tools/coolreload.html</url>
+    <name>かっこよくリロードするだけのページ</name>
+    <desc>かっこよくリロードする程度の能力</desc>
+    <tags>
+      <tag>リロード</tag>
+      <tag>かっこいい</tag>
+    </tags>
+  </tool>
+  <tool id="3">
+    <url>/tools/camera.html</url>
+    <name>カメラ</name>
+    <desc>ただのカメラ</desc>
+    <tags>
+      <tag>カメラ</tag>
+    </tags>
+  </tool>
+  <tool id="4">
+    <url>/ms05/tools/timesrecrd.html</url>
+    <name>時計 &amp; カレンダ</name>
+    <desc>時間を知らせる程度の能力</desc>
+    <tags>
+      <tag>時計</tag>
+      <tag>カレンダ</tag>
+    </tags>
+  </tool>
+  <tool id="5">
+    <url>/ms05/tools/memo.html</url>
+    <name>ms0101 めも</name>
+    <desc>テキストを記録し、HTMLとして実行する程度の能力</desc>
+    <tags>
+      <tag>メモ</tag>
+      <tag>HTML</tag>
+    </tags>
+  </tool>
+  <tool id="6">
+    <url>/ms05/tools/PercentEncodingConverter.html</url>
+    <name>パーセントエンコードコンバータ</name>
+    <desc>パーセントエンコーディングされたテキストをエンコード・デコードする程度の能力</desc>
+    <tags>
+      <tag>エンコード</tag>
+      <tag>テキスト</tag>
+      <tag>URL</tag>
+    </tags>
+  </tool>
+  <tool id="7">
+    <url>/ms05/tools/shader.html</url>
+    <name>シェーダー</name>
+    <desc>ノイズを可視化する程度の能力</desc>
+    <tags>
+      <tag>シェーダー</tag>
+      <tag>GLSL</tag>
+      <tag>ビジュアル</tag>
+    </tags>
+  </tool>
+  <tool id="8">
+    <url>/ms05/tools/proxy.html</url>
+    <name>プロキシ</name>
+    <desc>プロキシ通信する程度の能力</desc>
+    <tags>
+      <tag>プロキシ</tag>
+      <tag>HTML</tag>
+      <tag>Web</tag>
+    </tags>
+  </tool>
+</tools>
