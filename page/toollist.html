@@ -480,11 +480,11 @@ button { font-family: inherit; cursor: pointer; }
 <script>
 /* =============================================
    TOOL DATA
-   ツールデータは同ディレクトリの tools.xml から読み込みます。
+   ツールデータは同ディレクトリの /ms05/page/tools.xml から読み込みます。
    構成例:
      <tools>
        <tool id="1">
-         <url>/tools/xxx.html</url>
+         <url>/ms05/tools/xxx.html</url>
          <name>ツール名</name>
          <desc>説明文</desc>
          <tags><tag>タグ1</tag><tag>タグ2</tag></tags>
@@ -492,7 +492,7 @@ button { font-family: inherit; cursor: pointer; }
      </tools>
    ツールの追加・変更は tools.xml を編集してください。
 ============================================= */
-const TOOLS_XML_PATH = 'tools.xml';
+const TOOLS_XML_PATH = '/ms05/page/tools.xml';
 let TOOLS = [];
 
 /* STATE */
