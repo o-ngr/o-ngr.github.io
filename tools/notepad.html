@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Notes</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --bg:         #f5f4f0;
+  --surface:    #ffffff;
+  --surface2:   #f0efe9;
+  --text:       #1a1a18;
+  --text-2:     #6b6b62;
+  --text-3:     #9b9b90;
+  --border:     rgba(0,0,0,0.08);
+  --border-2:   rgba(0,0,0,0.05);
+  --accent:     #2b6cb0;
+  --accent-dim: rgba(43,108,176,0.12);
+  --accent-glow:rgba(43,108,176,0.2);
+  --danger:     #c53030;
+  --success:    #276749;
+  --warning:    #b7791f;
+  --tab-active: #ffffff;
+  --tab-hover:  rgba(0,0,0,0.04);
+  --editor-bg:  #ffffff;
+  --scrollbar:  rgba(0,0,0,0.12);
+  --overlay:    rgba(15,15,12,0.45);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,0.12),0 4px 12px rgba(0,0,0,0.06);
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --font-ui:    'DM Sans', -apple-system, sans-serif;
+  --font-mono:  'DM Mono', 'SF Mono', Menlo, monospace;
+  --transition: 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:         #111110;
+    --surface:    #1a1a18;
+    --surface2:   #222220;
+    --text:       #e8e8e0;
+    --text-2:     #8a8a80;
+    --text-3:     #5a5a52;
+    --border:     rgba(255,255,255,0.07);
+    --border-2:   rgba(255,255,255,0.04);
+    --accent:     #63b3ed;
+    --accent-dim: rgba(99,179,237,0.1);
+    --accent-glow:rgba(99,179,237,0.18);
+    --danger:     #fc8181;
+    --success:    #68d391;
+    --warning:    #f6ad55;
+    --tab-active: #2a2a28;
+    --tab-hover:  rgba(255,255,255,0.04);
+    --editor-bg:  #141413;
+    --scrollbar:  rgba(255,255,255,0.1);
+    --overlay:    rgba(0,0,0,0.6);
+  }
+}
+
+html,body{height:100%;height:100dvh;overflow:hidden}
+
+body{
+  font-family:var(--font-ui);
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  position:fixed;width:100%;
+}
+
+.app{
+  display:flex;
+  height:100vh;
+  height:100dvh;
+}
+
+.sidebar{
+  width:220px;
+  flex-shrink:0;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  z-index:10;
+  position:relative;
+  transition:width 0.16s cubic-bezier(0.4,0,0.2,1);
+}
+.sidebar.no-transition{transition:none}
+.sidebar.collapsed{width:56px}
+
+.sidebar-resizer{
+  position:absolute;
+  top:0;right:-3px;
+  width:6px;height:100%;
+  cursor:col-resize;
+  z-index:11;
+  background:transparent;
+}
+.sidebar-resizer:hover,.sidebar-resizer.active{background:var(--accent-glow)}
+.sidebar.collapsed .sidebar-resizer{display:none}
+
+.sidebar-logo{
+  height:52px;
+  display:flex;
+  align-items:center;
+  padding:0 18px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  gap:8px;
+}
+.sidebar.collapsed .sidebar-logo{padding:0;justify-content:center}
+.sidebar.collapsed .logo-text{display:none}
+
+.logo-mark{
+  width:20px;height:20px;
+  background:var(--accent);
+  border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.logo-mark svg{width:10px;height:10px;fill:#fff}
+
+.logo-text{
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+.sidebar-collapse-btn{
+  width:24px;height:24px;
+  border:none;background:transparent;
+  border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-3);
+  cursor:pointer;
+  margin-left:auto;
+  flex-shrink:0;
+  transition:all var(--transition);
+}
+.sidebar-collapse-btn:hover{background:var(--tab-hover);color:var(--text)}
+.sidebar-collapse-btn svg{width:13px;height:13px;transition:transform 0.2s ease}
+.sidebar.collapsed .sidebar-collapse-btn{margin-left:0}
+.sidebar.collapsed .sidebar-collapse-btn svg{transform:rotate(180deg)}
+
+.tab-list{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:8px 6px;
+  list-style:none;
+}
+
+.tab-item{
+  display:flex;
+  align-items:center;
+  padding:0 10px;
+  height:36px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  gap:8px;
+  margin-bottom:1px;
+  transition:background var(--transition),color var(--transition),transform 0.12s ease;
+  min-width:0;
+  position:relative;
+  user-select:none;
+}
+.sidebar.collapsed .tab-item{padding:0;justify-content:center}
+.tab-item:hover{background:var(--tab-hover)}
+.tab-item:hover .tab-close{opacity:1}
+.tab-item.active{
+  background:var(--tab-active);
+  box-shadow:var(--shadow-sm);
+  color:var(--text);
+}
+.tab-item.active::before{
+  content:'';
+  position:absolute;
+  left:-6px;top:6px;bottom:6px;
+  width:3px;
+  border-radius:0 3px 3px 0;
+  background:var(--accent);
+}
+.sidebar.collapsed .tab-item.active::before{left:0}
+.tab-item.active .tab-dot{background:var(--accent)}
+.tab-item.modified .tab-dot{background:var(--warning)}
+
+.tab-item.dragging{opacity:0.4}
+.tab-item.drag-over-top::before{
+  content:'';
+  position:absolute;
+  left:6px;right:6px;top:-1px;
+  height:2px;
+  border-radius:2px;
+  background:var(--accent);
+}
+.tab-item.drag-over-bottom::after{
+  content:'';
+  position:absolute;
+  left:6px;right:6px;bottom:-1px;
+  height:2px;
+  border-radius:2px;
+  background:var(--accent);
+}
+
+.tab-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--text-3);
+  flex-shrink:0;
+  transition:background var(--transition);
+}
+
+.tab-label{
+  flex:1;
+  font-size:12.5px;
+  font-weight:400;
+  color:var(--text-2);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  letter-spacing:0.01em;
+}
+.sidebar.collapsed .tab-label{display:none}
+.tab-item.active .tab-label{
+  color:var(--text);
+  font-weight:500;
+}
+
+.tab-label-input{
+  flex:1;
+  min-width:0;
+  border:none;
+  outline:none;
+  background:var(--surface2);
+  border-radius:4px;
+  padding:2px 5px;
+  font-family:var(--font-ui);
+  font-size:12.5px;
+  font-weight:500;
+  color:var(--text);
+  box-shadow:0 0 0 1.5px var(--accent);
+}
+
+.tab-close{
+  width:20px;height:20px;
+  border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  opacity:0;
+  color:var(--text-3);
+  transition:opacity var(--transition),background var(--transition),color var(--transition);
+  cursor:pointer;
+}
+.sidebar.collapsed .tab-close{display:none}
+.tab-close:hover{
+  background:var(--border);
+  color:var(--text);
+}
+.tab-close svg{width:10px;height:10px}
+
+.sidebar-bottom{
+  flex-shrink:0;
+  padding:10px 6px;
+  border-top:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.action-btn{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:0 10px;
+  height:34px;
+  border-radius:var(--radius-sm);
+  border:none;
+  background:transparent;
+  color:var(--text-2);
+  font-family:var(--font-ui);
+  font-size:12.5px;
+  font-weight:400;
+  cursor:pointer;
+  transition:all var(--transition);
+  width:100%;
+  text-align:left;
+  letter-spacing:0.01em;
+  position:relative;
+}
+.sidebar.collapsed .action-btn{justify-content:center;padding:0}
+.sidebar.collapsed .action-btn span{display:none}
+.action-btn:hover{background:var(--tab-hover);color:var(--text)}
+.action-btn:active{opacity:0.7}
+.action-btn svg{width:14px;height:14px;flex-shrink:0;opacity:0.7}
+.action-btn.add-tab{color:var(--accent);font-weight:500}
+.action-btn.add-tab:hover{background:var(--accent-dim);color:var(--accent)}
+.action-btn.add-tab svg{opacity:1}
+.action-btn.options-btn.open{background:var(--accent-dim);color:var(--accent)}
+.action-btn.options-btn.open svg{opacity:1}
+
+.action-shortcut{
+  margin-left:auto;
+  font-size:10px;
+  color:var(--text-3);
+  font-family:var(--font-mono);
+  letter-spacing:0;
+}
+.sidebar.collapsed .action-shortcut{display:none}
+
+main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  position:relative;
+  overflow:hidden;
+}
+
+.top-bar{
+  display:none;
+  height:52px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  align-items:center;
+  padding:0 8px;
+  gap:4px;
+  flex-shrink:0;
+}
+.top-bar-title{
+  flex:1;
+  text-align:center;
+  font-size:13.5px;
+  font-weight:500;
+  color:var(--text);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  padding:0 4px;
+}
+
+.icon-btn{
+  width:36px;height:36px;
+  border:none;background:transparent;
+  border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  color:var(--text-2);
+  transition:all var(--transition);
+  flex-shrink:0;
+}
+.icon-btn:hover{background:var(--tab-hover);color:var(--text)}
+.icon-btn:active{opacity:0.6}
+.icon-btn svg{width:18px;height:18px}
+
+.toolbar{
+  height:40px;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border-2);
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:4px;
+  flex-shrink:0;
+}
+
+.toolbar-sep{
+  width:1px;height:16px;
+  background:var(--border);
+  margin:0 4px;
+  flex-shrink:0;
+}
+
+.tool-btn{
+  height:26px;
+  padding:0 10px;
+  border-radius:5px;
+  border:none;background:transparent;
+  font-family:var(--font-ui);
+  font-size:11.5px;
+  font-weight:500;
+  color:var(--text-2);
+  cursor:pointer;
+  display:flex;align-items:center;gap:5px;
+  transition:all var(--transition);
+  white-space:nowrap;
+  letter-spacing:0.01em;
+}
+.tool-btn:hover{background:var(--tab-hover);color:var(--text)}
+.tool-btn:active{opacity:0.7}
+.tool-btn svg{width:12px;height:12px;opacity:0.8}
+.tool-btn.primary-tool{
+  background:var(--accent);
+  color:#fff;
+  padding:0 12px;
+}
+.tool-btn.primary-tool:hover{opacity:0.88}
+.tool-btn.primary-tool svg{opacity:1}
+
+.toolbar-right{margin-left:auto;display:flex;align-items:center;gap:4px}
+
+.status-bar{
+  height:24px;
+  background:var(--surface2);
+  border-top:1px solid var(--border-2);
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:16px;
+  flex-shrink:0;
+}
+.status-item{
+  font-size:11px;
+  color:var(--text-3);
+  font-family:var(--font-mono);
+  letter-spacing:0.02em;
+}
+.status-item.right{margin-left:auto}
+
+/* Editor */
+.editor-wrap{
+  flex:1;
+  overflow:hidden;
+  position:relative;
+}
+#editor{
+  width:100%;height:100%;
+  padding:28px 32px;
+  border:none;
+  background:var(--editor-bg);
+  color:var(--text);
+  font-family:var(--font-mono);
+  font-size:14px;
+  line-height:1.75;
+  font-weight:400;
+  resize:none;
+  outline:none;
+  -webkit-appearance:none;
+  letter-spacing:0.01em;
+  caret-color:var(--accent);
+}
+#editor::placeholder{color:var(--text-3);font-style:italic}
+#editor::selection{background:var(--accent-glow)}
+
+.drawer-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:var(--overlay);
+  z-index:100;
+  opacity:0;
+  transition:opacity 0.22s ease;
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+.drawer-overlay.show{display:block}
+.drawer-overlay.visible{opacity:1}
+.drawer-overlay.popover-mode{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+
+.drawer{
+  position:fixed;
+  top:0;right:0;
+  height:100%;
+  width:300px;
+  max-width:85vw;
+  background:var(--surface);
+  z-index:101;
+  transform:translateX(100%);
+  transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  display:flex;flex-direction:column;
+  border-left:1px solid var(--border);
+  box-shadow:var(--shadow-lg);
+}
+.drawer.open{transform:translateX(0)}
+
+/* Popover mode (desktop options panel) */
+.drawer.popover{
+  top:auto;right:auto;
+  height:auto;
+  max-height:min(560px,80vh);
+  width:320px;
+  max-width:320px;
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  transform:scale(0.96) translateY(4px);
+  opacity:0;
+  transform-origin:bottom left;
+  transition:transform 0.16s cubic-bezier(0.4,0,0.2,1),opacity 0.14s ease;
+  box-shadow:var(--shadow-lg);
+}
+.drawer.popover.open{transform:scale(1) translateY(0);opacity:1}
+.drawer.popover .drawer-header{border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+
+.mobile-tabs{
+  position:fixed;
+  top:0;left:0;
+  height:100%;
+  width:260px;
+  max-width:80vw;
+  background:var(--surface);
+  z-index:101;
+  transform:translateX(-100%);
+  transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--border);
+  box-shadow:var(--shadow-lg);
+}
+.mobile-tabs.open{transform:translateX(0)}
+
+.mobile-tabs-header{
+  height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.mobile-tabs-title{
+  font-size:13px;font-weight:600;
+  color:var(--text);letter-spacing:-0.01em;
+}
+
+.drawer-header{
+  height:52px;
+  display:flex;align-items:center;
+  padding:0 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  gap:12px;
+}
+.drawer-title{
+  flex:1;
+  font-size:13px;font-weight:600;
+  color:var(--text);letter-spacing:-0.01em;
+}
+
+.drawer-body{flex:1;overflow-y:auto;padding:16px}
+
+.drawer-section{margin-bottom:24px}
+.drawer-section:last-child{margin-bottom:4px}
+.drawer-section-label{
+  font-size:10.5px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--text-3);
+  margin-bottom:10px;
+}
+
+.field-group{display:flex;flex-direction:column;gap:8px}
+
+.field{
+  display:flex;flex-direction:column;gap:5px;
+}
+.field-label{
+  font-size:11px;color:var(--text-3);
+  font-weight:500;letter-spacing:0.03em;
+}
+.field input,.field select{
+  height:36px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:0 10px;
+  font-family:var(--font-ui);
+  font-size:13px;
+  color:var(--text);
+  outline:none;
+  transition:border-color var(--transition),box-shadow var(--transition);
+  width:100%;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.field input:focus,.field select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-glow);
+}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%238a8a80' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 8px center;
+  background-size:16px;
+  padding-right:30px;
+  cursor:pointer;
+}
+
+.row{display:flex;gap:8px}
+.row .field{flex:1}
+
+.drawer-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  height:38px;
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  background:var(--surface2);
+  font-family:var(--font-ui);
+  font-size:13px;
+  font-weight:500;
+  color:var(--text);
+  cursor:pointer;
+  width:100%;
+  transition:all var(--transition);
+  margin-bottom:8px;
+  letter-spacing:0.01em;
+}
+.drawer-btn:hover{background:var(--tab-hover);border-color:var(--text-3)}
+.drawer-btn:active{opacity:0.7}
+.drawer-btn svg{width:14px;height:14px;opacity:0.7}
+.drawer-btn.cta{
+  background:var(--accent);
+  color:#fff;
+  border-color:transparent;
+}
+.drawer-btn.cta:hover{opacity:0.88}
+.drawer-btn.cta svg{opacity:1}
+
+.shortcuts-grid{
+  display:flex;flex-direction:column;gap:6px;
+}
+.shortcut-row{
+  display:flex;align-items:center;justify-content:space-between;
+}
+.shortcut-label{font-size:12px;color:var(--text-2)}
+.shortcut-keys{display:flex;gap:3px;align-items:center}
+kbd{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:1px 6px;
+  font-family:var(--font-ui);
+  font-size:10.5px;
+  font-weight:600;
+  color:var(--text-2);
+  display:inline-block;
+}
+
+.toast-container{
+  position:fixed;
+  top:16px;right:16px;
+  z-index:9999;
+  display:flex;flex-direction:column;gap:8px;
+  pointer-events:none;
+}
+.toast{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;
+  background:var(--text);
+  color:var(--bg);
+  border-radius:var(--radius-md);
+  font-size:13px;
+  font-weight:500;
+  box-shadow:var(--shadow-lg);
+  transform:translateX(120%);
+  opacity:0;
+  transition:transform 0.28s cubic-bezier(0.4,0,0.2,1),opacity 0.28s ease;
+  pointer-events:none;
+  max-width:280px;
+  letter-spacing:0.01em;
+}
+.toast.show{transform:translateX(0);opacity:1}
+.toast::before{
+  content:'';
+  width:6px;height:6px;
+  border-radius:50%;
+  flex-shrink:0;
+  background:currentColor;
+  opacity:0.6;
+}
+.toast.success::before{background:var(--success);color:var(--success);opacity:1}
+.toast.danger::before{background:var(--danger);opacity:1}
+.toast.warning::before{background:var(--warning);opacity:1}
+
+.save-indicator{
+  position:fixed;
+  bottom:32px;right:16px;
+  font-size:11px;
+  font-weight:500;
+  color:var(--success);
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:5px 10px;
+  border-radius:20px;
+  box-shadow:var(--shadow-sm);
+  z-index:200;
+  opacity:0;
+  transform:translateY(8px);
+  pointer-events:none;
+  transition:opacity 0.2s ease,transform 0.2s ease;
+  display:flex;align-items:center;gap:5px;
+}
+.save-indicator.show{opacity:1;transform:translateY(0)}
+.save-indicator::before{
+  content:'';width:6px;height:6px;
+  border-radius:50%;background:var(--success);
+}
+
+/* Context menu */
+.context-menu{
+  position:fixed;
+  z-index:300;
+  min-width:180px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-lg);
+  padding:5px;
+  opacity:0;
+  transform:scale(0.96);
+  transform-origin:top left;
+  transition:opacity 0.12s ease,transform 0.12s ease;
+  pointer-events:none;
+}
+.context-menu.show{opacity:1;transform:scale(1);pointer-events:auto}
+.context-menu-item{
+  display:flex;align-items:center;gap:9px;
+  height:32px;
+  padding:0 9px;
+  border-radius:6px;
+  font-size:12.5px;
+  color:var(--text);
+  cursor:pointer;
+  white-space:nowrap;
+  transition:background var(--transition);
+}
+.context-menu-item:hover{background:var(--tab-hover)}
+.context-menu-item.danger{color:var(--danger)}
+.context-menu-item svg{width:13px;height:13px;opacity:0.7;flex-shrink:0}
+.context-menu-sep{height:1px;background:var(--border);margin:5px 3px}
+
+*::-webkit-scrollbar{width:5px;height:5px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:99px}
+*::-webkit-scrollbar-thumb:hover{background:var(--text-3)}
+
+@media (max-width:768px){
+  .sidebar{display:none}
+  .top-bar{display:flex}
+  .toolbar{padding:0 10px;gap:2px;height:38px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .toolbar::-webkit-scrollbar{display:none}
+  .tool-btn span{display:none}
+  .tool-btn{padding:0 8px;min-width:32px;justify-content:center}
+  .tool-btn.primary-tool span{display:inline}
+  .tool-btn.primary-tool{padding:0 10px}
+  #editor{padding:16px;font-size:14px}
+  .status-bar{padding:0 10px}
+  .toast-container{top:60px;right:8px;left:8px}
+  .toast{max-width:100%}
+  .save-indicator{bottom:28px;right:10px}
+  .drawer{width:280px}
+  .toolbar-sep:not(.keep){display:none}
+}
+
+@media (min-width:769px){
+  .mobile-tabs{display:none!important}
+}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(-6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.tab-item{animation:slideIn 0.18s ease}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- Desktop layout -->
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="desktopSidebar">
+    <div class="sidebar-resizer" id="sidebarResizer"></div>
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 12 12"><rect x="1" y="1" width="4" height="4" rx="1"/><rect x="7" y="1" width="4" height="4" rx="1"/><rect x="1" y="7" width="4" height="4" rx="1"/><rect x="7" y="7" width="4" height="4" rx="1"/></svg>
+      </div>
+      <span class="logo-text">Notes</span>
+      <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="サイドバーを折りたたむ" aria-label="サイドバーを折りたたむ">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5l-5 5 5 5"/></svg>
+      </button>
+    </div>
+    <ul class="tab-list" id="desktopTabList" role="tablist"></ul>
+    <div class="sidebar-bottom">
+      <button class="action-btn add-tab" id="desktopAddTab" title="新規タブ">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
+        <span>新規タブ</span>
+        <span class="action-shortcut">⌘T</span>
+      </button>
+      <button class="action-btn options-btn" id="optionsBtn" title="オプション">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="2"/><circle cx="10" cy="3" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+        <span>オプション</span>
+        <span class="action-shortcut">⌘,</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main id="mainContent">
+    <!-- Mobile top bar -->
+    <div class="top-bar">
+      <button class="icon-btn" onclick="toggleMobileTabs()" title="タブ" aria-label="タブ一覧">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="16" height="3" rx="1"/><rect x="2" y="9" width="12" height="3" rx="1"/><rect x="2" y="14" width="14" height="3" rx="1"/></svg>
+      </button>
+      <div class="top-bar-title" id="mobileTabTitle">Untitled.html</div>
+      <button class="icon-btn" onclick="showDrawer()" title="メニュー" aria-label="メニュー">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="10" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg>
+      </button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button class="tool-btn" onclick="FileOps.preview()" title="ブラウザで実行">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="6,4 17,10 6,16" fill="currentColor" stroke="none"/></svg>
+        <span>実行</span>
+      </button>
+      <div class="toolbar-sep keep"></div>
+      <button class="tool-btn" onclick="openFilePicker()" title="ファイルを開く">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h14v10H3z"/><path d="M3 7l2-4h6l2 4"/></svg>
+        <span>開く</span>
+      </button>
+      <div class="toolbar-right">
+        <button class="tool-btn primary-tool" onclick="FileOps.download()" title="保存">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14v3h12v-3M10 3v10M6 9l4 4 4-4" stroke="white"/></svg>
+          <span>保存</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Editor -->
+    <div class="editor-wrap">
+      <textarea id="editor" placeholder="ここにコードやテキストを入力..." spellcheck="false" aria-label="エディタ"></textarea>
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="status-item" id="statusChars">0 chars</span>
+      <span class="status-item" id="statusLines">1 line</span>
+      <span class="status-item right" id="statusExt">.html</span>
+    </div>
+  </main>
+</div>
+
+<!-- Mobile tabs panel -->
+<div class="mobile-tabs" id="mobileTabs">
+  <div class="mobile-tabs-header">
+    <span class="mobile-tabs-title">タブ</span>
+    <button class="icon-btn" onclick="closeMobileTabs()" aria-label="閉じる">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/></svg>
+    </button>
+  </div>
+  <ul class="tab-list" id="mobileTabList" style="padding:8px 6px"></ul>
+  <div style="padding:10px 6px;border-top:1px solid var(--border)">
+    <button class="action-btn add-tab" id="mobileAddTab" style="border:none;width:100%;text-align:left">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
+      新規タブ
+    </button>
+  </div>
+</div>
+
+<!-- Overlay -->
+<div class="drawer-overlay" id="overlay" onclick="closeAll()"></div>
+
+<!-- Drawer -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">オプション</span>
+    <button class="icon-btn" onclick="closeDrawer()" aria-label="閉じる">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body">
+    <!-- File settings -->
+    <div class="drawer-section">
+      <div class="drawer-section-label">ファイル設定</div>
+      <div class="field-group">
+        <div class="row">
+          <div class="field" style="flex:2">
+            <label class="field-label" for="drawerFilename">ファイル名</label>
+            <input id="drawerFilename" type="text" placeholder="Untitled" spellcheck="false">
+          </div>
+          <div class="field">
+            <label class="field-label" for="drawerExt">拡張子</label>
+            <select id="drawerExt">
+              <option value=".html">.html</option>
+              <option value=".txt">.txt</option>
+              <option value=".js">.js</option>
+              <option value=".css">.css</option>
+              <option value=".json">.json</option>
+              <option value=".md">.md</option>
+              <option value=".xml">.xml</option>
+              <option value=".svg">.svg</option>
+              <option value=".py">.py</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="drawer-section">
+      <div class="drawer-section-label">アクション</div>
+      <button class="drawer-btn cta" onclick="FileOps.download();closeDrawer()">
+        <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.8"><path d="M4 14v3h12v-3M10 3v10M6 9l4 4 4-4"/></svg>
+        保存してダウンロード
+      </button>
+      <button class="drawer-btn" onclick="FileOps.preview();closeDrawer()">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="6,4 17,10 6,16" fill="currentColor" stroke="none" opacity="0.7"/></svg>
+        ブラウザで実行
+      </button>
+      <button class="drawer-btn" onclick="openFilePicker();closeDrawer()">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h14v10H3z"/><path d="M3 7l2-4h6l2 4"/></svg>
+        ファイルを開く
+      </button>
+    </div>
+
+    <!-- Import/Export -->
+    <div class="drawer-section">
+      <div class="drawer-section-label">インポート / エクスポート</div>
+      <button class="drawer-btn" onclick="Data.exportAll()">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14v3h12v-3M10 3v10M14 7l-4-4-4 4"/></svg>
+        全タブをエクスポート
+      </button>
+      <button class="drawer-btn" onclick="openImportPicker()">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14v3h12v-3M10 3v10M6 9l4 4 4-4"/></svg>
+        タブをインポート
+      </button>
+    </div>
+
+    <!-- Shortcuts -->
+    <div class="drawer-section">
+      <div class="drawer-section-label">ショートカット</div>
+      <div class="shortcuts-grid">
+        <div class="shortcut-row"><span class="shortcut-label">保存</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>S</kbd></div></div>
+        <div class="shortcut-row"><span class="shortcut-label">新規タブ</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>T</kbd></div></div>
+        <div class="shortcut-row"><span class="shortcut-label">タブを閉じる</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>W</kbd></div></div>
+        <div class="shortcut-row"><span class="shortcut-label">次のタブ</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>Tab</kbd></div></div>
+        <div class="shortcut-row"><span class="shortcut-label">オプション</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>,</kbd></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden inputs -->
+<input id="fileInput" type="file" style="display:none" accept=".html,.txt,.js,.css,.json,.md,.xml,.svg,.py">
+<input id="importInput" type="file" style="display:none" accept=".json">
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Save indicator -->
+<div class="save-indicator" id="saveIndicator">自動保存済み</div>
+
+<!-- Context menu -->
+<div class="context-menu" id="contextMenu"></div>
+
+<script>
+'use strict';
+
+const $ = id => document.getElementById(id);
+const editor       = $('editor');
+const desktopList  = $('desktopTabList');
+const mobileList   = $('mobileTabList');
+const drawerName   = $('drawerFilename');
+const drawerExt    = $('drawerExt');
+const mobileTitle  = $('mobileTabTitle');
+const statusChars  = $('statusChars');
+const statusLines  = $('statusLines');
+const statusExt    = $('statusExt');
+const overlay      = $('overlay');
+const drawer       = $('drawer');
+const mobileTabs   = $('mobileTabs');
+const saveIndicator= $('saveIndicator');
+const sidebar      = $('desktopSidebar');
+const optionsBtn   = $('optionsBtn');
+const contextMenu  = $('contextMenu');
+
+const STORAGE_KEY = 'notes_v3';
+const SIDEBAR_KEY = 'notes_sidebar_v1';
+let tabs = [];
+let current = -1;
+let saveTimer = null;
+let isMobile = () => window.innerWidth <= 768;
+let dragFromIndex = null;
+let renameIndex = null;
+
+function showToast(msg, type = '') {
+  const container = $('toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.textContent = msg;
+  container.appendChild(el);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => el.classList.add('show'));
+  });
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 300);
+  }, 2200);
+}
+
+function showSave() {
+  saveIndicator.classList.add('show');
+  setTimeout(() => saveIndicator.classList.remove('show'), 1800);
+}
+
+function persist(showAnim = false) {
+  const tab = tabs[current];
+  if (tab && renameIndex === null) {
+    tab.content   = editor.value;
+    tab.name      = drawerName.value || 'Untitled';
+    tab.extension = drawerExt.value;
+  }
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tabs));
+      if (showAnim) showSave();
+      if (tab) {
+        tab.saved = tab.content;
+        tab.modified = false;
+      }
+      renderTabs();
+    } catch(e) {
+      if (e.name === 'QuotaExceededError')
+        showToast('ストレージ容量が不足しています', 'danger');
+    }
+  }, 350);
+}
+
+function loadStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (Array.isArray(data) && data.length) {
+        tabs = data;
+        current = 0;
+        tabs.forEach(t => { if (t.saved === undefined) t.saved = t.content; t.modified = false; });
+        return true;
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
+function loadSidebarPrefs() {
+  try {
+    const raw = localStorage.getItem(SIDEBAR_KEY);
+    if (!raw) return;
+    const prefs = JSON.parse(raw);
+    if (prefs.width) sidebar.style.width = prefs.width + 'px';
+    if (prefs.collapsed) sidebar.classList.add('collapsed');
+  } catch(e) {}
+}
+
+function saveSidebarPrefs() {
+  try {
+    localStorage.setItem(SIDEBAR_KEY, JSON.stringify({
+      width: sidebar.classList.contains('collapsed') ? null : parseInt(sidebar.style.width) || 220,
+      collapsed: sidebar.classList.contains('collapsed')
+    }));
+  } catch(e) {}
+}
+
+function renderTabs() {
+  [desktopList, mobileList].forEach(list => {
+    const isDesktop = list === desktopList;
+    list.innerHTML = '';
+    tabs.forEach((tab, i) => {
+      const li = document.createElement('li');
+      li.className = 'tab-item' + (i === current ? ' active' : '') + (tab.modified ? ' modified' : '');
+      li.setAttribute('role','tab');
+      li.setAttribute('aria-selected', i === current);
+      li.title = tab.name + tab.extension;
+      li.dataset.index = i;
+      li.innerHTML = `<span class="tab-dot"></span><span class="tab-label">${escape(tab.name)}${tab.extension}</span><span class="tab-close" title="閉じる"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></span>`;
+      li.querySelector('.tab-close').addEventListener('click', e => {
+        e.stopPropagation();
+        deleteTab(i);
+      });
+      li.addEventListener('click', () => {
+        if (i !== current) switchTab(i);
+        if (isMobile()) closeMobileTabs();
+      });
+
+      if (isDesktop) {
+        li.draggable = true;
+        li.addEventListener('dragstart', e => {
+          dragFromIndex = i;
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', String(i));
+          requestAnimationFrame(() => li.classList.add('dragging'));
+        });
+        li.addEventListener('dragend', () => {
+          li.classList.remove('dragging');
+          document.querySelectorAll('.tab-item').forEach(x => x.classList.remove('drag-over-top','drag-over-bottom'));
+          dragFromIndex = null;
+        });
+        li.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          const rect = li.getBoundingClientRect();
+          const before = (e.clientY - rect.top) < rect.height / 2;
+          li.classList.toggle('drag-over-top', before);
+          li.classList.toggle('drag-over-bottom', !before);
+        });
+        li.addEventListener('dragleave', () => {
+          li.classList.remove('drag-over-top','drag-over-bottom');
+        });
+        li.addEventListener('drop', e => {
+          e.preventDefault();
+          const from = dragFromIndex;
+          const rect = li.getBoundingClientRect();
+          const before = (e.clientY - rect.top) < rect.height / 2;
+          li.classList.remove('drag-over-top','drag-over-bottom');
+          if (from === null || from === i) return;
+          let to = before ? i : i + 1;
+          reorderTab(from, to);
+        });
+        li.addEventListener('dblclick', e => {
+          e.stopPropagation();
+          startRename(i);
+        });
+        li.addEventListener('contextmenu', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          openContextMenu(e.clientX, e.clientY, i);
+        });
+      }
+
+      list.appendChild(li);
+    });
+  });
+  updateTitleBar();
+  updateStatus();
+}
+
+function escape(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function loadTab() {
+  const tab = tabs[current];
+  if (!tab) return;
+  editor.value    = tab.content;
+  drawerName.value = tab.name;
+  drawerExt.value  = tab.extension;
+  updateStatus();
+  updateTitleBar();
+}
+
+function updateTitleBar() {
+  const tab = tabs[current];
+  const label = tab ? tab.name + tab.extension : '';
+  if (mobileTitle) mobileTitle.textContent = label;
+  statusExt.textContent = tab ? tab.extension : '';
+}
+
+function updateStatus() {
+  const v = editor.value;
+  statusChars.textContent = v.length.toLocaleString() + ' chars';
+  statusLines.textContent = (v.split('\n').length).toLocaleString() + ' lines';
+}
+
+function addTab(name = 'Untitled', content = '', ext = '.html') {
+  tabs.push({ name, content, extension: ext, created: Date.now(), lastModified: Date.now(), modified: false, saved: content });
+  current = tabs.length - 1;
+  renderTabs();
+  loadTab();
+  persist();
+  editor.focus();
+  scrollTabIntoView(current);
+}
+
+function duplicateTab(i) {
+  const src = tabs[i];
+  if (!src) return;
+  tabs.splice(i + 1, 0, {
+    name: src.name + ' コピー',
+    content: src.content,
+    extension: src.extension,
+    created: Date.now(),
+    lastModified: Date.now(),
+    modified: false,
+    saved: src.content
+  });
+  current = i + 1;
+  renderTabs();
+  loadTab();
+  persist();
+  showToast('タブを複製しました', 'success');
+}
+
+function switchTab(i) {
+  persist();
+  current = i;
+  renderTabs();
+  loadTab();
+  scrollTabIntoView(i);
+}
+
+function scrollTabIntoView(i) {
+  const li = desktopList.children[i];
+  if (li) li.scrollIntoView({ block: 'nearest' });
+}
+
+function reorderTab(from, to) {
+  if (from < to) to--;
+  if (from === to) { renderTabs(); return; }
+  const activeTab = tabs[current];
+  const [moved] = tabs.splice(from, 1);
+  tabs.splice(to, 0, moved);
+  current = tabs.indexOf(activeTab);
+  persist();
+  renderTabs();
+}
+
+function deleteTab(i) {
+  if (tabs.length === 1) {
+    tabs[0] = { name:'Untitled', content:'', extension:'.html', created:Date.now(), lastModified:Date.now(), modified:false, saved:'' };
+    showToast('タブをリセットしました', 'warning');
+  } else {
+    const name = tabs[i].name + tabs[i].extension;
+    tabs.splice(i, 1);
+    if (current >= tabs.length) current = tabs.length - 1;
+    else if (current > i) current--;
+    showToast(`${name} を削除しました`, 'danger');
+  }
+  renderTabs();
+  loadTab();
+  persist();
+}
+
+function closeOthers(i) {
+  const keep = tabs[i];
+  tabs = [keep];
+  current = 0;
+  renderTabs();
+  loadTab();
+  persist();
+  showToast('他のタブを閉じました', 'warning');
+}
+
+function closeAllTabs() {
+  tabs = [{ name:'Untitled', content:'', extension:'.html', created:Date.now(), lastModified:Date.now(), modified:false, saved:'' }];
+  current = 0;
+  renderTabs();
+  loadTab();
+  persist();
+  showToast('すべてのタブを閉じました', 'warning');
+}
+
+function startRename(i) {
+  if (isMobile()) return;
+  renameIndex = i;
+  const li = desktopList.children[i];
+  if (!li) return;
+  const labelEl = li.querySelector('.tab-label');
+  const tab = tabs[i];
+  const input = document.createElement('input');
+  input.className = 'tab-label-input';
+  input.value = tab.name;
+  input.spellcheck = false;
+  labelEl.replaceWith(input);
+  input.focus();
+  input.select();
+
+  const commit = () => {
+    const val = input.value.trim();
+    tab.name = val || 'Untitled';
+    renameIndex = null;
+    if (i === current) drawerName.value = tab.name;
+    persist();
+    renderTabs();
+  };
+  input.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    if (e.key === 'Escape') { e.preventDefault(); renameIndex = null; renderTabs(); }
+  });
+  input.addEventListener('blur', commit);
+  input.addEventListener('click', e => e.stopPropagation());
+}
+
+function openContextMenu(x, y, i) {
+  const tab = tabs[i];
+  contextMenu.innerHTML = '';
+  const items = [
+    { label:'名前を変更', icon:'<path d="M4 16l1-4L13 4l3 3-8 8-4 1z"/>', action:() => startRename(i) },
+    { label:'複製', icon:'<rect x="6" y="6" width="10" height="10" rx="1.5"/><path d="M4 14V5.5A1.5 1.5 0 015.5 4H14"/>', action:() => duplicateTab(i) },
+    null,
+    { label:'閉じる', icon:'<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>', action:() => deleteTab(i) },
+    { label:'他のタブを閉じる', icon:'<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>', action:() => closeOthers(i), disabled: tabs.length < 2 },
+    { label:'すべて閉じる', icon:'<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>', action:() => closeAllTabs(), danger:true }
+  ];
+  items.forEach(item => {
+    if (item === null) {
+      const sep = document.createElement('div');
+      sep.className = 'context-menu-sep';
+      contextMenu.appendChild(sep);
+      return;
+    }
+    if (item.disabled) return;
+    const el = document.createElement('div');
+    el.className = 'context-menu-item' + (item.danger ? ' danger' : '');
+    el.innerHTML = `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">${item.icon}</svg>${item.label}`;
+    el.addEventListener('click', () => { closeContextMenu(); item.action(); });
+    contextMenu.appendChild(el);
+  });
+
+  contextMenu.style.left = '0px';
+  contextMenu.style.top = '0px';
+  contextMenu.classList.add('show');
+  requestAnimationFrame(() => {
+    const r = contextMenu.getBoundingClientRect();
+    const left = Math.min(x, window.innerWidth - r.width - 8);
+    const top = Math.min(y, window.innerHeight - r.height - 8);
+    contextMenu.style.left = left + 'px';
+    contextMenu.style.top = top + 'px';
+  });
+}
+
+function closeContextMenu() {
+  contextMenu.classList.remove('show');
+}
+
+const FileOps = {
+  download() {
+    const tab = tabs[current];
+    const content = editor.value;
+    const filename = (drawerName.value || 'file') + drawerExt.value;
+    const blob = new Blob([content], {type:'text/plain;charset=utf-8'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    if (tab) { tab.saved = content; tab.modified = false; renderTabs(); }
+    showToast(`${filename} を保存しました`, 'success');
+    closeDrawer();
+  },
+  openFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const dot  = file.name.lastIndexOf('.');
+      const name = dot !== -1 ? file.name.slice(0, dot) : file.name;
+      const ext  = dot !== -1 ? file.name.slice(dot) : '.txt';
+      addTab(name, e.target.result, ext);
+    };
+    reader.onerror = () => showToast('読み込みに失敗しました', 'danger');
+    reader.readAsText(file);
+  },
+  preview() {
+    const content = editor.value;
+    const blob = new Blob([content], {type:'text/html;charset=utf-8'});
+    const url  = URL.createObjectURL(blob);
+    const w    = window.open(url, '_blank');
+    if (w) { w.onload = () => URL.revokeObjectURL(url); showToast('ブラウザで実行しました', 'success'); }
+    else   { URL.revokeObjectURL(url); showToast('ポップアップがブロックされました', 'warning'); }
+    closeDrawer();
+  }
+};
+
+const Data = {
+  exportAll() {
+    persist();
+    const blob = new Blob([JSON.stringify(tabs, null, 2)], {type:'application/json'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = `notes_backup_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('エクスポートしました', 'success');
+    closeDrawer();
+  },
+  importAll(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (Array.isArray(data) && data.length) {
+          tabs = data;
+          current = 0;
+          tabs.forEach(t => { if (t.saved === undefined) t.saved = t.content; t.modified = false; });
+          renderTabs(); loadTab(); persist();
+          showToast(`${data.length}個のタブをインポートしました`, 'success');
+        } else {
+          showToast('無効なファイルです', 'danger');
+        }
+      } catch { showToast('インポートに失敗しました', 'danger'); }
+      closeDrawer();
+    };
+    reader.readAsText(file);
+  }
+};
+
+function showDrawer() {
+  const tab = tabs[current];
+  if (tab) { drawerName.value = tab.name; drawerExt.value = tab.extension; }
+  const desktop = !isMobile();
+  drawer.classList.toggle('popover', desktop);
+  overlay.classList.toggle('popover-mode', desktop);
+  if (desktop) positionPopover();
+  showOverlay();
+  drawer.classList.add('open');
+  optionsBtn.classList.add('open');
+}
+function closeDrawer() {
+  drawer.classList.remove('open');
+  optionsBtn.classList.remove('open');
+  hideOverlay();
+}
+function positionPopover() {
+  const r = optionsBtn.getBoundingClientRect();
+  drawer.style.left = (r.right + 10) + 'px';
+  drawer.style.bottom = (window.innerHeight - r.bottom) + 'px';
+  drawer.style.top = 'auto';
+  drawer.style.right = 'auto';
+}
+function toggleMobileTabs() {
+  if (mobileTabs.classList.contains('open')) closeMobileTabs();
+  else { showOverlay(); mobileTabs.classList.add('open'); }
+}
+function closeMobileTabs() {
+  mobileTabs.classList.remove('open');
+  hideOverlay();
+}
+function showOverlay() {
+  overlay.classList.add('show');
+  requestAnimationFrame(() => overlay.classList.add('visible'));
+}
+function hideOverlay() {
+  overlay.classList.remove('visible');
+  setTimeout(() => overlay.classList.remove('show'), 220);
+}
+function closeAll() { closeDrawer(); closeMobileTabs(); closeContextMenu(); }
+
+function openFilePicker() { $('fileInput').click(); }
+function openImportPicker() { $('importInput').click(); }
+
+function toggleSidebarCollapse() {
+  sidebar.classList.toggle('collapsed');
+  saveSidebarPrefs();
+  if (drawer.classList.contains('open') && drawer.classList.contains('popover')) positionPopover();
+}
+
+editor.addEventListener('input', () => {
+  persist(true);
+  updateStatus();
+  const tab = tabs[current];
+  if (tab) {
+    tab.modified = editor.value !== tab.saved;
+    renderTabs();
+  }
+});
+
+editor.addEventListener('keydown', e => {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const s = editor.selectionStart, end = editor.selectionEnd;
+    editor.value = editor.value.slice(0,s) + '    ' + editor.value.slice(end);
+    editor.selectionEnd = s + 4;
+    persist(true); updateStatus();
+  }
+});
+
+// Drawer filename/ext sync
+drawerName.addEventListener('input', () => {
+  const tab = tabs[current];
+  if (tab) { tab.name = drawerName.value; renderTabs(); persist(); }
+});
+drawerExt.addEventListener('change', () => {
+  const tab = tabs[current];
+  if (tab) { tab.extension = drawerExt.value; statusExt.textContent = drawerExt.value; renderTabs(); persist(); }
+});
+
+// File inputs
+$('fileInput').addEventListener('change', e => {
+  FileOps.openFile(e.target.files[0]);
+  e.target.value = '';
+});
+$('importInput').addEventListener('change', e => {
+  Data.importAll(e.target.files[0]);
+  e.target.value = '';
+});
+
+// Add tab / options buttons
+$('desktopAddTab').addEventListener('click', () => addTab());
+$('mobileAddTab').addEventListener('click', () => { addTab(); closeMobileTabs(); });
+optionsBtn.addEventListener('click', () => {
+  if (drawer.classList.contains('open')) closeDrawer();
+  else showDrawer();
+});
+$('sidebarCollapseBtn').addEventListener('click', toggleSidebarCollapse);
+
+// Sidebar resize
+(function initResizer() {
+  const resizer = $('sidebarResizer');
+  let dragging = false;
+  resizer.addEventListener('mousedown', e => {
+    if (sidebar.classList.contains('collapsed')) return;
+    dragging = true;
+    resizer.classList.add('active');
+    sidebar.classList.add('no-transition');
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const w = Math.min(360, Math.max(180, e.clientX));
+    sidebar.style.width = w + 'px';
+    if (drawer.classList.contains('open') && drawer.classList.contains('popover')) positionPopover();
+  });
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    resizer.classList.remove('active');
+    sidebar.classList.remove('no-transition');
+    document.body.style.userSelect = '';
+    saveSidebarPrefs();
+  });
+})();
+
+// Context menu dismissal
+document.addEventListener('click', e => {
+  if (!contextMenu.contains(e.target)) closeContextMenu();
+});
+window.addEventListener('resize', () => {
+  closeContextMenu();
+  if (drawer.classList.contains('open') && drawer.classList.contains('popover')) positionPopover();
+});
+window.addEventListener('scroll', closeContextMenu, true);
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  const mod = e.ctrlKey || e.metaKey;
+  if (mod && e.key === 's') { e.preventDefault(); FileOps.download(); }
+  if (mod && e.key === 't') { e.preventDefault(); addTab(); }
+  if (mod && e.key === 'w') { e.preventDefault(); deleteTab(current); }
+  if (mod && e.key === ',') { e.preventDefault(); showDrawer(); }
+  if (mod && e.key === 'Tab') {
+    e.preventDefault();
+    const next = e.shiftKey
+      ? (current === 0 ? tabs.length - 1 : current - 1)
+      : (current + 1) % tabs.length;
+    switchTab(next);
+  }
+  if (e.key === 'Escape') {
+    if (drawer.classList.contains('open')) closeDrawer();
+    else if (mobileTabs.classList.contains('open')) closeMobileTabs();
+    closeContextMenu();
+  }
+});
+
+// Swipe gesture (mobile)
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 60) {
+    if (dx > 0 && touchStartX < 30) toggleMobileTabs();
+    if (dx < 0 && drawer.classList.contains('open')) closeDrawer();
+  }
+}, { passive: true });
+
+// Beforeunload
+window.addEventListener('beforeunload', e => {
+  persist();
+  if (tabs.some(t => t.modified)) {
+    e.preventDefault();
+    return e.returnValue = '保存されていない変更があります';
+  }
+});
+
+function init() {
+  loadSidebarPrefs();
+  if (!loadStorage()) addTab();
+  else { renderTabs(); loadTab(); }
+  editor.focus();
+}
+
+init();
+</script>
+</body>
+</html>
