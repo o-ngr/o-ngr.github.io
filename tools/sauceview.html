@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>ソースを読む程度の能力</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        a {
+            color: #ffe500;
+            text-decoration: none;
+        }
+
+        body {
+            background: #0f0f0f;
+            color: #ffe500;
+            font-family: 'Roboto Mono', monospace;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #container {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            #container {
+                padding: 30px;
+            }
+        }
+
+        h1 {
+            font-size: 1.3em;
+            margin: 0 0 10px 0;
+            color: #ffe500;
+            font-weight: normal;
+        }
+
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+        }
+
+        .header-section {
+            margin-bottom: 20px;
+        }
+
+        .counter-img {
+            display: block;
+            margin: 10px 0;
+            max-width: 180px;
+            height: auto;
+        }
+
+        @media (min-width: 768px) {
+            .counter-img {
+                max-width: 200px;
+            }
+        }
+
+        .info-note {
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 11px;
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .info-note {
+                padding: 12px 15px;
+                font-size: 12px;
+            }
+        }
+
+        .info-note strong {
+            color: #ffe500;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .input-row {
+                flex-direction: row;
+                align-items: center;
+                gap: 12px;
+            }
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            background-color: #2a2a2a;
+            color: #ffe500;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Roboto Mono', monospace;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ffe500;
+        }
+
+        .method-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .method-selector {
+                gap: 10px;
+            }
+        }
+
+        .method-btn {
+            flex: 1;
+            background-color: #333;
+            color: #aaa;
+            border: 1px solid #444;
+            padding: 12px 16px;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 768px) {
+            .method-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+
+        .method-btn.active {
+            background-color: #ffe500;
+            color: #000;
+            border-color: #ffe500;
+        }
+
+        .method-btn:hover:not(.active):not(:disabled) {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .method-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #888;
+            min-height: 18px;
+            line-height: 1.5;
+        }
+
+        .status.error {
+            color: #ff6b6b;
+        }
+
+        .status.success {
+            color: #51cf66;
+        }
+
+        .status.loading {
+            color: #ffe500;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #444;
+            border-top-color: #ffe500;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #444 #1a1a1a;
+        }
+
+        .tab-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .tab-container::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .tab-container::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 3px;
+        }
+
+        .tab-btn {
+            background-color: #2a2a2a;
+            color: #aaa;
+            border: 1px solid #444;
+            border-bottom: none;
+            padding: 10px 14px;
+            font-size: 12px;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        @media (min-width: 768px) {
+            .tab-btn {
+                padding: 10px 18px;
+                font-size: 13px;
+            }
+        }
+
+        .tab-btn.active {
+            background-color: #333;
+            color: #ffe500;
+            border-color: #ffe500;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: #ffe500;
+            color: #000;
+            border: none;
+            padding: 11px 18px;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        @media (min-width: 768px) {
+            button {
+                padding: 11px 22px;
+                font-size: 14px;
+            }
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #ffed33;
+        }
+
+        button:active:not(:disabled) {
+            background-color: #e6cc00;
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background-color: #666;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .output-container {
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            background-color: #2a2a2a;
+            color: #ffe500;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 12px;
+            resize: vertical;
+            font-family: 'Roboto Mono', monospace;
+            line-height: 1.5;
+            transition: border-color 0.2s;
+        }
+
+        @media (min-width: 768px) {
+            textarea {
+                height: 400px;
+                font-size: 13px;
+                padding: 15px;
+            }
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffe500;
+        }
+
+        textarea::placeholder {
+            color: #666;
+        }
+
+        .char-count {
+            font-size: 11px;
+            color: #666;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .footer a {
+            color: #ffe500;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="header-section">
+            <a href="/"><h1>HTMLを閲覧する程度のツール</h1></a>
+            <a href="/">
+                <img class="counter-img" src="https://counter.256server.com/ms0101?theme=moebooru" alt="アクセスカウンター" width="200" height="75">
+            </a>
+        </div>
+
+        <div class="info-note">
+            <strong>プロキシ:</strong> CORS制限を回避してHTMLを取得 (6つのプロキシで自動リトライ)<br>
+            <strong>直接:</strong> 同一オリジンかCORS対応サイトのみ取得可能
+        </div>
+
+        <div class="input-section">
+            <div class="input-row">
+                <input type="text" id="urlInput" placeholder="ここにURLを入力してね">
+                <div class="method-selector">
+                    <button class="method-btn active" data-method="proxy">proxy</button>
+                    <button class="method-btn" data-method="direct">直接</button>
+                </div>
+            </div>
+            <div class="status" id="status">URLを入力して取得ボタンを押してください</div>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="all">all</button>
+            <button class="tab-btn" data-tab="title">title</button>
+            <button class="tab-btn" data-tab="meta">meta</button>
+            <button class="tab-btn" data-tab="script">script</button>
+            <button class="tab-btn" data-tab="html">html</button>
+            <button class="tab-btn" data-tab="css">css</button>
+        </div>
+
+        <div class="button-group">
+            <button id="fetchBtn" onclick="fetchHTML()">取得</button>
+            <button id="copyBtn" onclick="copyToClipboard()">コピー</button>
+            <button id="clearBtn" onclick="clearOutput()">クリア</button>
+        </div>
+
+        <div class="output-container">
+            <textarea id="output" readonly placeholder="ここに表示されるよ"></textarea>
+            <div class="char-count" id="charCount"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentMethod = 'proxy';
+        let currentTab = 'all';
+        let cachedHTML = '';
+        let cachedExtractions = {};
+
+        // イベントリスナー設定
+        document.querySelectorAll('.method-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMethod = btn.dataset.method;
+            });
+        });
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTab = btn.dataset.tab;
+                updateOutput();
+            });
+        });
+
+        document.getElementById('urlInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                fetchHTML();
+            }
+        });
+
+        // メイン取得関数
+        async function fetchHTML() {
+            const url = document.getElementById('urlInput').value.trim();
+            const output = document.getElementById('output');
+
+            if (!url) {
+                showStatus('URLを入力してください', 'error');
+                return;
+            }
+
+            if (!isValidURL(url)) {
+                showStatus('有効なURLを入力してください (http://またはhttps://から始まる)', 'error');
+                return;
+            }
+
+            setButtonsDisabled(true);
+            output.value = '';
+            showStatus('<span class="loading-spinner"></span>取得中...', 'loading', true);
+
+            try {
+                let html;
+                let proxyUsed = '';
+
+                if (currentMethod === 'proxy') {
+                    const result = await fetchViaProxy(url);
+                    html = result.html;
+                    proxyUsed = result.proxy;
+                } else {
+                    html = await fetchDirect(url);
+                }
+
+                // キャッシュをクリアして新しいデータを保存
+                cachedHTML = html;
+                cachedExtractions = {};
+                
+                // 非同期で解析
+                requestAnimationFrame(() => {
+                    updateOutput();
+                    updateCharCount();
+                });
+
+                const statusMsg = proxyUsed 
+                    ? `取得完了 (${formatBytes(html.length)}) - ${proxyUsed}経由`
+                    : `取得完了 (${formatBytes(html.length)})`;
+                showStatus(statusMsg, 'success');
+            } catch (error) {
+                const errorMsg = `取得に失敗しました\nエラー: ${error.message}`;
+                output.value = errorMsg;
+                showStatus(`取得失敗: ${error.message}`, 'error');
+                console.error('Fetch error:', error);
+            } finally {
+                setButtonsDisabled(false);
+            }
+        }
+
+        // 出力更新関数（パフォーマンス最適化）
+        function updateOutput() {
+            const output = document.getElementById('output');
+            if (!cachedHTML) {
+                output.value = '';
+                updateCharCount();
+                return;
+            }
+
+            // キャッシュがあればそれを使用
+            if (cachedExtractions[currentTab]) {
+                output.value = cachedExtractions[currentTab];
+                updateCharCount();
+                return;
+            }
+
+            // 非同期で解析（大きなHTMLでもUIをブロックしない）
+            requestAnimationFrame(() => {
+                const content = extractContent(currentTab, cachedHTML);
+                cachedExtractions[currentTab] = content;
+                output.value = content;
+                updateCharCount();
+            });
+        }
+
+        // コンテンツ抽出関数
+        function extractContent(tab, html) {
+            switch (tab) {
+                case 'all':
+                    return html;
+                case 'title':
+                    return extractTitle(html);
+                case 'meta':
+                    return extractMeta(html);
+                case 'script':
+                    return extractScript(html);
+                case 'html':
+                    return extractHTML(html);
+                case 'css':
+                    return extractCSS(html);
+                default:
+                    return html;
+            }
+        }
+
+        function extractTitle(html) {
+            const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+            return titleMatch ? titleMatch[0] : 'titleタグが見つかりませんでした';
+        }
+
+        function extractMeta(html) {
+            const metaMatches = html.match(/<meta[^>]*>/gi);
+            return metaMatches ? metaMatches.join('\n') : 'metaタグが見つかりませんでした';
+        }
+
+        function extractScript(html) {
+            const scriptMatches = html.match(/<script[\s\S]*?<\/script>/gi);
+            return scriptMatches ? scriptMatches.join('\n\n') : 'scriptタグが見つかりませんでした';
+        }
+
+        function extractHTML(html) {
+            const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            if (!bodyMatch) return html;
+
+            let bodyContent = bodyMatch[0];
+            bodyContent = bodyContent.replace(/<script[\s\S]*?<\/script>/gi, '');
+            bodyContent = bodyContent.replace(/<style[\s\S]*?<\/style>/gi, '');
+            return bodyContent || 'HTML要素が見つかりませんでした';
+        }
+
+        function extractCSS(html) {
+            const styleMatches = html.match(/<style[\s\S]*?<\/style>/gi);
+            const linkMatches = html.match(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi);
+            let result = '';
+
+            if (styleMatches) {
+                result += styleMatches.join('\n\n');
+            }
+            if (linkMatches) {
+                result += (result ? '\n\n' : '') + linkMatches.join('\n');
+            }
+
+            return result || 'CSSが見つかりませんでした';
+        }
+
+        // ネットワーク関数
+        async function fetchDirect(url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return await response.text();
+        }
+
+        async function fetchWithTimeout(url, timeout = 10000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+            
+            try {
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                return response;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                throw error;
+            }
+        }
+
+        async function fetchViaProxy(url) {
+            const proxies = [
+                {
+                    url: `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+                    name: 'AllOrigins',
+                    parse: async (response) => {
+                        const data = await response.json();
+                        return data.contents;
+                    }
+                },
+                {
+                    url: `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                    name: 'CORSProxy.io',
+                    parse: async (response) => await response.text()
+                },
+                {
+                    url: `https://cors-anywhere.herokuapp.com/${url}`,
+                    name: 'CORS Anywhere',
+                    parse: async (response) => await response.text()
+                },
+                {
+                    url: `https://thingproxy.freeboard.io/fetch/${url}`,
+                    name: 'ThingProxy',
+                    parse: async (response) => await response.text()
+                },
+                {
+                    url: `https://crossorigin.me/${url}`,
+                    name: 'CrossOrigin.me',
+                    parse: async (response) => await response.text()
+                },
+                {
+                    url: `https://cors.sh/${url}`,
+                    name: 'CORS.sh',
+                    parse: async (response) => await response.text()
+                }
+            ];
+
+            const errors = [];
+
+            for (let i = 0; i < proxies.length; i++) {
+                const proxy = proxies[i];
+                try {
+                    showStatus(`<span class="loading-spinner"></span>プロキシ試行中 (${i + 1}/${proxies.length}): ${proxy.name}...`, 'loading', true);
+                    
+                    const response = await fetchWithTimeout(proxy.url, 10000);
+                    
+                    if (!response.ok) {
+                        errors.push(`${proxy.name}: HTTP ${response.status}`);
+                        continue;
+                    }
+
+                    const html = await proxy.parse(response);
+                    
+                    if (html && html.length > 0) {
+                        return { html, proxy: proxy.name };
+                    } else {
+                        errors.push(`${proxy.name}: 空のレスポンス`);
+                    }
+                } catch (error) {
+                    const errorMsg = error.name === 'AbortError' ? 'タイムアウト' : error.message;
+                    errors.push(`${proxy.name}: ${errorMsg}`);
+                    console.warn(`プロキシ ${proxy.name} での取得に失敗:`, error);
+                    continue;
+                }
+            }
+
+            throw new Error(`すべてのプロキシでの取得に失敗しました\n詳細:\n${errors.join('\n')}`);
+        }
+
+        // ユーティリティ関数
+        function showStatus(message, type, isHtml = false) {
+            const status = document.getElementById('status');
+            if (isHtml) {
+                status.innerHTML = message;
+            } else {
+                status.textContent = message;
+            }
+            status.className = `status ${type}`;
+        }
+
+        function isValidURL(string) {
+            try {
+                const url = new URL(string);
+                return url.protocol === 'http:' || url.protocol === 'https:';
+            } catch {
+                return false;
+            }
+        }
+
+        function setButtonsDisabled(disabled) {
+            document.getElementById('fetchBtn').disabled = disabled;
+            document.getElementById('copyBtn').disabled = disabled;
+            document.getElementById('clearBtn').disabled = disabled;
+            document.getElementById('urlInput').disabled = disabled;
+            document.querySelectorAll('.method-btn').forEach(btn => btn.disabled = disabled);
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = disabled);
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function updateCharCount() {
+            const output = document.getElementById('output');
+            const charCount = document.getElementById('charCount');
+            const length = output.value.length;
+            if (length > 0) {
+                charCount.textContent = `${length.toLocaleString()} 文字 (${formatBytes(length)})`;
+            } else {
+                charCount.textContent = '';
+            }
+        }
+
+        async function copyToClipboard() {
+            const textarea = document.getElementById('output');
+            if (!textarea.value.trim()) {
+                showStatus('コピーするコンテンツがありません', 'error');
+                return;
+            }
+
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(textarea.value);
+                    showStatus('クリップボードにコピー完了', 'success');
+                } else {
+                    textarea.select();
+                    textarea.setSelectionRange(0, 99999);
+                    document.execCommand('copy');
+                    showStatus('クリップボードにコピー完了', 'success');
+                }
+            } catch (error) {
+                showStatus('コピーに失敗しました', 'error');
+            }
+        }
+
+        function clearOutput() {
+            document.getElementById('output').value = '';
+            document.getElementById('status').textContent = 'URLを入力して取得ボタンを押してください';
+            document.getElementById('status').className = 'status';
+            document.getElementById('charCount').textContent = '';
+            cachedHTML = '';
+            cachedExtractions = {};
+        }
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"d1d5394f0c3f4bfba52e8ef3151ab7fa","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
