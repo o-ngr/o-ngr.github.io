@@ -49,42 +49,38 @@
   </div>
   <span class="counter-label">VISITOR!</span>
 </div>
-  
-<script>
+  <script>
   document.addEventListener("DOMContentLoaded", function() {
-    // 💡 あなたのサイト専用の識別キー（半角英数字で好きな文字に変えてもOKです）
-    const siteKey = "my_unique_github_io_counter_2026"; 
+    // 💡 あなたのサイト専用の識別ID（半角英数字で好きな文字に変えてOK）
+    const siteKey = "my_private_github_pages_counter_2026"; 
     
-    // 現在も無料で使える信頼性の高いカウントAPIを利用します
-    const counterUrl = `https://api.countapi.xyz/hit/default/${siteKey}`;
+    // 現在非常に安定して稼働している、数字のテキストだけを返す軽量APIです
+    const counterUrl = `https://count.getloli.com/get/@${siteKey}?json=true`;
     
-    // 画像フォルダへのパス（index.htmlと同じ場所にある counter_images フォルダ）
     const imagePath = "counter_images/"; 
     const counterContainer = document.getElementById("custom-counter");
 
     fetch(counterUrl)
       .then(response => {
-        if (!response.ok) {
-          throw new Error('ネットワークエラーが発生しました');
-        }
+        if (!response.ok) throw new Error('APIの応答がありません');
         return response.json();
       })
       .then(data => {
-        // APIから現在のアクセス数を取得（このAPIでは data.value に数字が入ります）
+        // APIから数字（アクセス数）を取得
         const count = data.value;
         
-        // 6桁に揃える（例: 000001）
+        // 6桁に揃える（例: 000005）
         const paddedCount = String(count).padStart(6, '0');
         counterContainer.innerHTML = "";
 
-        // 1文字ずつ画像に置き換えていく、あなたが作ったお気に入りの仕組みです！
+        // あなたが作った、お気に入りの画像置き換え処理です！
         for (let num of paddedCount) {
           const img = document.createElement("img");
           img.src = `${imagePath}${num}.png`;
           img.alt = num;
           img.className = "counter-digit-img";
           
-          // 万が一、画像が読み込めなかった時の保険（数字を文字で表示）
+          // 画像が読み込めなかった場合の保険（文字で数字を表示）
           img.onerror = function() {
             this.style.display = 'none';
             const span = document.createElement("span");
@@ -92,6 +88,7 @@
             span.style.fontSize = "24px";
             span.style.margin = "0 2px";
             span.style.fontWeight = "bold";
+            span.style.color = "#333";
             counterContainer.appendChild(span);
           };
 
