@@ -2,3 +2,75 @@
   <span class="counter-label">ACCESS COUNTER</span>
   <div id="custom-counter" class="counter-digits">Loading...</div>
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // あなた専用の識別キー（ユーザー名などに書き換えてください）
+    const siteKey = "あなたのユーザー名_github_io"; 
+    const counterUrl = `https://api.hana-counter.net/v1/counter/${siteKey}/hit`;
+
+    fetch(counterUrl)
+      .then(response => response.json())
+      .then(data => {
+        // カウントされた数字を取得（例: 125）
+        const count = data.count;
+        
+        // 数字を5桁（00125）に揃える
+        const paddedCount = String(count).padStart(5, '0');
+        
+        // 1文字ずつ分解してHTML（画像やテキスト）に組み立てる
+        const counterContainer = document.getElementById("custom-counter");
+        counterContainer.innerHTML = ""; // Loading...を消す
+
+        // 数字の1文字ずつに枠をつけて表示させる場合
+        for (let num of paddedCount) {
+          const span = document.createElement("span");
+          span.className = "digit-box";
+          span.innerText = num;
+          counterContainer.appendChild(span);
+        }
+      })
+      .catch(error => {
+        console.error("Counter Error:", error);
+        document.getElementById("custom-counter").innerText = "-----";
+      });
+  });
+</script>
+
+<style>
+  /* カウンタ全体の枠組み */
+.my-counter-wrapper {
+  text-align: center;
+  margin: 20px auto;
+  font-family: 'Courier New', Courier, monospace; /* 等幅フォントでレトロ感を出す */
+}
+
+/* カウンタのラベル文字（ACCESS COUNTER） */
+.counter-label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 5px;
+  letter-spacing: 2px;
+}
+
+/* 数字が並ぶエリア */
+.counter-digits {
+  display: inline-block;
+  background-color: #000; /* 黒背景 */
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 2px solid #333;
+}
+
+/* 数字1文字ずつのボックス */
+.digit-box {
+  display: inline-block;
+  color: #00ff00; /* ネオングリーン（お好みでピンクや白に変えてもOK！） */
+  font-size: 20px;
+  font-weight: bold;
+  width: 16px;
+  text-align: center;
+  margin: 0 2px;
+  text-shadow: 0 0 5px #00ff00; /* 文字をぼんやり光らせる */
+}
+</style>
