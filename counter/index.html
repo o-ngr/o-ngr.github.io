@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>訪問者カウンター 動作確認</title>
+<style>
+  body {
+    font-family: sans-serif;
+    background: #f5f5f5;
+  }
+
+  /* カウンタ全体の枠組み */
+  .my-counter-wrapper {
+    text-align: center;
+    margin: 20px auto;
+  }
+  /* ラベル文字（WELCOME! YOU ARE / VISITOR!） */
+  .counter-label {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin: 5px 0;
+    font-weight: bold;
+  }
+  /* 数字画像が並ぶエリア */
+  .counter-images-area {
+    display: flex; /* 画像を横並びにする */
+    justify-content: center; /* 中央に寄せる */
+    align-items: center;
+    margin: 10px 0;
+  }
+  /* 数字画像1枚ずつのスタイル */
+  .counter-digit-img {
+    display: block;
+    height: 32px; /* 画像の高さを好きなサイズに固定する */
+    width: auto; /* 横幅は自動調整（画像の縦横比を保つ） */
+    margin: 0 -1px; /* 画像同士の隙間をなくす（必要に応じて調整） */
+    border: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="my-counter-wrapper">
+  <span class="counter-label">WELCOME! YOU ARE</span>
+  <div id="custom-counter" class="counter-images-area">
+    Loading...
+  </div>
+  <span class="counter-label">VISITOR!</span>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const siteKey = "あなたのユーザー名_github_io_v2"; // 識別キー（新しいサイト名などに）
+    const counterUrl = `https://api.hana-counter.net/v1/counter/${siteKey}/hit`;
+
+    // 重要：画像を置いたフォルダのパスを正しく書く
+    // 例：このHTMLと同じ階層に counter_images フォルダを作った場合
+    const imagePath = "./counter_images/";
+
+    fetch(counterUrl)
+      .then(response => response.json())
+      .then(data => {
+        // カウントされた数字を取得（例: 125）
+        const count = data.count;
+
+        // 数字を6桁（000125）に揃える
+        const paddedCount = String(count).padStart(6, '0');
+
+        const counterContainer = document.getElementById("custom-counter");
+        counterContainer.innerHTML = ""; // 以前の内容（Loading...など）を消す
+
+        // 数字の1文字ずつを、<img>タグに変換して並べる
+        for (let num of paddedCount) {
+          const img = document.createElement("img");
+          img.src = `${imagePath}${num}.png`; // 例: ./counter_images/1.png
+          img.alt = num;
+          img.className = "counter-digit-img";
+          counterContainer.appendChild(img);
+        }
+      })
+      .catch(error => {
+        console.error("Counter Error:", error);
+        document.getElementById("custom-counter").innerText = "Error";
+      });
+  });
+</script>
+
+</body>
+</html>
