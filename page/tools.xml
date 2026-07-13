@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tools>
   <tool id="1">
-    <url>/ms05/tools/mediaplayer.html</url>
+    <url>/tools/mediaplayer.html</url>
     <name>メディアプレイヤ</name>
     <desc>メディアを再生、実行する程度の能力</desc>
     <tags>
@@ -11,7 +11,7 @@
     </tags>
   </tool>
   <tool id="2">
-    <url>/ms05/tools/coolreload.html</url>
+    <url>/tools/coolreload.html</url>
     <name>かっこよくリロードするだけのページ</name>
     <desc>かっこよくリロードする程度の能力</desc>
     <tags>
@@ -28,7 +28,7 @@
     </tags>
   </tool>
   <tool id="4">
-    <url>/ms05/tools/timesrecrd.html</url>
+    <url>/tools/timesrecrd.html</url>
     <name>時計 &amp; カレンダ</name>
     <desc>時間を知らせる程度の能力</desc>
     <tags>
@@ -37,7 +37,7 @@
     </tags>
   </tool>
   <tool id="5">
-    <url>/ms05/tools/memo.html</url>
+    <url>/tools/memo.html</url>
     <name>ms0101 めも</name>
     <desc>テキストを記録し、HTMLとして実行する程度の能力</desc>
     <tags>
@@ -46,7 +46,7 @@
     </tags>
   </tool>
   <tool id="6">
-    <url>/ms05/tools/PercentEncodingConverter.html</url>
+    <url>/tools/PercentEncodingConverter.html</url>
     <name>パーセントエンコードコンバータ</name>
     <desc>パーセントエンコーディングされたテキストをエンコード・デコードする程度の能力</desc>
     <tags>
@@ -56,7 +56,7 @@
     </tags>
   </tool>
   <tool id="7">
-    <url>/ms05/tools/shader.html</url>
+    <url>/tools/shader.html</url>
     <name>シェーダー</name>
     <desc>ノイズを可視化する程度の能力</desc>
     <tags>
@@ -66,7 +66,7 @@
     </tags>
   </tool>
   <tool id="8">
-    <url>/ms05/tools/proxy.html</url>
+    <url>/tools/proxy.html</url>
     <name>プロキシ</name>
     <desc>プロキシ通信する程度の能力</desc>
     <tags>
