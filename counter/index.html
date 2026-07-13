@@ -54,7 +54,7 @@
   document.addEventListener("DOMContentLoaded", function() {
     const siteKey = "あなたのユーザー名_github_io_v2";
     const counterUrl = `https://api.hana-counter.net/v1/counter/${siteKey}/hit`;
-    const imagePath = "./counter_images/";
+    const imagePath = "/couter/counter_images/";
     fetch(counterUrl)
       .then(response => response.json())
       .then(data => {
