@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tools>
+  <tool id="1">
+    <url>/play/stgd.html</url>
+    <name>弾幕STGパソコンバージョン</name>
+    <desc>弾幕シューティングのパソコンバージョン</desc>
+    <tags>
+      <tag>stg</tag>
+      <tag>パソコン</tag>
+      <tag>弾幕</tag>
+    </tags>
+  </tool>
+  <tool id="2">
+    <url>/play/stgm.html</url>
+    <name>弾幕シューティングモバイルバージョン</name>
+    <desc>弾幕シューティングのモバイルブラウザーバージョン</desc>
+    <tags>
+      <tag>stg</tag>
+      <tag>モバイル</tag>
+      <tag>弾幕</tag>
+    </tags>
+  </tool>
+  <tool id="3">
+    <url>/tools/camera.html</url>
+    <name>カメラ</name>
+    <desc>ただのカメラ</desc>
+    <tags>
+      <tag>カメラ</tag>
+    </tags>
+  </tool>
+  <tool id="4">
+    <url>/tools/timesrecrd.html</url>
+    <name>時計 &amp; カレンダ</name>
+    <desc>時間を知らせる程度の能力</desc>
+    <tags>
+      <tag>時計</tag>
+      <tag>カレンダ</tag>
+    </tags>
+  </tool>
+  <tool id="5">
+    <url>/tools/memo.html</url>
+    <name>ms0101 めも</name>
+    <desc>テキストを記録し、HTMLとして実行する程度の能力</desc>
+    <tags>
+      <tag>メモ</tag>
+      <tag>HTML</tag>
+    </tags>
+  </tool>
+  <tool id="6">
+    <url>/tools/PercentEncodingConverter.html</url>
+    <name>パーセントエンコードコンバータ</name>
+    <desc>パーセントエンコーディングされたテキストをエンコード・デコードする程度の能力</desc>
+    <tags>
+      <tag>エンコード</tag>
+      <tag>テキスト</tag>
+      <tag>URL</tag>
+    </tags>
+  </tool>
+  <tool id="7">
+    <url>/tools/shader.html</url>
+    <name>シェーダー</name>
+    <desc>ノイズを可視化する程度の能力</desc>
+    <tags>
+      <tag>シェーダー</tag>
+      <tag>GLSL</tag>
+      <tag>ビジュアル</tag>
+    </tags>
+  </tool>
+  <tool id="8">
+    <url>/tools/proxy.html</url>
+    <name>プロキシ</name>
+    <desc>プロキシ通信する程度の能力</desc>
+    <tags>
+      <tag>プロキシ</tag>
+      <tag>HTML</tag>
+      <tag>Web</tag>
+    </tags>
+  </tool>
+</tools>
