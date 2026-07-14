@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<script>document.addEventListener("DOMContentLoaded", function() {document.addEventListener("contextmenu", function(event) {event.preventDefault();});
+});</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:title" content="O-ngr | 弾幕STG">
+<meta property="og:description" content="Onogoroの作成した弾幕シューティングゲーム!!(弾幕STG)モバイルデバイでもデスクトップデバイスでも!!">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/image/ms0101-image.png">
+<meta property="og:url" content="https://o-ngr.puter.site">
+<meta property="og:site_name" content="Onogoro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="O-ngr | 弾幕STG">
+<meta name="twitter:description" content="Onogoroの作成した弾幕シューティングゲーム!!(弾幕STG)モバイルデバイスでもデスクトップデバイスでも!!">
+<meta name="twitter:image" content="/image/ms0101-image.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Onogoro | 弾幕STG</title>
+<style>
+html, body {margin: 0;padding: 0;height: 100%;width: 100%;overflow: hidden;}
+iframe {border: none;width: 100%;height: 100%;}
+
+#version-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(20, 20, 30, 0.92);
+  color: #f0f0f5;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  max-width: 90vw;
+  box-sizing: border-box;
+  text-align: center;
+}
+#version-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+#version-toast a {
+  color: #9fd1ff;
+  text-decoration: underline;
+  font-weight: bold;
+}
+#version-toast a:hover {
+  color: #c9e8ff;
+}
+#version-toast .toast-close {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 14px;
+  line-height: 1;
+}
+#version-toast .toast-close:hover {
+  color: #fff;
+}
+</style>
+</head>
+<body>
+<iframe id="frame" src=""></iframe>
+<div id="version-toast">
+  <span class="toast-close" id="toast-close">✕</span>
+  <span id="toast-message"></span>
+</div>
+<script>
+function isTouchDevice() {return (
+(navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+(navigator.msMaxTouchPoints && navigator.msMaxTouchPoints > 0) ||
+('ontouchstart' in window) ||
+(window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
+);
+}
+
+function showVersionToast(isMobile) {
+  const toast = document.getElementById('version-toast');
+  const msg = document.getElementById('toast-message');
+
+  const currentLabel = isMobile ? 'スマホ版' : 'PC版';
+  const otherLabel = isMobile ? 'PC版' : 'スマホ版';
+  const otherHref = isMobile ? '/play/STGd.html' : '/play/STGm.html';
+
+  msg.innerHTML = `今表示しているのは<strong>${currentLabel}</strong>です。<br>${otherLabel}にアクセスしたい方は<a href="${otherHref}" target="_blank" rel="noopener">こちら</a>から飛んでください。`;
+
+  toast.classList.add('show');
+
+  clearTimeout(showVersionToast._hideTimer);
+  showVersionToast._hideTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 8000);
+}
+
+function loadFrame() {const frame = document.getElementById('frame');const mobile = isTouchDevice();if (mobile) {frame.src = '/play/STGm.html';} else {frame.src = '/play/STGd.html';}showVersionToast(mobile);}
+
+document.getElementById('toast-close').addEventListener('click', function() {
+  document.getElementById('version-toast').classList.remove('show');
+  clearTimeout(showVersionToast._hideTimer);
+});
+
+window.addEventListener('load', loadFrame);
+window.addEventListener('resize', loadFrame);
+</script>
+</body>
+</html>
