@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>のぉどますたぁ</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        #wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            width: 540px;
+        }
+
+        /* HEADER */
+        #header {
+            width: 100%;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding: 0 4px 10px 4px;
+            border-bottom: 1px solid #333;
+        }
+
+        #title {
+            font-size: 22px;
+            letter-spacing: 6px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        #stage-label {
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: #888;
+        }
+
+        /* STATUS BAR  */
+        #status-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 4px;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #555;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            font-variant-numeric: tabular-nums;
+            min-width: 48px;
+            text-align: center;
+        }
+
+        #intersect-count {
+            color: #ff5252;
+        }
+
+        #intersect-count.zero {
+            color: #00e5a0;
+        }
+
+        /* キャンバス */
+        #canvas-wrap {
+            position: relative;
+            width: 540px;
+            height: 540px;
+        }
+
+        canvas {
+            display: block;
+            background: #111;
+            border: 1px solid #222;
+        }
+
+        /* メッセージオーバーレイ */
+        #overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.82);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s;
+        }
+
+        #overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #overlay-title {
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        #overlay-sub {
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: #888;
+            margin-bottom: 32px;
+        }
+
+        #overlay-stats {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 36px;
+        }
+
+        .os-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .os-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #555;
+        }
+
+        .os-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #00e5a0;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid #444;
+            font-size: 13px;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn:hover {
+            border-color: #00e5a0;
+            color: #00e5a0;
+        }
+
+        .btn-primary {
+            border-color: #00e5a0;
+            color: #00e5a0;
+        }
+
+        .btn-primary:hover {
+            background: #00e5a020;
+        }
+
+        /* ---- BOTTOM BAR ---- */
+        #bottom-bar {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 4px 0 4px;
+            border-top: 1px solid #222;
+        }
+
+        #msg {
+            font-size: 13px;
+            letter-spacing: 1px;
+            color: #555;
+            min-height: 18px;
+        }
+
+        #msg.alert {
+            color: #ff5252;
+        }
+
+        #reset-btn {
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+
+        /* ---- STAGE SELECT ---- */
+        #stage-select-screen {
+            position: fixed;
+            inset: 0;
+            background: #0d0d0d;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            z-index: 100;
+        }
+
+        #stage-select-screen h2 {
+            font-size: 18px;
+            letter-spacing: 6px;
+            color: #ffffff;
+        }
+
+        #stage-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .stage-btn {
+            width: 72px;
+            height: 72px;
+            border: 1px solid #333;
+            background: transparent;
+            color: #888;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: border-color 0.2s, color 0.2s;
+            position: relative;
+        }
+
+        .stage-btn:hover {
+            border-color: #555;
+            color: #ccc;
+        }
+
+        .stage-btn.cleared {
+            border-color: #00e5a040;
+            color: #00e5a0;
+        }
+
+        .stage-btn.cleared::after {
+            content: 'CLEAR';
+            font-size: 8px;
+            letter-spacing: 1px;
+            color: #00e5a060;
+        }
+
+        .stage-btn .stage-nodes {
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: #444;
+        }
+
+        .stage-btn.cleared .stage-nodes {
+            color: #00e5a040;
+        }
+
+        #stage-select-screen .btn {
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="stage-select-screen">
+    <a href="/" target="_blank" rel="noopener noreferrer"><img src="https://counter.256server.com/@:ms05?theme=rule34" alt="アクセスカウンタ" width="200" height="60"></a>
+    <h2>のぉどますたぁ</h2>
+    <div id="stage-grid"></div>
+    <button class="btn" id="back-to-game-btn" style="display:none">BACK</button>
+</div>
+
+<div id="wrapper">
+    <div id="header">
+        <span id="title">のぉどますたぁ</span>
+        <span id="stage-label">STAGE --</span>
+    </div>
+
+    <div id="status-bar">
+        <div class="stat">
+            <span class="stat-label">SCORE</span>
+            <span class="stat-value" id="score-val">0</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">BEST</span>
+            <span class="stat-value" id="best-val">--</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">MOVES</span>
+            <span class="stat-value" id="moves-val">0</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">TIME</span>
+            <span class="stat-value" id="time-val">0:00</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">CROSS</span>
+            <span class="stat-value" id="intersect-count">0</span>
+        </div>
+    </div>
+
+    <div id="canvas-wrap">
+        <canvas id="gameCanvas" width="540" height="540"></canvas>
+
+        <div id="overlay">
+            <div id="overlay-title">CLEAR</div>
+            <div id="overlay-sub">ALL INTERSECTIONS RESOLVED</div>
+            <div id="overlay-stats">
+                <div class="os-item">
+                    <span class="os-label">SCORE</span>
+                    <span class="os-value" id="final-score">0</span>
+                </div>
+                <div class="os-item">
+                    <span class="os-label">MOVES</span>
+                    <span class="os-value" id="final-moves">0</span>
+                </div>
+                <div class="os-item">
+                    <span class="os-label">TIME</span>
+                    <span class="os-value" id="final-time">0:00</span>
+                </div>
+            </div>
+            <div style="display:flex;gap:16px">
+                <button class="btn btn-primary" id="next-btn">NEXT STAGE</button>
+                <button class="btn" id="retry-btn">RETRY</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bottom-bar">
+        <span id="msg">ノードをドラックして交差をなくすげぇむだよ。</span>
+        <button class="btn" id="reset-btn">RESET</button>
+    </div>
+</div>
+
+<script>
+// Each stage: { nodes (initial layout type), edges, difficulty label }
+
+const STAGE_DEFS = [
+    // Stage 1: 5 nodes, pentagon+star (classic)
+    { label: 'EASY',    nodeCount: 5,  edgeMode: 'star5'      },
+    // Stage 2: 6 nodes
+    { label: 'EASY',    nodeCount: 6,  edgeMode: 'complete4'  },
+    // Stage 3: 7 nodes
+    { label: 'NORMAL',  nodeCount: 7,  edgeMode: 'star7'      },
+    // Stage 4: 8 nodes
+    { label: 'NORMAL',  nodeCount: 8,  edgeMode: 'wheel6'     },
+    // Stage 5: 9 nodes
+    { label: 'NORMAL',  nodeCount: 9,  edgeMode: 'bipartite'  },
+    // Stage 6: 10 nodes
+    { label: 'HARD',    nodeCount: 10, edgeMode: 'star10'     },
+    // Stage 7: 11 nodes
+    { label: 'HARD',    nodeCount: 11, edgeMode: 'mixed11'    },
+    // Stage 8: 12 nodes
+    { label: 'HARD',    nodeCount: 12, edgeMode: 'dense12'    },
+    // Stage 9: 12 nodes extra
+    { label: 'EXPERT',  nodeCount: 13, edgeMode: 'expert13'   },
+    // Stage 10: 14 nodes
+    { label: 'EXPERT',  nodeCount: 14, edgeMode: 'expert14'   },
+];
+
+const canvas = document.getElementById('gameCanvas');
+const ctx    = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const NODE_R = 11;
+const PAD    = 50;
+
+let stageIndex  = 0;
+let nodes       = [];
+let edges       = [];
+let dragNode    = null;
+let dragOffX    = 0, dragOffY = 0;
+let isCleared   = false;
+let score       = 0;
+let moves       = 0;
+let startTime   = 0;
+let timerHandle = null;
+let bestScores  = {};   // stageIndex -> score
+let clearedSet  = new Set();
+
+// Particles for clear effect
+let particles   = [];
+
+function buildEdges(mode, n) {
+    const e = [];
+    const add = (a,b) => { if(a!==b) e.push({from:a,to:b}); };
+
+    switch(mode) {
+        case 'star5':
+            // pentagram: 0-2, 2-4, 4-1, 1-3, 3-0
+            [[0,2],[2,4],[4,1],[1,3],[3,0]].forEach(([a,b])=>add(a,b));
+            break;
+        case 'complete4': {
+            // complete graph K4 on first 4 nodes, plus 2 spurs
+            for(let a=0;a<4;a++) for(let b=a+1;b<4;b++) add(a,b);
+            add(4,1); add(5,3); add(4,2); add(5,0);
+            break;
+        }
+        case 'star7':
+            // 7-point star (skip 2)
+            for(let i=0;i<7;i++) add(i,(i+3)%7);
+            add(0,4); add(1,5); add(2,6);
+            break;
+        case 'wheel6':
+            // hub 0, rim 1..6, cross chords
+            for(let i=1;i<=6;i++) add(0,i);
+            for(let i=1;i<=6;i++) add(i,(i%6)+1);
+            add(1,4); add(2,5); add(3,6);
+            break;
+        case 'bipartite': {
+            // K_{4,5} subset
+            const A=[0,1,2,3], B=[4,5,6,7,8];
+            A.forEach(a=>{ B.forEach(b=>{ if(Math.random()<0.75) add(a,b); }); });
+            if(e.length<10) { A.forEach(a=>B.forEach(b=>add(a,b))); }
+            break;
+        }
+        case 'star10':
+            for(let i=0;i<10;i++) add(i,(i+4)%10);
+            for(let i=0;i<10;i++) add(i,(i+3)%10);
+            break;
+        case 'mixed11':
+            for(let i=0;i<11;i++) add(i,(i+5)%11);
+            for(let i=0;i<11;i++) add(i,(i+2)%11);
+            add(0,6); add(3,8); add(1,9);
+            break;
+        case 'dense12':
+            for(let i=0;i<12;i++) add(i,(i+5)%12);
+            for(let i=0;i<12;i++) add(i,(i+4)%12);
+            add(0,7); add(1,8); add(2,9); add(3,10);
+            break;
+        case 'expert13':
+            for(let i=0;i<13;i++) add(i,(i+6)%13);
+            for(let i=0;i<13;i++) add(i,(i+3)%13);
+            add(0,8); add(2,10); add(4,12);
+            break;
+        case 'expert14':
+            for(let i=0;i<14;i++) add(i,(i+6)%14);
+            for(let i=0;i<14;i++) add(i,(i+5)%14);
+            for(let i=0;i<14;i++) add(i,(i+2)%14);
+            break;
+        default:
+            for(let i=0;i<n;i++) add(i,(i+2)%n);
+    }
+
+    const seen = new Set();
+    return e.filter(({from,to})=>{
+        const k = from<to ? `${from}-${to}` : `${to}-${from}`;
+        if(seen.has(k)) return false;
+        seen.add(k);
+        return true;
+    });
+}
+
+function initStage(idx) {
+    stageIndex = idx;
+    const def = STAGE_DEFS[idx];
+    const n = def.nodeCount;
+    nodes = [];
+    edges = [];
+    isCleared = false;
+    particles = [];
+    moves = 0;
+    score = 0;
+    startTime = Date.now();
+
+    const cx = W/2, cy = H/2;
+    const r  = Math.min(W,H)/2 - PAD - 20;
+    for(let i=0;i<n;i++) {
+        // Use a slightly randomized angle so initial placement isn't too ordered
+        const baseAngle = (i/n)*Math.PI*2;
+        const angle = baseAngle + (Math.random()-0.5)*0.6;
+        const rr = r * (0.55 + Math.random()*0.45);
+        nodes.push({
+            x: cx + rr * Math.cos(angle),
+            y: cy + rr * Math.sin(angle),
+            id: i
+        });
+    }
+
+    edges = buildEdges(def.mode, n).map(e=>({...e, intersect:false, flash:0}));
+
+    updateUI();
+    checkClear();
+    startTimer();
+    draw();
+
+    document.getElementById('stage-label').textContent = `STAGE ${idx+1}  ${def.label}`;
+
+    const best = bestScores[idx];
+    document.getElementById('best-val').textContent = best !== undefined ? best : '--';
+}
+
+function startTimer() {
+    if(timerHandle) clearInterval(timerHandle);
+    timerHandle = setInterval(()=>{
+        if(!isCleared) {
+            document.getElementById('time-val').textContent = formatTime(Date.now()-startTime);
+        }
+    }, 500);
+}
+
+function formatTime(ms) {
+    const s = Math.floor(ms/1000);
+    return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+}
+
+function cross2D(ox,oy,ax,ay,bx,by) {
+    return (ax-ox)*(by-oy)-(ay-oy)*(bx-ox);
+}
+
+function segmentsIntersect(p1,p2,p3,p4) {
+    if(p1===p3||p1===p4||p2===p3||p2===p4) return false;
+    const d1 = cross2D(p3.x,p3.y,p4.x,p4.y,p1.x,p1.y);
+    const d2 = cross2D(p3.x,p3.y,p4.x,p4.y,p2.x,p2.y);
+    const d3 = cross2D(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+    const d4 = cross2D(p1.x,p1.y,p2.x,p2.y,p4.x,p4.y);
+    if(((d1>0&&d2<0)||(d1<0&&d2>0))&&((d3>0&&d4<0)||(d3<0&&d4>0))) return true;
+    return false;
+}
+
+function checkClear() {
+    edges.forEach(e=>{ e.intersect=false; });
+    let cnt=0;
+    for(let i=0;i<edges.length;i++) {
+        for(let j=i+1;j<edges.length;j++) {
+            const e1=edges[i], e2=edges[j];
+            if(segmentsIntersect(nodes[e1.from],nodes[e1.to],nodes[e2.from],nodes[e2.to])) {
+                e1.intersect=true;
+                e2.intersect=true;
+                cnt++;
+            }
+        }
+    }
+    const el = document.getElementById('intersect-count');
+    el.textContent = cnt;
+    el.className = cnt===0 ? 'stat-value zero' : 'stat-value';
+
+    if(cnt===0 && !isCleared) onClear();
+}
+
+function calcScore() {
+    const elapsedSec = (Date.now()-startTime)/1000;
+    const timeBonus  = Math.max(0, 1000 - Math.floor(elapsedSec*2));
+    const moveBonus  = Math.max(0, 500 - moves*3);
+    const stageBonus = (stageIndex+1)*200;
+    return stageBonus + timeBonus + moveBonus;
+}
+
+function onClear() {
+    isCleared = true;
+    if(timerHandle) clearInterval(timerHandle);
+
+    score = calcScore();
+    if(bestScores[stageIndex]===undefined || score > bestScores[stageIndex]) {
+        bestScores[stageIndex] = score;
+        document.getElementById('best-val').textContent = score;
+    }
+    clearedSet.add(stageIndex);
+
+    spawnParticles();
+
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('final-moves').textContent = moves;
+    document.getElementById('final-time').textContent  = formatTime(Date.now()-startTime);
+
+    const hasNext = stageIndex+1 < STAGE_DEFS.length;
+    document.getElementById('next-btn').style.display = hasNext ? '' : 'none';
+
+    setTimeout(()=>{ document.getElementById('overlay').classList.add('show'); }, 400);
+
+    updateUI();
+    buildStageGrid();
+}
+
+function spawnParticles() {
+    for(let i=0;i<80;i++) {
+        const angle = Math.random()*Math.PI*2;
+        const speed = 1.5 + Math.random()*3.5;
+        particles.push({
+            x: W/2 + (Math.random()-0.5)*200,
+            y: H/2 + (Math.random()-0.5)*200,
+            vx: Math.cos(angle)*speed,
+            vy: Math.sin(angle)*speed,
+            life: 1.0,
+            decay: 0.012+Math.random()*0.018,
+            r: 2+Math.random()*3,
+            hue: [0,120,160,200,300][Math.floor(Math.random()*5)]
+        });
+    }
+    animateParticles();
+}
+
+function animateParticles() {
+    if(particles.length===0) return;
+    draw();
+    particles = particles.filter(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        p.vy+=0.04;
+        p.life-=p.decay;
+        return p.life>0;
+    });
+    if(particles.length>0) requestAnimationFrame(animateParticles);
+}
+
+function draw() {
+    ctx.clearRect(0,0,W,H);
+
+    edges.forEach(edge=>{
+        const A=nodes[edge.from], B=nodes[edge.to];
+        ctx.beginPath();
+        ctx.moveTo(A.x,A.y);
+        ctx.lineTo(B.x,B.y);
+        ctx.lineWidth = 2;
+        if(isCleared) {
+            ctx.strokeStyle = '#00e5a0';
+        } else if(edge.intersect) {
+            ctx.strokeStyle = '#ff5252';
+        } else {
+            ctx.strokeStyle = '#444';
+        }
+        ctx.stroke();
+    });
+
+    if(dragNode) {
+        edges.forEach(edge=>{
+            if(edge.from===dragNode.id || edge.to===dragNode.id) {
+                const A=nodes[edge.from], B=nodes[edge.to];
+                ctx.beginPath();
+                ctx.moveTo(A.x,A.y);
+                ctx.lineTo(B.x,B.y);
+                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = edge.intersect ? '#ff7070' : '#888';
+                ctx.stroke();
+            }
+        });
+    }
+
+    particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle = `hsla(${p.hue},80%,65%,${p.life})`;
+        ctx.fill();
+    });
+
+    nodes.forEach(node=>{
+        const isHovered = node===dragNode;
+        ctx.beginPath();
+        ctx.arc(node.x,node.y,NODE_R,0,Math.PI*2);
+        if(isCleared) {
+            ctx.fillStyle = '#00e5a0';
+        } else if(isHovered) {
+            ctx.fillStyle = '#ffffff';
+        } else {
+            // Check if this node has any intersecting edge
+            const hot = edges.some(e=>(e.from===node.id||e.to===node.id)&&e.intersect);
+            ctx.fillStyle = hot ? '#ff5252' : '#2a2a2a';
+        }
+        ctx.fill();
+        ctx.strokeStyle = isCleared ? '#00e5a0' : (isHovered ? '#ffffff' : '#666');
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Node ID label (small, subtle)
+        ctx.fillStyle = isCleared ? '#003322' : (isHovered ? '#000' : '#999');
+        ctx.font = `bold ${NODE_R-2}px Helvetica Neue`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.id, node.x, node.y);
+    });
+}
+
+
+function updateUI() {
+    document.getElementById('score-val').textContent = score;
+    document.getElementById('moves-val').textContent = moves;
+}
+
+function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = W / rect.width;
+    const scaleY = H / rect.height;
+    const src = e.touches ? e.touches[0] : e;
+    return {
+        x: (src.clientX - rect.left) * scaleX,
+        y: (src.clientY - rect.top)  * scaleY
+    };
+}
+
+function onStart(e) {
+    if(isCleared) return;
+    const pos = getPos(e);
+    let closest = null, closestD = Infinity;
+    nodes.forEach(n=>{
+        const d = Math.hypot(n.x-pos.x, n.y-pos.y);
+        if(d < NODE_R+14 && d < closestD) { closestD=d; closest=n; }
+    });
+    if(closest) {
+        dragNode = closest;
+        dragOffX = closest.x - pos.x;
+        dragOffY = closest.y - pos.y;
+    }
+}
+
+function onMove(e) {
+    if(!dragNode) return;
+    e.preventDefault();
+    const pos = getPos(e);
+    dragNode.x = Math.max(NODE_R, Math.min(W-NODE_R, pos.x + dragOffX));
+    dragNode.y = Math.max(NODE_R, Math.min(H-NODE_R, pos.y + dragOffY));
+    checkClear();
+    draw();
+}
+
+function onEnd() {
+    if(dragNode) {
+        moves++;
+        updateUI();
+        dragNode = null;
+        checkClear();
+        draw();
+    }
+}
+
+canvas.addEventListener('mousedown',  onStart);
+canvas.addEventListener('mousemove',  onMove);
+window.addEventListener('mouseup',    onEnd);
+canvas.addEventListener('touchstart', onStart, {passive:false});
+canvas.addEventListener('touchmove',  onMove,  {passive:false});
+window.addEventListener('touchend',   onEnd);
+
+
+function buildStageGrid() {
+    const grid = document.getElementById('stage-grid');
+    grid.innerHTML = '';
+    STAGE_DEFS.forEach((def,i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'stage-btn' + (clearedSet.has(i) ? ' cleared' : '');
+        btn.innerHTML = `<span>${i+1}</span><span class="stage-nodes">${def.nodeCount}N / ${def.label}</span>`;
+        btn.addEventListener('click',()=>{
+            hideStageSelect();
+            initStage(i);
+        });
+        grid.appendChild(btn);
+    });
+}
+
+function showStageSelect() {
+    buildStageGrid();
+    document.getElementById('stage-select-screen').style.display='flex';
+    document.getElementById('back-to-game-btn').style.display = stageIndex>=0 ? '' : 'none';
+}
+
+function hideStageSelect() {
+    document.getElementById('stage-select-screen').style.display='none';
+}
+
+// Stage select visible by default on first load
+document.getElementById('title').addEventListener('click', showStageSelect);
+document.getElementById('back-to-game-btn').addEventListener('click', ()=>{
+    hideStageSelect();
+    draw();
+});
+
+
+document.getElementById('reset-btn').addEventListener('click', ()=>{
+    document.getElementById('overlay').classList.remove('show');
+    initStage(stageIndex);
+});
+
+document.getElementById('next-btn').addEventListener('click', ()=>{
+    document.getElementById('overlay').classList.remove('show');
+    if(stageIndex+1 < STAGE_DEFS.length) initStage(stageIndex+1);
+});
+
+document.getElementById('retry-btn').addEventListener('click', ()=>{
+    document.getElementById('overlay').classList.remove('show');
+    initStage(stageIndex);
+});
+
+buildStageGrid();
+
+document.getElementById('back-to-game-btn').style.display='none';
+</script>
+</body>
+</html>
