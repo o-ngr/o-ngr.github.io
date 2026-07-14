@@ -12,7 +12,7 @@
 <meta property="og:description" content="Onogoroの作成した弾幕シューティングゲーム!!(弾幕STG)モバイルデバイでもデスクトップデバイスでも!!">
 <meta property="og:type" content="website">
 <meta property="og:image" content="/image/ms0101-image.png">
-<meta property="og:url" content="https://o-ngr.puter.site">
+<meta property="og:url" content="https://o-ngr.github.io/play/stg.html">
 <meta property="og:site_name" content="Onogoro">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="O-ngr | 弾幕STG">
@@ -94,7 +94,7 @@ function showVersionToast(isMobile) {
 
   const currentLabel = isMobile ? 'スマホ版' : 'PC版';
   const otherLabel = isMobile ? 'PC版' : 'スマホ版';
-  const otherHref = isMobile ? '/play/STGd.html' : '/play/STGm.html';
+  const otherHref = isMobile ? '/play/stgd.html' : '/play/stgm.html';
 
   msg.innerHTML = `今表示しているのは<strong>${currentLabel}</strong>です。<br>${otherLabel}にアクセスしたい方は<a href="${otherHref}" target="_blank" rel="noopener">こちら</a>から飛んでください。`;
 
@@ -106,7 +106,7 @@ function showVersionToast(isMobile) {
   }, 8000);
 }
 
-function loadFrame() {const frame = document.getElementById('frame');const mobile = isTouchDevice();if (mobile) {frame.src = '/play/STGm.html';} else {frame.src = '/play/STGd.html';}showVersionToast(mobile);}
+function loadFrame() {const frame = document.getElementById('frame');const mobile = isTouchDevice();if (mobile) {frame.src = '/play/STGm.html';} else {frame.src = '/play/stgd.html';}showVersionToast(mobile);}
 
 document.getElementById('toast-close').addEventListener('click', function() {
   document.getElementById('version-toast').classList.remove('show');
