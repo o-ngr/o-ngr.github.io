@@ -1,766 +1,759 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>ソースを読む程度の能力</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>ソースを読む程度の能力</title>
+<style>
+    :root {
+        --bg: #0a0a0a;
+        --panel: #161616;
+        --panel2: #202020;
+        --border: #333333;
+        --border-light: #444444;
+        --accent: #ff3b3b;
+        --accent-dim: #b32424;
+        --on-accent: #ffffff;
+        --text: #e8e8e8;
+        --text-muted: #999999;
+        --text-faint: #666666;
+        --danger: #ff6b6b;
+        --success: #6bcf6b;
+        --info: #7ec8ff;
+    }
 
-        a {
-            color: #ffe500;
-            text-decoration: none;
-        }
+    [data-theme="light"] {
+        --bg: #ffffff;
+        --panel: #f7f7f7;
+        --panel2: #eeeeee;
+        --border: #dddddd;
+        --border-light: #cccccc;
+        --accent: #e02424;
+        --accent-dim: #a81b1b;
+        --on-accent: #ffffff;
+        --text: #1a1a1a;
+        --text-muted: #666666;
+        --text-faint: #999999;
+        --danger: #d62828;
+        --success: #2e7d32;
+        --info: #1565c0;
+    }
 
-        body {
-            background: #0f0f0f;
-            color: #ffe500;
-            font-family: 'Roboto Mono', monospace;
-            margin: 0;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
+    * { box-sizing: border-box; }
 
-        #container {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 900px;
-            width: 100%;
-        }
+    a { color: var(--accent); text-decoration: none; }
 
-        @media (min-width: 768px) {
-            #container {
-                padding: 30px;
-            }
-        }
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Roboto Mono', 'Consolas', monospace;
+        margin: 0;
+        padding: 12px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        min-height: 100vh;
+        transition: background-color 0.2s, color 0.2s;
+    }
 
-        h1 {
-            font-size: 1.3em;
-            margin: 0 0 10px 0;
-            color: #ffe500;
-            font-weight: normal;
-        }
+    #container {
+        position: relative;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 20px;
+        max-width: 900px;
+        width: 100%;
+        margin-top: 10px;
+        overflow: hidden;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
 
-        @media (min-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-                margin-bottom: 15px;
-            }
-        }
+    @media (min-width: 768px) {
+        #container { padding: 32px; margin-top: 30px; }
+    }
 
-        .header-section {
-            margin-bottom: 20px;
-        }
+    /* 弾幕リング装飾（控えめ） */
+    #ring-deco {
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 160px;
+        height: 160px;
+        pointer-events: none;
+        opacity: 0.35;
+    }
+    #ring-deco circle { fill: var(--accent); }
 
-        .counter-img {
-            display: block;
-            margin: 10px 0;
-            max-width: 180px;
-            height: auto;
-        }
+    .header-section {
+        position: relative;
+        margin-bottom: 22px;
+        z-index: 1;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+    }
 
-        @media (min-width: 768px) {
-            .counter-img {
-                max-width: 200px;
-            }
-        }
+    .header-left { flex: 1; min-width: 0; }
 
-        .info-note {
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 20px;
-            font-size: 11px;
-            color: #aaa;
-            line-height: 1.5;
-        }
+    h1 {
+        font-size: 1.25em;
+        margin: 0 0 12px 0;
+        color: var(--accent);
+        font-weight: 500;
+        letter-spacing: 0.02em;
+    }
 
-        @media (min-width: 768px) {
-            .info-note {
-                padding: 12px 15px;
-                font-size: 12px;
-            }
-        }
+    @media (min-width: 768px) {
+        h1 { font-size: 1.7em; margin-bottom: 14px; }
+    }
 
-        .info-note strong {
-            color: #ffe500;
-        }
+    .counter-img {
+        display: block;
+        max-width: 180px;
+        height: auto;
+        opacity: 0.9;
+    }
 
-        .input-section {
-            margin-bottom: 20px;
-        }
+    @media (min-width: 768px) {
+        .counter-img { max-width: 200px; }
+    }
 
-        .input-row {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
+    .info-note {
+        background-color: var(--panel2);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent-dim);
+        border-radius: 4px;
+        padding: 10px 12px;
+        margin-bottom: 20px;
+        font-size: 11.5px;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
 
-        @media (min-width: 768px) {
-            .input-row {
-                flex-direction: row;
-                align-items: center;
-                gap: 12px;
-            }
-        }
+    @media (min-width: 768px) {
+        .info-note { padding: 12px 16px; font-size: 12.5px; }
+    }
 
-        input[type="text"] {
-            flex: 1;
-            padding: 12px;
-            background-color: #2a2a2a;
-            color: #ffe500;
-            border: 1px solid #444;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: 'Roboto Mono', monospace;
-            transition: border-color 0.2s;
-        }
+    .info-note strong { color: var(--accent); }
 
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #ffe500;
-        }
+    .input-section { margin-bottom: 18px; }
 
-        .method-selector {
-            display: flex;
-            gap: 8px;
-        }
+    .input-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
 
-        @media (min-width: 768px) {
-            .method-selector {
-                gap: 10px;
-            }
-        }
+    @media (min-width: 768px) {
+        .input-row { flex-direction: row; align-items: stretch; gap: 10px; }
+    }
 
-        .method-btn {
-            flex: 1;
-            background-color: #333;
-            color: #aaa;
-            border: 1px solid #444;
-            padding: 12px 16px;
-            font-size: 13px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Roboto Mono', monospace;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
+    input[type="text"] {
+        flex: 1;
+        padding: 13px 14px;
+        background-color: var(--panel2);
+        color: var(--text);
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: border-color 0.15s;
+        min-width: 0;
+    }
 
-        @media (min-width: 768px) {
-            .method-btn {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-        }
+    input[type="text"]:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
 
-        .method-btn.active {
-            background-color: #ffe500;
-            color: #000;
-            border-color: #ffe500;
-        }
+    input[type="text"]::placeholder { color: var(--text-faint); }
 
-        .method-btn:hover:not(.active):not(:disabled) {
-            background-color: #444;
-            color: #fff;
-        }
+    .method-selector {
+        display: flex;
+        gap: 6px;
+        background: var(--panel2);
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        padding: 3px;
+    }
 
-        .method-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+    .method-btn {
+        flex: 1;
+        background-color: transparent;
+        color: var(--text-muted);
+        border: none;
+        padding: 9px 14px;
+        font-size: 12.5px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        white-space: nowrap;
+    }
 
-        .status {
-            margin-bottom: 12px;
-            font-size: 12px;
-            color: #888;
-            min-height: 18px;
-            line-height: 1.5;
-        }
+    @media (min-width: 768px) {
+        .method-btn { padding: 9px 16px; font-size: 13px; }
+    }
 
-        .status.error {
-            color: #ff6b6b;
-        }
+    .method-btn.active {
+        background-color: var(--accent);
+        color: var(--on-accent);
+    }
 
-        .status.success {
-            color: #51cf66;
-        }
+    .method-btn:hover:not(.active):not(:disabled) { color: var(--text); }
+    .method-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .status.loading {
-            color: #ffe500;
-        }
+    .method-hint {
+        font-size: 11px;
+        color: var(--text-faint);
+        margin-bottom: 14px;
+        line-height: 1.5;
+    }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 2px solid #444;
-            border-top-color: #ffe500;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
+    /* システムログ */
+    .status-log {
+        background-color: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-bottom: 16px;
+        height: 88px;
+        overflow-y: auto;
+        font-size: 11.5px;
+        line-height: 1.8;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-light) var(--bg);
+    }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+    .status-log::-webkit-scrollbar { width: 6px; }
+    .status-log::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
 
-        .tab-container {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 0;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: #444 #1a1a1a;
-        }
+    .log-entry {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+        color: var(--text-muted);
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
 
-        .tab-container::-webkit-scrollbar {
-            height: 6px;
-        }
+    .log-dot {
+        flex-shrink: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-faint);
+        margin-top: 2px;
+    }
 
-        .tab-container::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
+    .log-entry.info .log-dot { background: var(--info); }
+    .log-entry.loading .log-dot { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
+    .log-entry.success .log-dot { background: var(--success); }
+    .log-entry.error .log-dot { background: var(--danger); }
+    .log-entry.warn .log-dot { background: var(--accent); }
 
-        .tab-container::-webkit-scrollbar-thumb {
-            background: #444;
-            border-radius: 3px;
-        }
+    .log-entry.success { color: var(--success); }
+    .log-entry.error { color: var(--danger); }
+    .log-entry.warn { color: var(--accent); }
 
-        .tab-btn {
-            background-color: #2a2a2a;
-            color: #aaa;
-            border: 1px solid #444;
-            border-bottom: none;
-            padding: 10px 14px;
-            font-size: 12px;
-            border-radius: 4px 4px 0 0;
-            cursor: pointer;
-            font-family: 'Roboto Mono', monospace;
-            white-space: nowrap;
-            flex-shrink: 0;
-            transition: all 0.2s;
-        }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
 
-        @media (min-width: 768px) {
-            .tab-btn {
-                padding: 10px 18px;
-                font-size: 13px;
-            }
-        }
+    .tab-container {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-light) var(--panel);
+    }
 
-        .tab-btn.active {
-            background-color: #333;
-            color: #ffe500;
-            border-color: #ffe500;
-        }
+    .tab-container::-webkit-scrollbar { height: 5px; }
+    .tab-container::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
 
-        .tab-btn:hover:not(.active) {
-            background-color: #333;
-            color: #fff;
-        }
+    .tab-btn {
+        background-color: transparent;
+        color: var(--text-muted);
+        border: 1px solid transparent;
+        border-bottom: none;
+        padding: 9px 14px;
+        font-size: 12px;
+        border-radius: 4px 4px 0 0;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: all 0.15s;
+    }
 
-        .button-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-        }
+    @media (min-width: 768px) {
+        .tab-btn { padding: 9px 18px; font-size: 12.5px; }
+    }
 
-        button {
-            background-color: #ffe500;
-            color: #000;
-            border: none;
-            padding: 11px 18px;
-            font-size: 13px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Roboto Mono', monospace;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
+    .tab-btn.active {
+        background-color: var(--panel2);
+        color: var(--accent);
+        border-color: var(--border) var(--border) var(--panel2);
+    }
 
-        @media (min-width: 768px) {
-            button {
-                padding: 11px 22px;
-                font-size: 14px;
-            }
-        }
+    .tab-btn:hover:not(.active) { color: var(--text); }
 
-        button:hover:not(:disabled) {
-            background-color: #ffed33;
-        }
+    .button-group {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
 
-        button:active:not(:disabled) {
-            background-color: #e6cc00;
-            transform: translateY(1px);
-        }
+    button {
+        background-color: var(--accent);
+        color: var(--on-accent);
+        border: none;
+        padding: 11px 18px;
+        font-size: 13px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        font-weight: 500;
+    }
 
-        button:disabled {
-            background-color: #666;
-            color: #999;
-            cursor: not-allowed;
-        }
+    @media (min-width: 768px) {
+        button { padding: 11px 22px; font-size: 14px; }
+    }
 
-        .output-container {
-            position: relative;
-        }
+    button:hover:not(:disabled) { background-color: var(--accent-dim); }
+    button:active:not(:disabled) { transform: translateY(1px); }
 
-        textarea {
-            width: 100%;
-            height: 300px;
-            background-color: #2a2a2a;
-            color: #ffe500;
-            border: 1px solid #444;
-            border-radius: 4px;
-            padding: 12px;
-            font-size: 12px;
-            resize: vertical;
-            font-family: 'Roboto Mono', monospace;
-            line-height: 1.5;
-            transition: border-color 0.2s;
-        }
+    button:disabled { background-color: var(--border-light); color: var(--text-faint); cursor: not-allowed; }
 
-        @media (min-width: 768px) {
-            textarea {
-                height: 400px;
-                font-size: 13px;
-                padding: 15px;
-            }
-        }
+    button.secondary {
+        background-color: var(--panel2);
+        color: var(--text-muted);
+        border: 1px solid var(--border-light);
+    }
+    button.secondary:hover:not(:disabled) { color: var(--text); background-color: var(--panel); }
+    button.secondary:active:not(:disabled) { transform: translateY(1px); }
 
-        textarea:focus {
-            outline: none;
-            border-color: #ffe500;
-        }
+    .output-container { position: relative; }
 
-        textarea::placeholder {
-            color: #666;
-        }
+    textarea {
+        width: 100%;
+        height: 320px;
+        background-color: var(--panel2);
+        color: var(--text);
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        padding: 13px;
+        font-size: 12px;
+        resize: vertical;
+        font-family: inherit;
+        line-height: 1.6;
+        transition: border-color 0.15s;
+    }
 
-        .char-count {
-            font-size: 11px;
-            color: #666;
-            text-align: right;
-            margin-top: 5px;
-        }
+    @media (min-width: 768px) {
+        textarea { height: 420px; font-size: 13px; padding: 16px; }
+    }
 
-        .footer {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666;
-        }
+    textarea:focus { outline: none; border-color: var(--accent); }
+    textarea::placeholder { color: var(--text-faint); }
 
-        .footer a {
-            color: #ffe500;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    .char-count {
+        font-size: 11px;
+        color: var(--text-faint);
+        text-align: right;
+        margin-top: 6px;
+    }
+</style>
 </head>
 <body>
-    <div id="container">
-        <div class="header-section">
+<div id="container">
+    <svg id="ring-deco" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="80" cy="80" r="3" fill-opacity="1"/>
+        <circle cx="80" cy="40" r="3" fill-opacity="0.9"/>
+        <circle cx="112" cy="52" r="3" fill-opacity="0.8"/>
+        <circle cx="120" cy="80" r="3" fill-opacity="0.7"/>
+        <circle cx="112" cy="108" r="3" fill-opacity="0.6"/>
+        <circle cx="80" cy="120" r="3" fill-opacity="0.5"/>
+        <circle cx="48" cy="108" r="3" fill-opacity="0.4"/>
+        <circle cx="40" cy="80" r="3" fill-opacity="0.3"/>
+        <circle cx="48" cy="52" r="3" fill-opacity="0.2"/>
+        <circle cx="80" cy="80" r="60" fill="none" stroke="var(--accent)" stroke-width="1" stroke-opacity="0.15"/>
+        <circle cx="80" cy="80" r="30" fill="none" stroke="var(--accent)" stroke-width="1" stroke-opacity="0.15"/>
+    </svg>
+
+    <div class="header-section">
+        <div class="header-left">
             <a href="/"><h1>HTMLを閲覧する程度のツール</h1></a>
             <a href="/">
                 <img class="counter-img" src="https://counter.256server.com/ms0101?theme=moebooru" alt="アクセスカウンター" width="200" height="75">
             </a>
         </div>
+    </div>
 
-        <div class="info-note">
-            <strong>プロキシ:</strong> CORS制限を回避してHTMLを取得 (6つのプロキシで自動リトライ)<br>
-            <strong>直接:</strong> 同一オリジンかCORS対応サイトのみ取得可能
-        </div>
+    <div class="info-note">
+        <strong>自動:</strong> まず直接取得を試み、失敗した場合のみプロキシに自動切替<br>
+        <strong>直接:</strong> 同一オリジン・CORS対応サイトのみ取得可能<br>
+        <strong>プロキシ:</strong> 複数の中継サーバーを順に試行して取得
+    </div>
 
-        <div class="input-section">
-            <div class="input-row">
-                <input type="text" id="urlInput" placeholder="ここにURLを入力してね">
-                <div class="method-selector">
-                    <button class="method-btn active" data-method="proxy">proxy</button>
-                    <button class="method-btn" data-method="direct">直接</button>
-                </div>
+    <div class="input-section">
+        <div class="input-row">
+            <input type="text" id="urlInput" placeholder="ここにURLを入力してね">
+            <div class="method-selector">
+                <button class="method-btn active" data-method="auto">自動</button>
+                <button class="method-btn" data-method="direct">直接</button>
+                <button class="method-btn" data-method="proxy">プロキシ</button>
             </div>
-            <div class="status" id="status">URLを入力して取得ボタンを押してください</div>
-        </div>
-
-        <div class="tab-container">
-            <button class="tab-btn active" data-tab="all">all</button>
-            <button class="tab-btn" data-tab="title">title</button>
-            <button class="tab-btn" data-tab="meta">meta</button>
-            <button class="tab-btn" data-tab="script">script</button>
-            <button class="tab-btn" data-tab="html">html</button>
-            <button class="tab-btn" data-tab="css">css</button>
-        </div>
-
-        <div class="button-group">
-            <button id="fetchBtn" onclick="fetchHTML()">取得</button>
-            <button id="copyBtn" onclick="copyToClipboard()">コピー</button>
-            <button id="clearBtn" onclick="clearOutput()">クリア</button>
-        </div>
-
-        <div class="output-container">
-            <textarea id="output" readonly placeholder="ここに表示されるよ"></textarea>
-            <div class="char-count" id="charCount"></div>
         </div>
     </div>
 
-    <script>
-        let currentMethod = 'proxy';
-        let currentTab = 'all';
-        let cachedHTML = '';
-        let cachedExtractions = {};
+    <div class="status-log" id="statusLog"></div>
 
-        // イベントリスナー設定
-        document.querySelectorAll('.method-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentMethod = btn.dataset.method;
-            });
+    <div class="tab-container">
+        <button class="tab-btn active" data-tab="all">all</button>
+        <button class="tab-btn" data-tab="title">title</button>
+        <button class="tab-btn" data-tab="meta">meta</button>
+        <button class="tab-btn" data-tab="script">script</button>
+        <button class="tab-btn" data-tab="html">html</button>
+        <button class="tab-btn" data-tab="css">css</button>
+    </div>
+
+    <div class="button-group">
+        <button id="fetchBtn" onclick="fetchHTML()">取得</button>
+        <button class="secondary" id="copyBtn" onclick="copyToClipboard()">コピー</button>
+        <button class="secondary" id="clearBtn" onclick="clearOutput()">クリア</button>
+    </div>
+
+    <div class="output-container">
+        <textarea id="output" readonly placeholder="ここに表示されるよ"></textarea>
+        <div class="char-count" id="charCount"></div>
+    </div>
+</div>
+
+<script>
+    // ---- テーマ（システム設定に自動追従） ----
+    (function initTheme() {
+        const root = document.documentElement;
+        const mql = window.matchMedia('(prefers-color-scheme: light)');
+
+        function applyTheme() {
+            root.setAttribute('data-theme', mql.matches ? 'light' : 'dark');
+        }
+
+        applyTheme();
+        mql.addEventListener('change', applyTheme);
+    })();
+
+    let currentMethod = 'auto';
+    let currentTab = 'all';
+    let cachedHTML = '';
+    let cachedExtractions = {};
+
+    // 稼働率の高いプロキシのみ厳選（無効なものは除外し待ち時間を短縮）
+    const PROXIES = [
+        {
+            url: (u) => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+            name: 'AllOrigins',
+            parse: async (res) => (await res.json()).contents
+        },
+        {
+            url: (u) => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+            name: 'CORSProxy.io',
+            parse: async (res) => await res.text()
+        },
+        {
+            url: (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+            name: 'CodeTabs',
+            parse: async (res) => await res.text()
+        },
+        {
+            url: (u) => `https://thingproxy.freeboard.io/fetch/${u}`,
+            name: 'ThingProxy',
+            parse: async (res) => await res.text()
+        }
+    ];
+
+    document.querySelectorAll('.method-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMethod = btn.dataset.method;
         });
+    });
 
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentTab = btn.dataset.tab;
-                updateOutput();
-            });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentTab = btn.dataset.tab;
+            updateOutput();
         });
+    });
 
-        document.getElementById('urlInput').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                fetchHTML();
-            }
-        });
+    document.getElementById('urlInput').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') fetchHTML();
+    });
 
-        // メイン取得関数
-        async function fetchHTML() {
-            const url = document.getElementById('urlInput').value.trim();
-            const output = document.getElementById('output');
+    resetLog();
 
-            if (!url) {
-                showStatus('URLを入力してください', 'error');
-                return;
-            }
+    // ---- メイン取得処理 ----
+    async function fetchHTML() {
+        const url = document.getElementById('urlInput').value.trim();
+        const output = document.getElementById('output');
 
-            if (!isValidURL(url)) {
-                showStatus('有効なURLを入力してください (http://またはhttps://から始まる)', 'error');
-                return;
-            }
+        if (!url) { resetLog('URLを入力してください', 'error'); return; }
+        if (!isValidURL(url)) { resetLog('有効なURLを入力してください (http://またはhttps://から始まる)', 'error'); return; }
 
-            setButtonsDisabled(true);
-            output.value = '';
-            showStatus('<span class="loading-spinner"></span>取得中...', 'loading', true);
+        setButtonsDisabled(true);
+        output.value = '';
+        resetLog();
 
-            try {
-                let html;
-                let proxyUsed = '';
+        try {
+            let html, sourceLabel;
 
-                if (currentMethod === 'proxy') {
-                    const result = await fetchViaProxy(url);
-                    html = result.html;
-                    proxyUsed = result.proxy;
-                } else {
-                    html = await fetchDirect(url);
-                }
-
-                // キャッシュをクリアして新しいデータを保存
-                cachedHTML = html;
-                cachedExtractions = {};
-                
-                // 非同期で解析
-                requestAnimationFrame(() => {
-                    updateOutput();
-                    updateCharCount();
-                });
-
-                const statusMsg = proxyUsed 
-                    ? `取得完了 (${formatBytes(html.length)}) - ${proxyUsed}経由`
-                    : `取得完了 (${formatBytes(html.length)})`;
-                showStatus(statusMsg, 'success');
-            } catch (error) {
-                const errorMsg = `取得に失敗しました\nエラー: ${error.message}`;
-                output.value = errorMsg;
-                showStatus(`取得失敗: ${error.message}`, 'error');
-                console.error('Fetch error:', error);
-            } finally {
-                setButtonsDisabled(false);
-            }
-        }
-
-        // 出力更新関数（パフォーマンス最適化）
-        function updateOutput() {
-            const output = document.getElementById('output');
-            if (!cachedHTML) {
-                output.value = '';
-                updateCharCount();
-                return;
-            }
-
-            // キャッシュがあればそれを使用
-            if (cachedExtractions[currentTab]) {
-                output.value = cachedExtractions[currentTab];
-                updateCharCount();
-                return;
-            }
-
-            // 非同期で解析（大きなHTMLでもUIをブロックしない）
-            requestAnimationFrame(() => {
-                const content = extractContent(currentTab, cachedHTML);
-                cachedExtractions[currentTab] = content;
-                output.value = content;
-                updateCharCount();
-            });
-        }
-
-        // コンテンツ抽出関数
-        function extractContent(tab, html) {
-            switch (tab) {
-                case 'all':
-                    return html;
-                case 'title':
-                    return extractTitle(html);
-                case 'meta':
-                    return extractMeta(html);
-                case 'script':
-                    return extractScript(html);
-                case 'html':
-                    return extractHTML(html);
-                case 'css':
-                    return extractCSS(html);
-                default:
-                    return html;
-            }
-        }
-
-        function extractTitle(html) {
-            const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-            return titleMatch ? titleMatch[0] : 'titleタグが見つかりませんでした';
-        }
-
-        function extractMeta(html) {
-            const metaMatches = html.match(/<meta[^>]*>/gi);
-            return metaMatches ? metaMatches.join('\n') : 'metaタグが見つかりませんでした';
-        }
-
-        function extractScript(html) {
-            const scriptMatches = html.match(/<script[\s\S]*?<\/script>/gi);
-            return scriptMatches ? scriptMatches.join('\n\n') : 'scriptタグが見つかりませんでした';
-        }
-
-        function extractHTML(html) {
-            const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-            if (!bodyMatch) return html;
-
-            let bodyContent = bodyMatch[0];
-            bodyContent = bodyContent.replace(/<script[\s\S]*?<\/script>/gi, '');
-            bodyContent = bodyContent.replace(/<style[\s\S]*?<\/style>/gi, '');
-            return bodyContent || 'HTML要素が見つかりませんでした';
-        }
-
-        function extractCSS(html) {
-            const styleMatches = html.match(/<style[\s\S]*?<\/style>/gi);
-            const linkMatches = html.match(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi);
-            let result = '';
-
-            if (styleMatches) {
-                result += styleMatches.join('\n\n');
-            }
-            if (linkMatches) {
-                result += (result ? '\n\n' : '') + linkMatches.join('\n');
-            }
-
-            return result || 'CSSが見つかりませんでした';
-        }
-
-        // ネットワーク関数
-        async function fetchDirect(url) {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            return await response.text();
-        }
-
-        async function fetchWithTimeout(url, timeout = 10000) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeout);
-            
-            try {
-                const response = await fetch(url, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                return response;
-            } catch (error) {
-                clearTimeout(timeoutId);
-                throw error;
-            }
-        }
-
-        async function fetchViaProxy(url) {
-            const proxies = [
-                {
-                    url: `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-                    name: 'AllOrigins',
-                    parse: async (response) => {
-                        const data = await response.json();
-                        return data.contents;
-                    }
-                },
-                {
-                    url: `https://corsproxy.io/?${encodeURIComponent(url)}`,
-                    name: 'CORSProxy.io',
-                    parse: async (response) => await response.text()
-                },
-                {
-                    url: `https://cors-anywhere.herokuapp.com/${url}`,
-                    name: 'CORS Anywhere',
-                    parse: async (response) => await response.text()
-                },
-                {
-                    url: `https://thingproxy.freeboard.io/fetch/${url}`,
-                    name: 'ThingProxy',
-                    parse: async (response) => await response.text()
-                },
-                {
-                    url: `https://crossorigin.me/${url}`,
-                    name: 'CrossOrigin.me',
-                    parse: async (response) => await response.text()
-                },
-                {
-                    url: `https://cors.sh/${url}`,
-                    name: 'CORS.sh',
-                    parse: async (response) => await response.text()
-                }
-            ];
-
-            const errors = [];
-
-            for (let i = 0; i < proxies.length; i++) {
-                const proxy = proxies[i];
+            if (currentMethod === 'direct') {
+                addLog('直接取得を試行中...', 'loading');
+                html = await fetchDirect(url);
+                sourceLabel = '直接取得';
+            } else if (currentMethod === 'proxy') {
+                const result = await fetchViaProxies(url);
+                html = result.html;
+                sourceLabel = `${result.proxy}経由`;
+            } else {
+                // 自動: まず直接、失敗したらプロキシへ自動切替
+                addLog('直接取得を試行中...', 'loading');
                 try {
-                    showStatus(`<span class="loading-spinner"></span>プロキシ試行中 (${i + 1}/${proxies.length}): ${proxy.name}...`, 'loading', true);
-                    
-                    const response = await fetchWithTimeout(proxy.url, 10000);
-                    
-                    if (!response.ok) {
-                        errors.push(`${proxy.name}: HTTP ${response.status}`);
-                        continue;
-                    }
+                    html = await fetchDirect(url);
+                    sourceLabel = '直接取得';
+                    updateLastEntry('直接取得に成功', 'success');
+                } catch (directError) {
+                    updateLastEntry(`直接取得に失敗 (${directError.message})`, 'error');
+                    addLog('プロキシ経由に自動切替します', 'warn');
+                    const result = await fetchViaProxies(url);
+                    html = result.html;
+                    sourceLabel = `${result.proxy}経由（自動切替）`;
+                }
+            }
 
-                    const html = await proxy.parse(response);
-                    
-                    if (html && html.length > 0) {
-                        return { html, proxy: proxy.name };
-                    } else {
-                        errors.push(`${proxy.name}: 空のレスポンス`);
-                    }
-                } catch (error) {
-                    const errorMsg = error.name === 'AbortError' ? 'タイムアウト' : error.message;
-                    errors.push(`${proxy.name}: ${errorMsg}`);
-                    console.warn(`プロキシ ${proxy.name} での取得に失敗:`, error);
+            cachedHTML = html;
+            cachedExtractions = {};
+
+            requestAnimationFrame(() => {
+                updateOutput();
+                updateCharCount();
+            });
+
+            addLog(`取得完了 (${formatBytes(html.length)}) - ${sourceLabel}`, 'success');
+        } catch (error) {
+            output.value = `取得に失敗しました\nエラー: ${error.message}`;
+            addLog(`取得失敗: ${error.message}`, 'error');
+            console.error('Fetch error:', error);
+        } finally {
+            setButtonsDisabled(false);
+        }
+    }
+
+    async function fetchViaProxies(url) {
+        const errors = [];
+        for (let i = 0; i < PROXIES.length; i++) {
+            const proxy = PROXIES[i];
+            addLog(`プロキシ試行中 (${i + 1}/${PROXIES.length}): ${proxy.name}...`, 'loading');
+            try {
+                const response = await fetchWithTimeout(proxy.url(url), 10000);
+                if (!response.ok) {
+                    errors.push(`${proxy.name}: HTTP ${response.status}`);
+                    updateLastEntry(`${proxy.name}: HTTP ${response.status}`, 'error');
                     continue;
                 }
-            }
-
-            throw new Error(`すべてのプロキシでの取得に失敗しました\n詳細:\n${errors.join('\n')}`);
-        }
-
-        // ユーティリティ関数
-        function showStatus(message, type, isHtml = false) {
-            const status = document.getElementById('status');
-            if (isHtml) {
-                status.innerHTML = message;
-            } else {
-                status.textContent = message;
-            }
-            status.className = `status ${type}`;
-        }
-
-        function isValidURL(string) {
-            try {
-                const url = new URL(string);
-                return url.protocol === 'http:' || url.protocol === 'https:';
-            } catch {
-                return false;
-            }
-        }
-
-        function setButtonsDisabled(disabled) {
-            document.getElementById('fetchBtn').disabled = disabled;
-            document.getElementById('copyBtn').disabled = disabled;
-            document.getElementById('clearBtn').disabled = disabled;
-            document.getElementById('urlInput').disabled = disabled;
-            document.querySelectorAll('.method-btn').forEach(btn => btn.disabled = disabled);
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = disabled);
-        }
-
-        function formatBytes(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-        }
-
-        function updateCharCount() {
-            const output = document.getElementById('output');
-            const charCount = document.getElementById('charCount');
-            const length = output.value.length;
-            if (length > 0) {
-                charCount.textContent = `${length.toLocaleString()} 文字 (${formatBytes(length)})`;
-            } else {
-                charCount.textContent = '';
-            }
-        }
-
-        async function copyToClipboard() {
-            const textarea = document.getElementById('output');
-            if (!textarea.value.trim()) {
-                showStatus('コピーするコンテンツがありません', 'error');
-                return;
-            }
-
-            try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    await navigator.clipboard.writeText(textarea.value);
-                    showStatus('クリップボードにコピー完了', 'success');
-                } else {
-                    textarea.select();
-                    textarea.setSelectionRange(0, 99999);
-                    document.execCommand('copy');
-                    showStatus('クリップボードにコピー完了', 'success');
+                const html = await proxy.parse(response);
+                if (html && html.length > 0) {
+                    updateLastEntry(`${proxy.name}: 成功`, 'success');
+                    return { html, proxy: proxy.name };
                 }
+                errors.push(`${proxy.name}: 空のレスポンス`);
+                updateLastEntry(`${proxy.name}: 空のレスポンス`, 'error');
             } catch (error) {
-                showStatus('コピーに失敗しました', 'error');
+                const msg = error.name === 'AbortError' ? 'タイムアウト' : error.message;
+                errors.push(`${proxy.name}: ${msg}`);
+                updateLastEntry(`${proxy.name}: ${msg}`, 'error');
             }
         }
+        throw new Error(`すべてのプロキシでの取得に失敗しました (${errors.length}件)`);
+    }
 
-        function clearOutput() {
-            document.getElementById('output').value = '';
-            document.getElementById('status').textContent = 'URLを入力して取得ボタンを押してください';
-            document.getElementById('status').className = 'status';
-            document.getElementById('charCount').textContent = '';
-            cachedHTML = '';
-            cachedExtractions = {};
+    async function fetchDirect(url) {
+        const response = await fetchWithTimeout(url, 10000);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        return await response.text();
+    }
+
+    async function fetchWithTimeout(url, timeout = 10000) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        try {
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            return response;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            throw error;
         }
-    </script>
+    }
+
+    // ---- 出力・抽出 ----
+    function updateOutput() {
+        const output = document.getElementById('output');
+        if (!cachedHTML) { output.value = ''; updateCharCount(); return; }
+        if (cachedExtractions[currentTab]) {
+            output.value = cachedExtractions[currentTab];
+            updateCharCount();
+            return;
+        }
+        requestAnimationFrame(() => {
+            const content = extractContent(currentTab, cachedHTML);
+            cachedExtractions[currentTab] = content;
+            output.value = content;
+            updateCharCount();
+        });
+    }
+
+    function extractContent(tab, html) {
+        switch (tab) {
+            case 'all': return html;
+            case 'title': return extractTitle(html);
+            case 'meta': return extractMeta(html);
+            case 'script': return extractScript(html);
+            case 'html': return extractHTML(html);
+            case 'css': return extractCSS(html);
+            default: return html;
+        }
+    }
+
+    function extractTitle(html) {
+        const m = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        return m ? m[0] : 'titleタグが見つかりませんでした';
+    }
+
+    function extractMeta(html) {
+        const m = html.match(/<meta[^>]*>/gi);
+        return m ? m.join('\n') : 'metaタグが見つかりませんでした';
+    }
+
+    function extractScript(html) {
+        const m = html.match(/<script[\s\S]*?<\/script>/gi);
+        return m ? m.join('\n\n') : 'scriptタグが見つかりませんでした';
+    }
+
+    function extractHTML(html) {
+        const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        if (!bodyMatch) return html;
+        let bodyContent = bodyMatch[0];
+        bodyContent = bodyContent.replace(/<script[\s\S]*?<\/script>/gi, '');
+        bodyContent = bodyContent.replace(/<style[\s\S]*?<\/style>/gi, '');
+        return bodyContent || 'HTML要素が見つかりませんでした';
+    }
+
+    function extractCSS(html) {
+        const styleMatches = html.match(/<style[\s\S]*?<\/style>/gi);
+        const linkMatches = html.match(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi);
+        let result = '';
+        if (styleMatches) result += styleMatches.join('\n\n');
+        if (linkMatches) result += (result ? '\n\n' : '') + linkMatches.join('\n');
+        return result || 'CSSが見つかりませんでした';
+    }
+
+    // ---- システムログ ----
+    function resetLog(message, type) {
+        const log = document.getElementById('statusLog');
+        log.innerHTML = '';
+        addLog(message || 'URLを入力して取得ボタンを押してください', type || 'info');
+    }
+
+    function addLog(message, type = 'info') {
+        const log = document.getElementById('statusLog');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.innerHTML = `<span class="log-dot"></span><span class="log-text"></span>`;
+        entry.querySelector('.log-text').textContent = message;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function updateLastEntry(message, type) {
+        const log = document.getElementById('statusLog');
+        const last = log.lastElementChild;
+        if (!last) { addLog(message, type); return; }
+        last.className = `log-entry ${type}`;
+        last.querySelector('.log-text').textContent = message;
+    }
+
+    // ---- ユーティリティ ----
+    function isValidURL(string) {
+        try {
+            const url = new URL(string);
+            return url.protocol === 'http:' || url.protocol === 'https:';
+        } catch { return false; }
+    }
+
+    function setButtonsDisabled(disabled) {
+        document.getElementById('fetchBtn').disabled = disabled;
+        document.getElementById('copyBtn').disabled = disabled;
+        document.getElementById('clearBtn').disabled = disabled;
+        document.getElementById('urlInput').disabled = disabled;
+        document.querySelectorAll('.method-btn').forEach(btn => btn.disabled = disabled);
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = disabled);
+    }
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function updateCharCount() {
+        const output = document.getElementById('output');
+        const charCount = document.getElementById('charCount');
+        const length = output.value.length;
+        charCount.textContent = length > 0 ? `${length.toLocaleString()} 文字 (${formatBytes(length)})` : '';
+    }
+
+    async function copyToClipboard() {
+        const textarea = document.getElementById('output');
+        if (!textarea.value.trim()) { addLog('コピーするコンテンツがありません', 'error'); return; }
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(textarea.value);
+            } else {
+                textarea.select();
+                textarea.setSelectionRange(0, 99999);
+                document.execCommand('copy');
+            }
+            addLog('クリップボードにコピー完了', 'success');
+        } catch (error) {
+            addLog('コピーに失敗しました', 'error');
+        }
+    }
+
+    function clearOutput() {
+        document.getElementById('output').value = '';
+        document.getElementById('charCount').textContent = '';
+        cachedHTML = '';
+        cachedExtractions = {};
+        resetLog();
+    }
+</script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"d1d5394f0c3f4bfba52e8ef3151ab7fa","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
