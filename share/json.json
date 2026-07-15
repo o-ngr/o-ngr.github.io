@@ -1,4 +1,3 @@
-
 {
   "type": "bubble",
   "hero": {
@@ -15,52 +14,26 @@
   "body": {
     "type": "box",
     "layout": "vertical",
+    "backgroundColor": "#FFFFFF",
     "contents": [
       {
         "type": "text",
-        "text": "Brown Cafe",
+        "text": "Onogoro",
         "weight": "bold",
-        "size": "xl"
+        "size": "xl",
+        "color": "#111111"
       },
       {
-        "type": "box",
-        "layout": "baseline",
-        "margin": "md",
-        "contents": [
-          {
-            "type": "icon",
-            "size": "sm",
-            "url": "https://developers-resource.landpress.line.me/fx/img/review_gold_star_28.png"
-          },
-          {
-            "type": "icon",
-            "size": "sm",
-            "url": "https://developers-resource.landpress.line.me/fx/img/review_gold_star_28.png"
-          },
-          {
-            "type": "icon",
-            "size": "sm",
-            "url": "https://developers-resource.landpress.line.me/fx/img/review_gold_star_28.png"
-          },
-          {
-            "type": "icon",
-            "size": "sm",
-            "url": "https://developers-resource.landpress.line.me/fx/img/review_gold_star_28.png"
-          },
-          {
-            "type": "icon",
-            "size": "sm",
-            "url": "https://developers-resource.landpress.line.me/fx/img/review_gray_star_28.png"
-          },
-          {
-            "type": "text",
-            "text": "4.0",
-            "size": "sm",
-            "color": "#999999",
-            "margin": "md",
-            "flex": 0
-          }
-        ]
+        "type": "text",
+        "text": "オノゴロ",
+        "size": "sm",
+        "color": "#999999",
+        "margin": "xs"
+      },
+      {
+        "type": "separator",
+        "margin": "lg",
+        "color": "#E60012"
       },
       {
         "type": "box",
@@ -75,16 +48,17 @@
             "contents": [
               {
                 "type": "text",
-                "text": "Place",
-                "color": "#aaaaaa",
+                "text": "Site",
+                "color": "#E60012",
                 "size": "sm",
-                "flex": 1
+                "flex": 2,
+                "weight": "bold"
               },
               {
                 "type": "text",
-                "text": "Flex Tower, 7-7-4 Midori-ku, Tokyo",
+                "text": "Web / Game Dev",
                 "wrap": true,
-                "color": "#666666",
+                "color": "#111111",
                 "size": "sm",
                 "flex": 5
               }
@@ -97,16 +71,17 @@
             "contents": [
               {
                 "type": "text",
-                "text": "Time",
-                "color": "#aaaaaa",
+                "text": "Update",
+                "color": "#E60012",
                 "size": "sm",
-                "flex": 1
+                "flex": 2,
+                "weight": "bold"
               },
               {
                 "type": "text",
-                "text": "10:00 - 23:00",
+                "text": "STG / Tools / Notes",
                 "wrap": true,
-                "color": "#666666",
+                "color": "#111111",
                 "size": "sm",
                 "flex": 5
               }
@@ -120,15 +95,17 @@
     "type": "box",
     "layout": "vertical",
     "spacing": "sm",
+    "backgroundColor": "#FFFFFF",
     "contents": [
       {
         "type": "button",
-        "style": "link",
+        "style": "primary",
         "height": "sm",
+        "color": "#E60012",
         "action": {
           "type": "uri",
-          "label": "CALL",
-          "uri": "https://line.me/"
+          "label": "WEBSITE",
+          "uri": "https://o-ngr.github.io/"
         }
       },
       {
@@ -137,9 +114,10 @@
         "height": "sm",
         "action": {
           "type": "uri",
-          "label": "WEBSITE",
-          "uri": "https://line.me/"
-        }
+          "label": "TOOLS",
+          "uri": "https://o-ngr.github.io/"
+        },
+        "color": "#111111"
       },
       {
         "type": "box",
@@ -149,5 +127,18 @@
       }
     ],
     "flex": 0
+  },
+  "styles": {
+    "header": {
+      "backgroundColor": "#FFFFFF"
+    },
+    "body": {
+      "backgroundColor": "#FFFFFF"
+    },
+    "footer": {
+      "backgroundColor": "#FFFFFF",
+      "separator": true,
+      "separatorColor": "#E60012"
+    }
   }
 }
