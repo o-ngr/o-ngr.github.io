@@ -16,13 +16,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font
 #stage{position:relative;flex:1 1 auto;min-height:0;overflow:hidden}
 canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
 #controls{position:relative;flex:0 0 auto;display:flex;align-items:stretch;height:clamp(126px,21vh,190px);background:rgba(255,255,255,.025);border-top:1px solid rgba(255,255,255,.07);padding-bottom:env(safe-area-inset-bottom,0px)}
-#dpad{position:relative;flex:1 1 56%;height:100%;touch-action:none}
-.dbtn{position:absolute;width:clamp(48px,11vh,64px);height:clamp(48px,11vh,64px);border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.02);color:rgba(255,255,255,.3);font-family:'DM Mono',monospace;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:background .08s,border-color .08s,color .08s}
-.dbtn.active{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.42);color:#fff}
-.dp-up{left:50%;top:calc(50% - clamp(50px,11.5vh,66px));transform:translate(-50%,-50%)}
-.dp-down{left:50%;top:calc(50% + clamp(50px,11.5vh,66px));transform:translate(-50%,-50%)}
-.dp-left{left:calc(50% - clamp(50px,11.5vh,66px));top:50%;transform:translate(-50%,-50%)}
-.dp-right{left:calc(50% + clamp(50px,11.5vh,66px));top:50%;transform:translate(-50%,-50%)}
+#joy{position:relative;flex:1 1 56%;height:100%;touch-action:none;display:flex;align-items:center;justify-content:center}
+#joy-base{position:relative;width:clamp(112px,25vh,164px);height:clamp(112px,25vh,164px);border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.02);transition:border-color .08s,background .08s}
+#joy-base.active{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.045)}
+#joy-base::before{content:'';position:absolute;left:50%;top:50%;width:1px;height:14px;background:rgba(255,255,255,.08);transform:translate(-50%,-50%)}
+#joy-base::after{content:'';position:absolute;left:50%;top:50%;width:14px;height:1px;background:rgba(255,255,255,.08);transform:translate(-50%,-50%)}
+#joy-stick{position:absolute;left:50%;top:50%;width:clamp(46px,11vh,62px);height:clamp(46px,11vh,62px);border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);transform:translate(-50%,-50%);transition:background .08s,border-color .08s;pointer-events:none}
+#joy-base.active #joy-stick{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.44)}
 #ab{position:relative;flex:1 1 44%;height:100%;z-index:10;display:flex;flex-direction:row-reverse;align-items:center;justify-content:center;gap:clamp(10px,3vw,20px)}
 .btn{border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.02);color:rgba(255,255,255,.34);font-family:'DM Mono',monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .07s;position:relative}
 .btn:active{transform:scale(.86)}
@@ -131,11 +131,10 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
     <canvas id="cv"></canvas>
   </div>
   <div id="controls">
-    <div id="dpad">
-      <button id="dp-up" class="dbtn dp-up">▲</button>
-      <button id="dp-down" class="dbtn dp-down">▼</button>
-      <button id="dp-left" class="dbtn dp-left">◀</button>
-      <button id="dp-right" class="dbtn dp-right">▶</button>
+    <div id="joy">
+      <div id="joy-base">
+        <div id="joy-stick"></div>
+      </div>
     </div>
     <div id="ab">
       <button id="bb" class="btn on">BOMB<span id="bn">1</span><div id="bomb-pips"></div></button>
@@ -963,8 +962,7 @@ function update(){
 
 function tickPlayer(){
   const spd=inp.slow?1.8:4.6;
-  if(inp.left)G.px-=spd;if(inp.right)G.px+=spd;
-  if(inp.up)G.py-=spd;if(inp.down)G.py+=spd;
+  G.px+=inp.mx*spd;G.py+=inp.my*spd;
   G.px=clamp(G.px,0,W-24);G.py=clamp(G.py,K.TOP,H-24-K.BOT);
   if(G.invuln>0)G.invuln--;
   const now=Date.now();
@@ -1695,20 +1693,51 @@ function popScore(x,y,pts,mult){
 }
 
 /* 入力 */
-const inp={up:false,down:false,left:false,right:false,slow:false};
-let slowId=null,bombId=null;
+const inp={mx:0,my:0,slow:false};
+const kb={up:false,down:false,left:false,right:false};
+let slowId=null,bombId=null,joyId=null;
 const _th=[];
 function addT(el,ev,fn){el.addEventListener(ev,fn,{passive:false});_th.push({el,ev,fn});}
 
+function kbVector(){
+  let mx=0,my=0;
+  if(kb.left)mx-=1;if(kb.right)mx+=1;
+  if(kb.up)my-=1;if(kb.down)my+=1;
+  if(mx&&my){mx*=.7071;my*=.7071;}
+  return{mx,my};
+}
+
 function setupInput(){
-  /* 十字キー（Dパッド） */
-  const dpadDirs=[['dp-up','up'],['dp-down','down'],['dp-left','left'],['dp-right','right']];
-  for(const[id,dir]of dpadDirs){
-    const el=$(id);let tid=null;
-    const start=e=>{e.preventDefault();if(tid!==null)return;const t=e.changedTouches[0];tid=t.identifier;inp[dir]=true;el.classList.add('active');};
-    const end=e=>{e.preventDefault();for(const t of e.changedTouches)if(t.identifier===tid){tid=null;inp[dir]=false;el.classList.remove('active');}};
-    addT(el,'touchstart',start);addT(el,'touchend',end);addT(el,'touchcancel',end);
-  }
+  /* アナログスティック */
+  const joyBase=$('joy-base'),joyStick=$('joy-stick');
+  const joyMove=t=>{
+    const rect=joyBase.getBoundingClientRect();
+    const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
+    const maxR=rect.width/2;
+    let dx=t.clientX-cx,dy=t.clientY-cy;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist>maxR){dx=dx/dist*maxR;dy=dy/dist*maxR;}
+    joyStick.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    const dead=.14;
+    let nx=dx/maxR,ny=dy/maxR;
+    const nd=Math.sqrt(nx*nx+ny*ny);
+    if(nd<dead){nx=0;ny=0;}
+    inp.mx=clamp(nx,-1,1);inp.my=clamp(ny,-1,1);
+  };
+  const joyReset=()=>{joyStick.style.transform='translate(-50%,-50%)';joyBase.classList.remove('active');};
+  const joyStart=e=>{e.preventDefault();if(joyId!==null)return;const t=e.changedTouches[0];joyId=t.identifier;joyBase.classList.add('active');joyMove(t);};
+  const joyDrag=e=>{e.preventDefault();for(const t of e.changedTouches)if(t.identifier===joyId)joyMove(t);};
+  const joyEnd=e=>{
+    e.preventDefault();
+    for(const t of e.changedTouches){
+      if(t.identifier===joyId){
+        joyId=null;joyReset();
+        const v=kbVector();inp.mx=v.mx;inp.my=v.my;
+      }
+    }
+  };
+  addT(joyBase,'touchstart',joyStart);addT(joyBase,'touchmove',joyDrag);
+  addT(joyBase,'touchend',joyEnd);addT(joyBase,'touchcancel',joyEnd);
   const bs_=$('bs');
   addT(bs_,'touchstart',e=>{e.preventDefault();for(const t of e.changedTouches)if(slowId===null){slowId=t.identifier;inp.slow=true;bs_.classList.add('on');}});
   const sEnd=e=>{e.preventDefault();for(const t of e.changedTouches)if(t.identifier===slowId){slowId=null;inp.slow=false;bs_.classList.remove('on');}};
@@ -1720,13 +1749,13 @@ function setupInput(){
   const KM={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',KeyA:'left',KeyD:'right',KeyW:'up',KeyS:'down'};
   document.addEventListener('keydown',G._kd=e=>{
     if(G.state!=='play')return;
-    if(KM[e.code]){e.preventDefault();inp[KM[e.code]]=true;}
+    if(KM[e.code]){e.preventDefault();kb[KM[e.code]]=true;if(joyId===null){const v=kbVector();inp.mx=v.mx;inp.my=v.my;}}
     if(e.code==='KeyX'||e.code==='Space'){e.preventDefault();useBomb(false);}
     if(e.code==='ShiftLeft'||e.code==='ShiftRight'){e.preventDefault();inp.slow=true;$('bs').classList.add('on');}
     if(e.code==='Escape'||e.code==='KeyP')pauseGame();
   });
   document.addEventListener('keyup',G._ku=e=>{
-    if(KM[e.code])inp[KM[e.code]]=false;
+    if(KM[e.code]){kb[KM[e.code]]=false;if(joyId===null){const v=kbVector();inp.mx=v.mx;inp.my=v.my;}}
     if(e.code==='ShiftLeft'||e.code==='ShiftRight'){inp.slow=false;$('bs').classList.remove('on');}
   });
   refreshBombUI();
@@ -1736,9 +1765,12 @@ function removeInput(){
   _th.forEach(({el,ev,fn})=>el.removeEventListener(ev,fn));_th.length=0;
   if(G._kd){document.removeEventListener('keydown',G._kd);G._kd=null;}
   if(G._ku){document.removeEventListener('keyup',G._ku);G._ku=null;}
-  inp.slow=false;inp.up=inp.down=inp.left=inp.right=false;
+  inp.slow=false;inp.mx=0;inp.my=0;joyId=null;
+  kb.up=kb.down=kb.left=kb.right=false;
   $('bs').classList.remove('on');
-  document.querySelectorAll('.dbtn').forEach(el=>el.classList.remove('active'));
+  const jb=$('joy-base'),js=$('joy-stick');
+  if(jb)jb.classList.remove('active');
+  if(js)js.style.transform='translate(-50%,-50%)';
 }
 
 function pauseGame(){if(G.state!=='play')return;G.state='pause';show('o-pause');refreshSysBar();}
