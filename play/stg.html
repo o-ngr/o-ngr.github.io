@@ -106,7 +106,7 @@ function showVersionToast(isMobile) {
   }, 8000);
 }
 
-function loadFrame() {const frame = document.getElementById('frame');const mobile = isTouchDevice();if (mobile) {frame.src = '/play/STGm.html';} else {frame.src = '/play/stgd.html';}showVersionToast(mobile);}
+function loadFrame() {const frame = document.getElementById('frame');const mobile = isTouchDevice();if (mobile) {frame.src = '/play/stgm.html';} else {frame.src = '/play/stgd.html';}showVersionToast(mobile);}
 
 document.getElementById('toast-close').addEventListener('click', function() {
   document.getElementById('version-toast').classList.remove('show');
