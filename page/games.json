@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "url": "/play/stgd.html",
+    "name": "弾幕STGパソコンバージョン",
+    "desc": "弾幕シューティングのパソコンバージョン",
+    "tags": ["stg", "パソコン", "弾幕"]
+  },
+  {
+    "id": 2,
+    "url": "/play/stgm.html",
+    "name": "弾幕シューティングモバイルバージョン",
+    "desc": "弾幕シューティングのモバイルブラウザーバージョン",
+    "tags": ["stg", "モバイル", "弾幕"]
+  },
+  {
+    "id": 3,
+    "url": "/tools/camera.html",
+    "name": "カメラ",
+    "desc": "ただのカメラ",
+    "tags": ["カメラ"]
+  },
+  {
+    "id": 4,
+    "url": "/tools/timesrecrd.html",
+    "name": "時計 & カレンダ",
+    "desc": "時間を知らせる程度の能力",
+    "tags": ["時計", "カレンダ"]
+  },
+  {
+    "id": 5,
+    "url": "/tools/memo.html",
+    "name": "ms0101 めも",
+    "desc": "テキストを記録し、HTMLとして実行する程度の能力",
+    "tags": ["メモ", "HTML"]
+  },
+  {
+    "id": 6,
+    "url": "/tools/PercentEncodingConverter.html",
+    "name": "パーセントエンコードコンバータ",
+    "desc": "パーセントエンコーディングされたテキストをエンコード・デコードする程度の能力",
+    "tags": ["エンコード", "テキスト", "URL"]
+  },
+  {
+    "id": 7,
+    "url": "/tools/shader.html",
+    "name": "シェーダー",
+    "desc": "ノイズを可視化する程度の能力",
+    "tags": ["シェーダー", "GLSL", "ビジュアル"]
+  },
+  {
+    "id": 8,
+    "url": "/tools/proxy.html",
+    "name": "プロキシ",
+    "desc": "プロキシ通信する程度の能力",
+    "tags": ["プロキシ", "HTML", "Web"]
+  }
+]
