@@ -58,7 +58,8 @@
 </main>
 
 <script>
-const TOOLS_XML_PATH = '/page/games.xml';
+// JSONファイルのパス（必要に応じてパスを調整してください）
+const TOOLS_JSON_PATH = '/page/games.json'; 
 let TOOLS = [];
 
 /* STATE */
@@ -111,32 +112,14 @@ function toggleFavorite(id) {
   render();
 }
 
-/* TOOL DATA LOADING (external XML) */
-function text(node, selector) {
-  const el = node.querySelector(selector);
-  return el ? el.textContent.trim() : '';
-}
-
-function parseToolsXML(xmlText) {
-  const xml = new DOMParser().parseFromString(xmlText, 'application/xml');
-  if (xml.querySelector('parsererror')) {
-    throw new Error('games.xml の解析に失敗しました');
-  }
-  return Array.from(xml.querySelectorAll('tools > tool')).map(node => ({
-    id: parseInt(node.getAttribute('id'), 10),
-    url: text(node, 'url'),
-    name: text(node, 'name'),
-    desc: text(node, 'desc'),
-    tags: Array.from(node.querySelectorAll('tags > tag')).map(t => t.textContent.trim())
-  })).filter(t => !Number.isNaN(t.id) && t.url && t.name);
-}
-
+/* TOOL DATA LOADING (JSON) */
 async function loadTools() {
   try {
-    const res = await fetch(TOOLS_XML_PATH, { cache: 'no-store' });
-    if (!res.ok) throw new Error('games.xml の取得に失敗しました (' + res.status + ')');
-    const xmlText = await res.text();
-    TOOLS = parseToolsXML(xmlText);
+    const res = await fetch(TOOLS_JSON_PATH, { cache: 'no-store' });
+    if (!res.ok) throw new Error('games.json の取得に失敗しました (' + res.status + ')');
+    
+    // res.json() で直接JavaScriptのオブジェクト配列として読み込む
+    TOOLS = await res.json();
   } catch (err) {
     console.error(err);
     document.getElementById('toolsGrid').innerHTML =
@@ -171,7 +154,6 @@ function renderFavSection() {
   const section = document.getElementById('favSection');
   const list = document.getElementById('favList');
 
-  // お気に入りタブ中 or お気に入りなし → 非表示
   if (favItems.length === 0 || currentFilter === 'favorites') {
     section.classList.add('hidden');
     return;
@@ -254,7 +236,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// イベント委任: お気に入りトグル・削除・カード/行全体のクリックで開く
 document.addEventListener('click', e => {
   const favBtn = e.target.closest('.fav-toggle');
   if (favBtn) {
@@ -278,7 +259,6 @@ document.addEventListener('click', e => {
   }
 });
 
-// キーボード操作: フォーカスしたカード/行で Enter または Space を押すと開く
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
   if (e.target.closest('.fav-toggle') || e.target.closest('.fav-row-remove')) return;
