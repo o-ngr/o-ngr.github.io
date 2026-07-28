@@ -283,7 +283,23 @@
     button.secondary:hover:not(:disabled) { color: var(--text); background-color: var(--panel); }
     button.secondary:active:not(:disabled) { transform: translateY(1px); }
 
-    .view-area { position: relative; }
+    .view-area {
+        position: relative;
+        background-color: var(--panel);
+        transition: background-color 0.2s;
+    }
+
+    .view-area:fullscreen {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .view-area:fullscreen #renderFrame,
+    .view-area:fullscreen #sourceOutput {
+        height: 100%;
+        flex: 1;
+    }
 
     #renderFrame {
         width: 100%;
@@ -309,6 +325,26 @@
         display: none;
     }
 
+    .fullscreen-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 2;
+        background-color: var(--panel2);
+        color: var(--text-muted);
+        border: 1px solid var(--border-light);
+        padding: 6px 10px;
+        font-size: 11px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        opacity: 0.85;
+    }
+
+    .fullscreen-btn:hover { color: var(--text); background-color: var(--panel); opacity: 1; }
+    .fullscreen-btn:active { transform: translateY(1px); }
+
     .placeholder {
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
@@ -318,6 +354,30 @@
         color: var(--text-faint);
         font-size: 12.5px;
         pointer-events: none;
+    }
+
+    #container:fullscreen {
+        max-width: 100%;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        margin-top: 0;
+        overflow-y: auto;
+    }
+    #container:-webkit-full-screen {
+        max-width: 100%;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        margin-top: 0;
+        overflow-y: auto;
+    }
+
+    #container:fullscreen #renderFrame,
+    #container:fullscreen #sourceOutput,
+    #container:-webkit-full-screen #renderFrame,
+    #container:-webkit-full-screen #sourceOutput {
+        height: calc(100vh - 300px);
     }
 
     .char-count {
@@ -372,11 +432,13 @@
         <div class="button-group">
             <button id="fetchBtn" onclick="fetchPage()">開く</button>
             <button class="secondary" id="copyBtn" onclick="copySource()">コピー</button>
+            <button class="secondary" id="fullscreenBtn" onclick="toggleFullscreen()">全画面</button>
             <button class="secondary" id="clearBtn" onclick="clearAll()">クリア</button>
         </div>
     </div>
 
-    <div class="view-area">
+    <div class="view-area" id="viewArea">
+        <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">全画面</button>
         <iframe id="renderFrame" sandbox="allow-popups" referrerpolicy="no-referrer"></iframe>
         <textarea id="sourceOutput" readonly placeholder="ここにソースが表示されます"></textarea>
         <div class="placeholder" id="placeholder">URLを入力して「開く」を押してください</div>
@@ -641,6 +703,49 @@
             addLog('コピーに失敗しました', 'error');
         }
     }
+
+    // ---- 全画面表示 ----
+    function toggleFullscreen() {
+        const container = document.getElementById('container');
+        const fsElement = document.fullscreenElement || document.webkitFullscreenElement;
+        if (!fsElement) {
+            const request = container.requestFullscreen || container.webkitRequestFullscreen;
+            if (request) {
+                request.call(container).catch(err => addLog(`全画面表示に失敗しました: ${err.message}`, 'error'));
+            } else {
+                addLog('この端末では全画面表示に対応していません', 'error');
+            }
+        } else {
+            const exit = document.exitFullscreen || document.webkitExitFullscreen;
+            if (exit) exit.call(document);
+        }
+    }
+
+    function updateFullscreenBtn() {
+        const btn = document.getElementById('fullscreenBtn');
+        const fsElement = document.fullscreenElement || document.webkitFullscreenElement;
+        btn.textContent = fsElement ? '全画面終了' : '全画面';
+    }
+
+    document.addEventListener('fullscreenchange', updateFullscreenBtn);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenBtn);
+
+    // ---- 全画面表示 ----
+    function toggleFullscreen() {
+        const area = document.getElementById('viewArea');
+        if (!document.fullscreenElement) {
+            area.requestFullscreen().catch(() => {
+                addLog('全画面表示に対応していません', 'error');
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+        const btn = document.getElementById('fullscreenBtn');
+        btn.textContent = document.fullscreenElement ? '全画面解除' : '全画面';
+    });
 
     function clearAll() {
         cachedHTML = '';
