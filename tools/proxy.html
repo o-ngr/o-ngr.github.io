@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>簡易プロキシブラウザ</title>
+<style>
+    :root {
+        --bg: #0a0a0a;
+        --panel: #161616;
+        --panel2: #202020;
+        --border: #333333;
+        --border-light: #444444;
+        --accent: #ff3b3b;
+        --accent-dim: #b32424;
+        --on-accent: #ffffff;
+        --text: #e8e8e8;
+        --text-muted: #999999;
+        --text-faint: #666666;
+        --danger: #ff6b6b;
+        --success: #6bcf6b;
+        --info: #7ec8ff;
+    }
+
+    [data-theme="light"] {
+        --bg: #ffffff;
+        --panel: #f7f7f7;
+        --panel2: #eeeeee;
+        --border: #dddddd;
+        --border-light: #cccccc;
+        --accent: #e02424;
+        --accent-dim: #a81b1b;
+        --on-accent: #ffffff;
+        --text: #1a1a1a;
+        --text-muted: #666666;
+        --text-faint: #999999;
+        --danger: #d62828;
+        --success: #2e7d32;
+        --info: #1565c0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Roboto Mono', 'Consolas', monospace;
+        margin: 0;
+        padding: 12px;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    #container {
+        position: relative;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 20px;
+        max-width: 1100px;
+        width: 100%;
+        margin-top: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    @media (min-width: 768px) {
+        #container { padding: 28px; margin-top: 24px; }
+    }
+
+    #ring-deco {
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 160px;
+        height: 160px;
+        pointer-events: none;
+        opacity: 0.35;
+    }
+    #ring-deco circle { fill: var(--accent); }
+
+    h1 {
+        position: relative;
+        z-index: 1;
+        font-size: 1.25em;
+        margin: 0 0 14px 0;
+        color: var(--accent);
+        font-weight: 500;
+        letter-spacing: 0.02em;
+    }
+
+    @media (min-width: 768px) {
+        h1 { font-size: 1.6em; margin-bottom: 16px; }
+    }
+
+    .info-note {
+        background-color: var(--panel2);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent-dim);
+        border-radius: 4px;
+        padding: 10px 12px;
+        margin-bottom: 18px;
+        font-size: 11.5px;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    @media (min-width: 768px) {
+        .info-note { padding: 12px 16px; font-size: 12.5px; }
+    }
+
+    .info-note strong { color: var(--accent); }
+
+    .input-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    @media (min-width: 768px) {
+        .input-row { flex-direction: row; align-items: stretch; }
+    }
+
+    input[type="text"] {
+        flex: 1;
+        padding: 13px 14px;
+        background-color: var(--panel2);
+        color: var(--text);
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        min-width: 0;
+        transition: border-color 0.15s;
+    }
+
+    input[type="text"]:focus { outline: none; border-color: var(--accent); }
+    input[type="text"]::placeholder { color: var(--text-faint); }
+
+    .method-selector {
+        display: flex;
+        gap: 6px;
+        background: var(--panel2);
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        padding: 3px;
+    }
+
+    .method-btn {
+        flex: 1;
+        background-color: transparent;
+        color: var(--text-muted);
+        border: none;
+        padding: 9px 14px;
+        font-size: 12.5px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        white-space: nowrap;
+    }
+
+    @media (min-width: 768px) {
+        .method-btn { padding: 9px 16px; font-size: 13px; }
+    }
+
+    .method-btn.active { background-color: var(--accent); color: var(--on-accent); }
+    .method-btn:hover:not(.active):not(:disabled) { color: var(--text); }
+    .method-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .status-log {
+        background-color: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-bottom: 16px;
+        height: 76px;
+        overflow-y: auto;
+        font-size: 11.5px;
+        line-height: 1.8;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-light) var(--bg);
+    }
+
+    .status-log::-webkit-scrollbar { width: 6px; }
+    .status-log::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+
+    .log-entry {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+        color: var(--text-muted);
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+
+    .log-dot {
+        flex-shrink: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-faint);
+        margin-top: 2px;
+    }
+
+    .log-entry.info .log-dot { background: var(--info); }
+    .log-entry.loading .log-dot { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
+    .log-entry.success .log-dot { background: var(--success); }
+    .log-entry.error .log-dot { background: var(--danger); }
+    .log-entry.warn .log-dot { background: var(--accent); }
+
+    .log-entry.success { color: var(--success); }
+    .log-entry.error { color: var(--danger); }
+    .log-entry.warn { color: var(--accent); }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .view-selector {
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .view-btn {
+        background-color: transparent;
+        color: var(--text-muted);
+        border: 1px solid transparent;
+        border-bottom: none;
+        padding: 9px 16px;
+        font-size: 12.5px;
+        border-radius: 4px 4px 0 0;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+    }
+
+    .view-btn.active {
+        background-color: var(--panel2);
+        color: var(--accent);
+        border-color: var(--border) var(--border) var(--panel2);
+    }
+
+    .view-btn:hover:not(.active) { color: var(--text); }
+
+    .button-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    button {
+        background-color: var(--accent);
+        color: var(--on-accent);
+        border: none;
+        padding: 10px 16px;
+        font-size: 13px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        font-weight: 500;
+    }
+
+    button:hover:not(:disabled) { background-color: var(--accent-dim); }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button:disabled { background-color: var(--border-light); color: var(--text-faint); cursor: not-allowed; }
+
+    button.secondary {
+        background-color: var(--panel2);
+        color: var(--text-muted);
+        border: 1px solid var(--border-light);
+    }
+    button.secondary:hover:not(:disabled) { color: var(--text); background-color: var(--panel); }
+    button.secondary:active:not(:disabled) { transform: translateY(1px); }
+
+    .view-area {
+        position: relative;
+        background-color: var(--panel);
+        transition: background-color 0.2s;
+    }
+
+    .view-area.is-fullscreen {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .view-area.is-fullscreen #renderFrame,
+    .view-area.is-fullscreen #sourceOutput {
+        height: 100%;
+        flex: 1;
+    }
+
+    #renderFrame {
+        width: 100%;
+        height: 480px;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        background-color: #ffffff;
+        display: block;
+    }
+
+    #sourceOutput {
+        width: 100%;
+        height: 480px;
+        background-color: var(--panel2);
+        color: var(--text);
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        padding: 13px;
+        font-size: 12px;
+        resize: vertical;
+        font-family: inherit;
+        line-height: 1.6;
+        display: none;
+    }
+
+    .fullscreen-btn {
+        display: none;
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 2;
+        background-color: var(--panel2);
+        color: var(--text-muted);
+        border: 1px solid var(--border-light);
+        padding: 6px 10px;
+        font-size: 11px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        opacity: 0.85;
+    }
+
+    .view-area.is-fullscreen .fullscreen-btn {
+        display: block;
+    }
+
+    .fullscreen-btn:hover { color: var(--text); background-color: var(--panel); opacity: 1; }
+    .fullscreen-btn:active { transform: translateY(1px); }
+
+    .placeholder {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-faint);
+        font-size: 12.5px;
+        pointer-events: none;
+    }
+
+    #container.is-fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        max-width: 100%;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        margin-top: 0;
+        overflow-y: auto;
+    }
+
+    #container.is-fullscreen #renderFrame,
+    #container.is-fullscreen #sourceOutput {
+        height: calc(100vh - 300px);
+    }
+
+    body.fs-lock {
+        overflow: hidden;
+    }
+
+    .char-count {
+        font-size: 11px;
+        color: var(--text-faint);
+        text-align: right;
+        margin-top: 6px;
+    }
+</style>
+</head>
+<body>
+<div id="container">
+    <svg id="ring-deco" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="80" cy="80" r="3" fill-opacity="1"/>
+        <circle cx="80" cy="40" r="3" fill-opacity="0.9"/>
+        <circle cx="112" cy="52" r="3" fill-opacity="0.8"/>
+        <circle cx="120" cy="80" r="3" fill-opacity="0.7"/>
+        <circle cx="112" cy="108" r="3" fill-opacity="0.6"/>
+        <circle cx="80" cy="120" r="3" fill-opacity="0.5"/>
+        <circle cx="48" cy="108" r="3" fill-opacity="0.4"/>
+        <circle cx="40" cy="80" r="3" fill-opacity="0.3"/>
+        <circle cx="48" cy="52" r="3" fill-opacity="0.2"/>
+        <circle cx="80" cy="80" r="60" fill="none" stroke="var(--accent)" stroke-width="1" stroke-opacity="0.15"/>
+        <circle cx="80" cy="80" r="30" fill="none" stroke="var(--accent)" stroke-width="1" stroke-opacity="0.15"/>
+    </svg>
+
+    <h1>簡易プロキシブラウザ</h1>
+
+    <div class="info-note">
+        <strong>自動:</strong> まず直接取得を試み、失敗した場合のみプロキシに自動切替<br>
+        <strong>直接:</strong> 同一オリジン・CORS対応サイトのみ取得可能<br>
+        <strong>プロキシ:</strong> 複数の中継サーバーを順に試行して取得<br>
+        <strong>注記:</strong> レンダリング表示ではスクリプトを実行しません（安全のため）
+    </div>
+
+    <div class="input-row">
+        <input type="text" id="urlInput" placeholder="URLを入力（例: https://example.com）">
+        <div class="method-selector">
+            <button class="method-btn active" data-method="auto">自動</button>
+            <button class="method-btn" data-method="direct">直接</button>
+            <button class="method-btn" data-method="proxy">プロキシ</button>
+        </div>
+    </div>
+
+    <div class="status-log" id="statusLog"></div>
+
+    <div class="toolbar">
+        <div class="view-selector">
+            <button class="view-btn active" data-view="render">レンダリング</button>
+            <button class="view-btn" data-view="source">ソース</button>
+        </div>
+        <div class="button-group">
+            <button id="fetchBtn" onclick="fetchPage()">開く</button>
+            <button class="secondary" id="copyBtn" onclick="copySource()">コピー</button>
+            <button class="secondary" id="fullscreenBtn" onclick="toggleFullscreen()">全画面</button>
+            <button class="secondary" id="clearBtn" onclick="clearAll()">クリア</button>
+        </div>
+    </div>
+
+    <div class="view-area" id="viewArea">
+        <button class="fullscreen-btn" id="fullscreenBtnOverlay" onclick="toggleFullscreen()">全画面終了</button>
+        <iframe id="renderFrame" sandbox="allow-popups" referrerpolicy="no-referrer"></iframe>
+        <textarea id="sourceOutput" readonly placeholder="ここにソースが表示されます"></textarea>
+        <div class="placeholder" id="placeholder">URLを入力して「開く」を押してください</div>
+    </div>
+    <div class="char-count" id="charCount"></div>
+</div>
+
+<script>
+    // ---- テーマ（システム設定に自動追従） ----
+    (function initTheme() {
+        const root = document.documentElement;
+        const mql = window.matchMedia('(prefers-color-scheme: light)');
+        function applyTheme() { root.setAttribute('data-theme', mql.matches ? 'light' : 'dark'); }
+        applyTheme();
+        mql.addEventListener('change', applyTheme);
+    })();
+
+    let currentMethod = 'auto';
+    let currentView = 'render';
+    let cachedHTML = '';
+    let cachedURL = '';
+
+    // 稼働率の高いプロキシのみ厳選
+    const PROXIES = [
+        {
+            url: (u) => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+            name: 'AllOrigins',
+            parse: async (res) => (await res.json()).contents
+        },
+        {
+            url: (u) => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+            name: 'CORSProxy.io',
+            parse: async (res) => await res.text()
+        },
+        {
+            url: (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+            name: 'CodeTabs',
+            parse: async (res) => await res.text()
+        },
+        {
+            url: (u) => `https://thingproxy.freeboard.io/fetch/${u}`,
+            name: 'ThingProxy',
+            parse: async (res) => await res.text()
+        }
+    ];
+
+    document.querySelectorAll('.method-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMethod = btn.dataset.method;
+        });
+    });
+
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentView = btn.dataset.view;
+            updateView();
+        });
+    });
+
+    document.getElementById('urlInput').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') fetchPage();
+    });
+
+    resetLog();
+    updateView();
+
+    // ---- メイン取得処理 ----
+    async function fetchPage() {
+        let url = document.getElementById('urlInput').value.trim();
+        if (!url) { resetLog('URLを入力してください', 'error'); return; }
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        if (!isValidURL(url)) { resetLog('有効なURLを入力してください', 'error'); return; }
+
+        setButtonsDisabled(true);
+        resetLog();
+
+        try {
+            let html, sourceLabel;
+
+            if (currentMethod === 'direct') {
+                addLog('直接取得を試行中...', 'loading');
+                html = await fetchDirect(url);
+                sourceLabel = '直接取得';
+            } else if (currentMethod === 'proxy') {
+                const result = await fetchViaProxies(url);
+                html = result.html;
+                sourceLabel = `${result.proxy}経由`;
+            } else {
+                addLog('直接取得を試行中...', 'loading');
+                try {
+                    html = await fetchDirect(url);
+                    sourceLabel = '直接取得';
+                    updateLastEntry('直接取得に成功', 'success');
+                } catch (directError) {
+                    updateLastEntry(`直接取得に失敗 (${directError.message})`, 'error');
+                    addLog('プロキシ経由に自動切替します', 'warn');
+                    const result = await fetchViaProxies(url);
+                    html = result.html;
+                    sourceLabel = `${result.proxy}経由（自動切替）`;
+                }
+            }
+
+            cachedHTML = html;
+            cachedURL = url;
+            document.getElementById('placeholder').style.display = 'none';
+            updateView();
+            addLog(`取得完了 (${formatBytes(html.length)}) - ${sourceLabel}`, 'success');
+        } catch (error) {
+            addLog(`取得失敗: ${error.message}`, 'error');
+        } finally {
+            setButtonsDisabled(false);
+        }
+    }
+
+    async function fetchViaProxies(url) {
+        const errors = [];
+        for (let i = 0; i < PROXIES.length; i++) {
+            const proxy = PROXIES[i];
+            addLog(`プロキシ試行中 (${i + 1}/${PROXIES.length}): ${proxy.name}...`, 'loading');
+            try {
+                const response = await fetchWithTimeout(proxy.url(url), 10000);
+                if (!response.ok) {
+                    errors.push(`${proxy.name}: HTTP ${response.status}`);
+                    updateLastEntry(`${proxy.name}: HTTP ${response.status}`, 'error');
+                    continue;
+                }
+                const html = await proxy.parse(response);
+                if (html && html.length > 0) {
+                    updateLastEntry(`${proxy.name}: 成功`, 'success');
+                    return { html, proxy: proxy.name };
+                }
+                errors.push(`${proxy.name}: 空のレスポンス`);
+                updateLastEntry(`${proxy.name}: 空のレスポンス`, 'error');
+            } catch (error) {
+                const msg = error.name === 'AbortError' ? 'タイムアウト' : error.message;
+                errors.push(`${proxy.name}: ${msg}`);
+                updateLastEntry(`${proxy.name}: ${msg}`, 'error');
+            }
+        }
+        throw new Error(`すべてのプロキシでの取得に失敗しました (${errors.length}件)`);
+    }
+
+    async function fetchDirect(url) {
+        const response = await fetchWithTimeout(url, 10000);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        return await response.text();
+    }
+
+    async function fetchWithTimeout(url, timeout = 10000) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        try {
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            return response;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            throw error;
+        }
+    }
+
+    // ---- 表示切替 ----
+    function updateView() {
+        const frame = document.getElementById('renderFrame');
+        const source = document.getElementById('sourceOutput');
+        const placeholder = document.getElementById('placeholder');
+        const charCount = document.getElementById('charCount');
+
+        if (currentView === 'render') {
+            frame.style.display = 'block';
+            source.style.display = 'none';
+            charCount.textContent = '';
+            if (cachedHTML) {
+                const withBase = injectBaseTag(cachedHTML, cachedURL);
+                frame.srcdoc = withBase;
+            } else {
+                frame.srcdoc = '';
+            }
+        } else {
+            frame.style.display = 'none';
+            source.style.display = 'block';
+            source.value = cachedHTML;
+            charCount.textContent = cachedHTML ? `${cachedHTML.length.toLocaleString()} 文字 (${formatBytes(cachedHTML.length)})` : '';
+        }
+        placeholder.style.display = cachedHTML ? 'none' : 'flex';
+    }
+
+    function injectBaseTag(html, url) {
+        const baseTag = `<base href="${url}">`;
+        if (/<head[^>]*>/i.test(html)) {
+            return html.replace(/<head[^>]*>/i, (m) => `${m}${baseTag}`);
+        }
+        return baseTag + html;
+    }
+
+    // ---- システムログ ----
+    function resetLog(message, type) {
+        const log = document.getElementById('statusLog');
+        log.innerHTML = '';
+        addLog(message || 'URLを入力して「開く」を押してください', type || 'info');
+    }
+
+    function addLog(message, type = 'info') {
+        const log = document.getElementById('statusLog');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.innerHTML = `<span class="log-dot"></span><span class="log-text"></span>`;
+        entry.querySelector('.log-text').textContent = message;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function updateLastEntry(message, type) {
+        const log = document.getElementById('statusLog');
+        const last = log.lastElementChild;
+        if (!last) { addLog(message, type); return; }
+        last.className = `log-entry ${type}`;
+        last.querySelector('.log-text').textContent = message;
+    }
+
+    // ---- ユーティリティ ----
+    function isValidURL(string) {
+        try {
+            const url = new URL(string);
+            return url.protocol === 'http:' || url.protocol === 'https:';
+        } catch { return false; }
+    }
+
+    function setButtonsDisabled(disabled) {
+        document.getElementById('fetchBtn').disabled = disabled;
+        document.getElementById('copyBtn').disabled = disabled;
+        document.getElementById('clearBtn').disabled = disabled;
+        document.getElementById('urlInput').disabled = disabled;
+        document.querySelectorAll('.method-btn').forEach(btn => btn.disabled = disabled);
+    }
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    async function copySource() {
+        if (!cachedHTML.trim()) { addLog('コピーするコンテンツがありません', 'error'); return; }
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(cachedHTML);
+            } else {
+                const ta = document.getElementById('sourceOutput');
+                ta.select();
+                ta.setSelectionRange(0, 99999);
+                document.execCommand('copy');
+            }
+            addLog('クリップボードにコピー完了', 'success');
+        } catch (error) {
+            addLog('コピーに失敗しました', 'error');
+        }
+    }
+
+    // ---- 全画面表示（簡易版：Fullscreen APIを使わずCSSのみで実現） ----
+    let isFullscreen = false;
+
+    function toggleFullscreen() {
+        isFullscreen = !isFullscreen;
+        document.getElementById('container').classList.toggle('is-fullscreen', isFullscreen);
+        document.getElementById('viewArea').classList.toggle('is-fullscreen', isFullscreen);
+        document.body.classList.toggle('fs-lock', isFullscreen);
+        updateFullscreenBtn();
+        if (isFullscreen) window.scrollTo(0, 0);
+    }
+
+    function updateFullscreenBtn() {
+        const label = isFullscreen ? '全画面終了' : '全画面';
+        document.getElementById('fullscreenBtn').textContent = label;
+        document.getElementById('fullscreenBtnOverlay').textContent = label;
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && isFullscreen) toggleFullscreen();
+    });
+
+    function clearAll() {
+        cachedHTML = '';
+        cachedURL = '';
+        document.getElementById('sourceOutput').value = '';
+        document.getElementById('charCount').textContent = '';
+        document.getElementById('renderFrame').srcdoc = '';
+        resetLog();
+        updateView();
+    }
+</script>
+</body>
+</html>
