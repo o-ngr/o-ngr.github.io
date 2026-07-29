@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>簡易プロキシブラウザ</title>
+<title>proxy</title>
 <style>
     :root {
         --bg: #0a0a0a;
@@ -290,6 +290,13 @@
     }
 
     .view-area.is-fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        background-color: var(--bg);
         padding: 16px;
         display: flex;
         flex-direction: column;
@@ -299,6 +306,11 @@
     .view-area.is-fullscreen #sourceOutput {
         height: 100%;
         flex: 1;
+    }
+
+    .view-area.is-fullscreen .fullscreen-btn {
+        top: 24px;
+        right: 24px;
     }
 
     #renderFrame {
@@ -326,7 +338,6 @@
     }
 
     .fullscreen-btn {
-        display: none;
         position: absolute;
         top: 8px;
         right: 8px;
@@ -343,10 +354,6 @@
         opacity: 0.85;
     }
 
-    .view-area.is-fullscreen .fullscreen-btn {
-        display: block;
-    }
-
     .fullscreen-btn:hover { color: var(--text); background-color: var(--panel); opacity: 1; }
     .fullscreen-btn:active { transform: translateY(1px); }
 
@@ -359,28 +366,6 @@
         color: var(--text-faint);
         font-size: 12.5px;
         pointer-events: none;
-    }
-
-    #container.is-fullscreen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        max-width: 100%;
-        width: 100vw;
-        height: 100vh;
-        border-radius: 0;
-        margin-top: 0;
-        overflow-y: auto;
-    }
-
-    #container.is-fullscreen #renderFrame,
-    #container.is-fullscreen #sourceOutput {
-        height: calc(100vh - 300px);
-    }
-
-    body.fs-lock {
-        overflow: hidden;
     }
 
     .char-count {
@@ -435,13 +420,12 @@
         <div class="button-group">
             <button id="fetchBtn" onclick="fetchPage()">開く</button>
             <button class="secondary" id="copyBtn" onclick="copySource()">コピー</button>
-            <button class="secondary" id="fullscreenBtn" onclick="toggleFullscreen()">全画面</button>
             <button class="secondary" id="clearBtn" onclick="clearAll()">クリア</button>
         </div>
     </div>
 
     <div class="view-area" id="viewArea">
-        <button class="fullscreen-btn" id="fullscreenBtnOverlay" onclick="toggleFullscreen()">全画面終了</button>
+        <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">全画面</button>
         <iframe id="renderFrame" sandbox="allow-popups" referrerpolicy="no-referrer"></iframe>
         <textarea id="sourceOutput" readonly placeholder="ここにソースが表示されます"></textarea>
         <div class="placeholder" id="placeholder">URLを入力して「開く」を押してください</div>
@@ -707,26 +691,19 @@
         }
     }
 
-    // ---- 全画面表示（簡易版：Fullscreen APIを使わずCSSのみで実現） ----
-    let isFullscreen = false;
-
+    // ---- 全画面表示（Fullscreen API不使用） ----
     function toggleFullscreen() {
-        isFullscreen = !isFullscreen;
-        document.getElementById('container').classList.toggle('is-fullscreen', isFullscreen);
-        document.getElementById('viewArea').classList.toggle('is-fullscreen', isFullscreen);
-        document.body.classList.toggle('fs-lock', isFullscreen);
-        updateFullscreenBtn();
-        if (isFullscreen) window.scrollTo(0, 0);
-    }
-
-    function updateFullscreenBtn() {
-        const label = isFullscreen ? '全画面終了' : '全画面';
-        document.getElementById('fullscreenBtn').textContent = label;
-        document.getElementById('fullscreenBtnOverlay').textContent = label;
+        const area = document.getElementById('viewArea');
+        const btn = document.getElementById('fullscreenBtn');
+        const active = area.classList.toggle('is-fullscreen');
+        btn.textContent = active ? '解除' : '全画面表示';
+        document.body.style.overflow = active ? 'hidden' : '';
     }
 
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && isFullscreen) toggleFullscreen();
+        if (event.key !== 'Escape') return;
+        const area = document.getElementById('viewArea');
+        if (area.classList.contains('is-fullscreen')) toggleFullscreen();
     });
 
     function clearAll() {
