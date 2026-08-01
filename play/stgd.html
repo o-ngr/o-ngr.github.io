@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>stg003</title>
+<title>stg008</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -135,14 +135,14 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
 .crn.bl{bottom:7px;left:7px;border-right:none;border-top:none}
 .crn.br{bottom:7px;right:7px;border-left:none;border-top:none}
 
-.ov h1{font-weight:700;font-size:clamp(1.3rem,4vmin,2.1rem);letter-spacing:.4em;margin-bottom:6px;color:var(--gold2);text-shadow:0 0 26px rgba(200,149,42,.42)}
+.ov h1{font-weight:700;font-size:clamp(1.95rem,6vmin,3.15rem);letter-spacing:.4em;margin-bottom:9px;color:var(--gold2);text-shadow:0 0 26px rgba(200,149,42,.42)}
 .ov h1.red{color:rgba(220,60,50,1);text-shadow:0 0 22px rgba(200,40,30,.4)}
 .ov h1.grn{color:rgba(90,220,150,1);text-shadow:0 0 22px rgba(60,200,120,.4)}
-.ov-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:.46rem;letter-spacing:.2em;color:rgba(200,149,42,.4);margin:-2px 0 clamp(14px,3.4vmin,26px);text-align:center}
+.ov-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:.69rem;letter-spacing:.2em;color:rgba(200,149,42,.4);margin:-3px 0 clamp(21px,5.1vmin,39px);text-align:center}
 
 /* メニューボタン */
-.mb{position:relative;display:flex;align-items:center;width:clamp(190px,40vmin,250px);padding:clamp(6px,1.4vmin,9px) 4px clamp(6px,1.4vmin,9px) 22px;margin:1px 0;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.12);color:rgba(245,240,232,.55);font-family:'Noto Serif JP',serif;font-size:clamp(.62rem,1.5vmin,.8rem);letter-spacing:.22em;text-align:left;cursor:pointer;transition:color .12s}
-.mb::before{content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid transparent;transition:border-left-color .12s}
+.mb{position:relative;display:flex;align-items:center;width:clamp(285px,60vmin,375px);padding:clamp(9px,2.1vmin,13.5px) 6px clamp(9px,2.1vmin,13.5px) 33px;margin:1.5px 0;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.12);color:rgba(245,240,232,.55);font-family:'Noto Serif JP',serif;font-size:clamp(.93rem,2.25vmin,1.2rem);letter-spacing:.22em;text-align:left;cursor:pointer;transition:color .12s}
+.mb::before{content:'';position:absolute;left:4.5px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:7.5px solid transparent;border-bottom:7.5px solid transparent;border-left:10.5px solid transparent;transition:border-left-color .12s}
 .mb.sel,.mb:active{color:var(--gold2);text-shadow:0 0 8px rgba(200,149,42,.4)}
 .mb.sel::before,.mb:active::before{border-left-color:var(--gold2);animation:cur 1s ease-in-out infinite}
 .mb.danger{color:rgba(200,60,50,.4)}
@@ -150,38 +150,45 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
 @keyframes cur{0%,100%{transform:translateY(-50%) translateX(0)}50%{transform:translateY(-50%) translateX(3px)}}
 
 /* 自機・武器選択カード */
-.cw-row{position:relative;display:flex;flex-direction:column;align-items:flex-start;width:clamp(230px,52vmin,330px);padding:clamp(7px,1.6vmin,10px) clamp(8px,1.8vmin,12px) clamp(7px,1.6vmin,10px) 24px;margin:3px 0;background:transparent;border:1px solid rgba(255,255,255,.14);color:rgba(245,240,232,.55);font-family:'Noto Serif JP',serif;text-align:left;cursor:pointer;transition:color .12s,border-color .12s}
-.cw-row::before{content:'';position:absolute;left:6px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid transparent;transition:border-left-color .12s}
+.cw-row{position:relative;display:flex;flex-direction:column;align-items:flex-start;width:clamp(345px,78vmin,495px);padding:clamp(10.5px,2.4vmin,15px) clamp(12px,2.7vmin,18px) clamp(10.5px,2.4vmin,15px) 36px;margin:4.5px 0;background:transparent;border:1px solid rgba(255,255,255,.14);color:rgba(245,240,232,.55);font-family:'Noto Serif JP',serif;text-align:left;cursor:pointer;transition:color .12s,border-color .12s}
+.cw-row::before{content:'';position:absolute;left:9px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:7.5px solid transparent;border-bottom:7.5px solid transparent;border-left:10.5px solid transparent;transition:border-left-color .12s}
 .cw-row.sel,.cw-row:active{color:var(--gold2);border-color:var(--border2);background:rgba(200,149,42,.05)}
 .cw-row.sel::before,.cw-row:active::before{border-left-color:var(--gold2);animation:cur 1s ease-in-out infinite}
-.cw-row .nm{font-size:clamp(.56rem,1.3vmin,.72rem);letter-spacing:.16em}
-.cw-row .ds{display:block;font-size:clamp(.4rem,1vmin,.5rem);letter-spacing:.06em;color:rgba(245,240,232,.4);margin-top:4px;font-family:'Noto Sans JP',sans-serif}
-.cw-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:7px}
+.cw-row .nm{font-size:clamp(.84rem,1.95vmin,1.08rem);letter-spacing:.16em}
+.cw-row .ds{display:block;font-size:clamp(.6rem,1.5vmin,.75rem);letter-spacing:.06em;color:rgba(245,240,232,.4);margin-top:6px;font-family:'Noto Sans JP',sans-serif}
+.cw-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:10.5px}
 
-.pnl{width:clamp(230px,50vmin,310px);border-top:1px solid var(--border2);margin:clamp(6px,1.6vmin,12px) 0}
-.pr{display:flex;justify-content:space-between;align-items:center;padding:clamp(5px,1.2vmin,8px) 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:clamp(.5rem,1.2vmin,.66rem);font-family:'Noto Sans JP',sans-serif}
+.hs-tabs{display:flex;width:clamp(345px,75vmin,465px);gap:3px;margin-top:clamp(9px,2.4vmin,18px)}
+.hs-tab{flex:1;padding:clamp(6px,1.5vmin,9px) 2px;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(245,240,232,.4);font-family:'Noto Sans JP',sans-serif;font-size:clamp(.6rem,1.4vmin,.75rem);letter-spacing:.14em;text-align:center;cursor:pointer;transition:all .12s}
+.hs-tab.sel{box-shadow:0 0 0 1px var(--gold2) inset}
+.hs-tab.active.diff-easy{background:rgba(46,204,113,.15);border-color:rgba(46,204,113,.5);color:rgba(80,230,130,.95)}
+.hs-tab.active.diff-normal{background:rgba(52,152,219,.15);border-color:rgba(52,152,219,.5);color:rgba(100,180,255,.95)}
+.hs-tab.active.diff-hard{background:rgba(192,57,43,.15);border-color:rgba(192,57,43,.5);color:rgba(255,100,80,.95)}
+.hs-tab.active.diff-lunatic{background:rgba(142,68,173,.2);border-color:rgba(142,68,173,.6);color:rgba(200,120,255,.95)}
+.pnl{width:clamp(345px,75vmin,465px);border-top:1px solid var(--border2);margin:clamp(9px,2.4vmin,18px) 0}
+.pr{display:flex;justify-content:space-between;align-items:center;padding:clamp(7.5px,1.8vmin,12px) 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:clamp(.75rem,1.8vmin,.99rem);font-family:'Noto Sans JP',sans-serif}
 .pr .k{color:rgba(245,240,232,.5);letter-spacing:.14em}
 .pr .v{color:rgba(245,240,232,.9)}
 
-.opt-row{position:relative;display:flex;justify-content:space-between;align-items:center;width:clamp(250px,52vmin,330px);padding:clamp(6px,1.4vmin,9px) 6px clamp(6px,1.4vmin,9px) 22px;border-bottom:1px solid rgba(255,255,255,.1);cursor:pointer;color:rgba(245,240,232,.6);transition:color .12s}
-.opt-row::before{content:'';position:absolute;left:2px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid transparent}
+.opt-row{position:relative;display:flex;justify-content:space-between;align-items:center;width:clamp(375px,78vmin,495px);padding:clamp(9px,2.1vmin,13.5px) 9px clamp(9px,2.1vmin,13.5px) 33px;border-bottom:1px solid rgba(255,255,255,.1);cursor:pointer;color:rgba(245,240,232,.6);transition:color .12s}
+.opt-row::before{content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:7.5px solid transparent;border-bottom:7.5px solid transparent;border-left:10.5px solid transparent}
 .opt-row.sel{color:var(--gold2)}
 .opt-row.sel::before{border-left-color:var(--gold2);animation:cur 1s ease-in-out infinite}
-.opt-row .opt-label{font-family:'Noto Serif JP',serif;font-size:clamp(.56rem,1.35vmin,.7rem);letter-spacing:.18em}
-.opt-row .opt-value{font-family:'Noto Sans JP',sans-serif;font-size:.6rem;letter-spacing:.08em;display:flex;align-items:center;gap:8px}
-.opt-row .arrow{opacity:.6;padding:0 2px}
+.opt-row .opt-label{font-family:'Noto Serif JP',serif;font-size:clamp(.84rem,2.03vmin,1.05rem);letter-spacing:.18em}
+.opt-row .opt-value{font-family:'Noto Sans JP',sans-serif;font-size:.9rem;letter-spacing:.08em;display:flex;align-items:center;gap:12px}
+.opt-row .arrow{opacity:.6;padding:0 3px}
 .opt-row.sel .arrow{opacity:1}
-.opt-row .val-text{min-width:58px;text-align:center;display:inline-block}
+.opt-row .val-text{min-width:87px;text-align:center;display:inline-block}
 
-.tog{position:relative;width:28px;height:16px}
+.tog{position:relative;width:42px;height:24px}
 .tog input{opacity:0;width:0;height:0}
 .tog span{position:absolute;inset:0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
-.tog span::before{content:'';position:absolute;width:10px;height:10px;left:2px;top:2px;background:rgba(255,255,255,.2)}
+.tog span::before{content:'';position:absolute;width:15px;height:15px;left:3px;top:3px;background:rgba(255,255,255,.2)}
 .tog input:checked+span{border-color:rgba(200,149,42,.5)}
-.tog input:checked+span::before{transform:translateX(12px);background:var(--gold2)}
+.tog input:checked+span::before{transform:translateX(18px);background:var(--gold2)}
 
-.grd{font-family:'IM Fell English',serif;font-weight:400;font-size:clamp(2.2rem,5.4vmin,3.6rem);color:rgba(245,240,232,.75);margin:clamp(3px,.7vmin,6px) 0 clamp(6px,1.6vmin,12px);text-shadow:0 0 20px rgba(200,149,42,.25)}
-.ov-guide{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-family:'Noto Sans JP',sans-serif;font-size:.42rem;letter-spacing:.14em;color:rgba(245,240,232,.4)}
+.grd{font-family:'IM Fell English',serif;font-weight:400;font-size:clamp(3.3rem,8.1vmin,5.4rem);color:rgba(245,240,232,.75);margin:clamp(4.5px,1.05vmin,9px) 0 clamp(9px,2.4vmin,18px);text-shadow:0 0 20px rgba(200,149,42,.25)}
+.ov-guide{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-family:'Noto Sans JP',sans-serif;font-size:.63rem;letter-spacing:.14em;color:rgba(245,240,232,.4)}
 
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .fi{animation:fi .24s ease both}
@@ -193,12 +200,12 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
 #o-title{background:rgba(6,5,15,0)}
 #title-bg-canvas{position:absolute;inset:0;pointer-events:none}
 .title-wrapper{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
-.title-num{font-family:'IM Fell English',serif;font-size:clamp(.44rem,1.4vmin,.6rem);letter-spacing:.4em;color:rgba(200,149,42,.5);margin-bottom:8px}
-.title-main-jp{font-weight:700;font-size:clamp(1.5rem,4.6vmin,2.3rem);letter-spacing:.5em;color:var(--gold2);text-shadow:0 0 40px rgba(200,149,42,.5),0 2px 0 rgba(0,0,0,.8);margin-bottom:4px}
-.title-main-en{font-family:'IM Fell English',serif;font-style:italic;font-size:clamp(.5rem,1.4vmin,.68rem);letter-spacing:.24em;color:rgba(200,149,42,.4);margin-bottom:18px}
-.title-divider{display:flex;align-items:center;gap:10px;margin-bottom:24px;color:rgba(200,149,42,.35);font-size:.4rem;letter-spacing:.24em}
-.title-divider::before,.title-divider::after{content:'';width:34px;height:1px;background:rgba(200,149,42,.3)}
-.title-copyright{margin-top:20px;font-family:'Noto Sans JP',sans-serif;font-size:.32rem;letter-spacing:.14em;color:rgba(245,240,232,.22)}
+.title-num{font-family:'IM Fell English',serif;font-size:clamp(.66rem,2.1vmin,.9rem);letter-spacing:.4em;color:rgba(200,149,42,.5);margin-bottom:12px}
+.title-main-jp{font-weight:700;font-size:clamp(2.25rem,6.9vmin,3.45rem);letter-spacing:.5em;color:var(--gold2);text-shadow:0 0 40px rgba(200,149,42,.5),0 2px 0 rgba(0,0,0,.8);margin-bottom:6px}
+.title-main-en{font-family:'IM Fell English',serif;font-style:italic;font-size:clamp(.75rem,2.1vmin,1.02rem);letter-spacing:.24em;color:rgba(200,149,42,.4);margin-bottom:27px}
+.title-divider{display:flex;align-items:center;gap:15px;margin-bottom:36px;color:rgba(200,149,42,.35);font-size:.6rem;letter-spacing:.24em}
+.title-divider::before,.title-divider::after{content:'';width:51px;height:1px;background:rgba(200,149,42,.3)}
+.title-copyright{margin-top:30px;font-family:'Noto Sans JP',sans-serif;font-size:.48rem;letter-spacing:.14em;color:rgba(245,240,232,.22)}
 
 /* カウントダウン・スペル演出（プレイエリア内） */
 #o-count{position:absolute;inset:0;background:rgba(0,0,0,.5);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:150;pointer-events:none}
@@ -230,7 +237,7 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
   <canvas id="title-bg-canvas"></canvas>
   <div class="crn tl"></div><div class="crn tr"></div><div class="crn bl"></div><div class="crn br"></div>
   <div class="title-wrapper">
-    <div class="title-num fi">004</div>
+    <div class="title-num fi">008</div>
     <div class="title-main-jp fi1">stg</div>
     <div class="title-main-en fi2">Phantasm Bullet Reverie</div>
     <div class="title-divider fi2">夢と弾幕の宴</div>
@@ -241,7 +248,16 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
     </div>
     <div class="title-copyright fi3">幻弾郷STG　Phantom Dream Studio</div>
   </div>
-  <div class="ov-guide">矢印キー：移動　SHIFT：低速移動　Z / Space：ボム　P / Esc：ポーズ</div>
+  <div class="ov-guide">矢印キー：移動　SHIFT：低速移動　X / Space：ボム　P / Esc：ポーズ</div>
+</div>
+
+<!-- 難易度選択 -->
+<div id="o-diff" class="ov" style="display:none">
+  <div class="crn tl"></div><div class="crn tr"></div><div class="crn bl"></div><div class="crn br"></div>
+  <h1>難易度選択</h1>
+  <div class="ov-sub">DIFFICULTY SELECT　挑む難易度を選んでください</div>
+  <div id="diff-list"></div>
+  <button id="b-diff-back" class="mb" style="margin-top:10.5px">戻る</button>
 </div>
 
 <!-- 自機選択 -->
@@ -250,7 +266,7 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
   <h1>自機選択</h1>
   <div class="ov-sub">PLAYER SELECT　操作する自機を選んでください</div>
   <div id="char-list"></div>
-  <button id="b-char-back" class="mb" style="margin-top:7px">戻る</button>
+  <button id="b-char-back" class="mb" style="margin-top:10.5px">戻る</button>
 </div>
 
 <!-- 装備選択 -->
@@ -259,7 +275,7 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
   <h1>装備選択</h1>
   <div class="ov-sub" id="weapon-char-name">SHOT TYPE</div>
   <div id="weapon-list"></div>
-  <button id="b-weapon-back" class="mb" style="margin-top:7px">戻る</button>
+  <button id="b-weapon-back" class="mb" style="margin-top:10.5px">戻る</button>
 </div>
 
 <!-- ポーズ -->
@@ -278,7 +294,7 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
   <h1>オプション</h1>
   <div class="ov-sub">options</div>
   <div class="pnl" id="opt-rows"></div>
-  <button id="b-set-back" class="mb" style="margin-top:9px">戻る</button>
+  <button id="b-set-back" class="mb" style="margin-top:13.5px">戻る</button>
 </div>
 
 <!-- ハイスコア -->
@@ -286,8 +302,14 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
   <div class="crn tl"></div><div class="crn tr"></div><div class="crn bl"></div><div class="crn br"></div>
   <h1>スコアランキング</h1>
   <div class="ov-sub">high score</div>
+  <div class="hs-tabs">
+    <button class="hs-tab diff-easy" id="hs-tab-easy">EASY</button>
+    <button class="hs-tab diff-normal" id="hs-tab-normal">NORMAL</button>
+    <button class="hs-tab diff-hard" id="hs-tab-hard">HARD</button>
+    <button class="hs-tab diff-lunatic" id="hs-tab-lunatic">LUNATIC</button>
+  </div>
   <div class="pnl" id="hs-list"></div>
-  <button id="b-hs-clr" class="mb danger" style="margin-top:5px">記録を全消去</button>
+  <button id="b-hs-clr" class="mb danger" style="margin-top:7.5px">この難易度の記録を消去</button>
   <button id="b-hs-back" class="mb">戻る</button>
 </div>
 
@@ -305,7 +327,7 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
     <div class="pr"><span class="k">スペルボーナス</span><span class="v" id="r-spell">0</span></div>
     <div class="pr"><span class="k">命中率</span><span class="v" id="r-acc">0%</span></div>
   </div>
-  <button id="b-retry" class="mb sel" style="margin-top:9px">もう一度挑む</button>
+  <button id="b-retry" class="mb sel" style="margin-top:13.5px">もう一度挑む</button>
 </div>
 
 <!-- メインレイアウト -->
@@ -320,7 +342,7 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
   </div>
 
   <div id="hud-panel">
-    <div id="hud-title">stg004</div>
+    <div id="hud-title">stg008</div>
 
     <div id="hud-stage">
       <span id="hud-stage-label">STAGE</span>
@@ -384,10 +406,11 @@ const menuSel={overlay:null,idx:0};
 function getMenuItems(id){
   switch(id){
     case'o-title':return[$('b-start'),$('b-hs'),$('b-set')];
+    case'o-diff':return Array.from($('diff-list').children);
     case'o-char':return Array.from($('char-list').children);
     case'o-weapon':return Array.from($('weapon-list').children);
     case'o-set':return Array.from($('opt-rows').children).concat([$('b-set-back')]);
-    case'o-hs':return[$('b-hs-clr'),$('b-hs-back')];
+    case'o-hs':return HS_DIFFS.map(d=>$('hs-tab-'+d)).concat([$('b-hs-clr'),$('b-hs-back')]);
     case'o-pause':return[$('b-resume'),$('b-pause-opt'),$('b-quit')];
     case'o-result':return[$('b-retry')];
     default:return[];
@@ -402,14 +425,16 @@ function setSel(id,idx){
 }
 function resetMenuIdx(id){setSel(id,0);}
 function onShowOverlay(id){
-  if(id==='o-hs'){setSel('o-hs',1);return;}
+  if(id==='o-hs'){const di=HS_DIFFS.indexOf(cfg.difficulty);selectHSTab(di>=0?cfg.difficulty:'normal');setSel('o-hs',di>=0?di:1);return;}
+  if(id==='o-diff'){const di=HS_DIFFS.indexOf(cfg.difficulty);setSel('o-diff',di>=0?di:1);return;}
   if(['o-title','o-pause','o-result'].includes(id))resetMenuIdx(id);
 }
 function moveSel(dir){const id=menuSel.overlay;if(!id)return;setSel(id,menuSel.idx+dir);}
 function activateSel(){const id=menuSel.overlay;if(!id)return;const items=getMenuItems(id);const it=items[menuSel.idx];if(it)it.click();}
 function backSel(){
   const id=menuSel.overlay;
-  if(id==='o-char')$('b-char-back').click();
+  if(id==='o-diff')$('b-diff-back').click();
+  else if(id==='o-char')$('b-char-back').click();
   else if(id==='o-weapon')$('b-weapon-back').click();
   else if(id==='o-set')$('b-set-back').click();
   else if(id==='o-hs')$('b-hs-back').click();
@@ -417,10 +442,14 @@ function backSel(){
 }
 function leftRightSel(dir){
   if(menuSel.overlay==='o-set'&&menuSel.idx<OPT_ROWS.length)cycleOption(menuSel.idx,dir);
+  else if(menuSel.overlay==='o-hs'&&menuSel.idx<HS_DIFFS.length){
+    const ni=clamp(menuSel.idx+dir,0,HS_DIFFS.length-1);
+    selectHSTab(HS_DIFFS[ni]);setSel('o-hs',ni);
+  }
 }
 document.addEventListener('keydown',e=>{
   if(G.state==='play')return;
-  if(!['o-title','o-char','o-weapon','o-set','o-hs','o-pause','o-result'].includes(menuSel.overlay))return;
+  if(!['o-title','o-diff','o-char','o-weapon','o-set','o-hs','o-pause','o-result'].includes(menuSel.overlay))return;
   if(e.code==='ArrowUp'){e.preventDefault();moveSel(-1);}
   else if(e.code==='ArrowDown'){e.preventDefault();moveSel(1);}
   else if(e.code==='ArrowLeft'){e.preventDefault();leftRightSel(-1);}
@@ -431,12 +460,24 @@ document.addEventListener('keydown',e=>{
 
 /* ===== STORE ===== */
 const Store={
-  KC:'stg004_cfg',KH:'stg004_hs',
+  KC:'stg008_cfg',KH:'stg008_hs',
   loadCfg(){const d={difficulty:'normal',sound:true,scorePop:true,shake:true};try{return Object.assign(d,JSON.parse(localStorage.getItem(this.KC)||'{}'));}catch{return d;}},
   saveCfg(c){try{localStorage.setItem(this.KC,JSON.stringify(c));}catch{}},
   loadHS(){try{return JSON.parse(localStorage.getItem(this.KH)||'[]');}catch{return[];}},
-  clearHS(){try{localStorage.removeItem(this.KH);}catch{}},
-  addHS(list,e){const next=[...list,e].sort((a,b)=>b.score-a.score).slice(0,10);try{localStorage.setItem(this.KH,JSON.stringify(next));}catch{}return next;},
+  clearHS(diff){
+    if(!diff){try{localStorage.removeItem(this.KH);}catch{}return[];}
+    const next=this.loadHS().filter(x=>(x.difficulty||'normal')!==diff);
+    try{localStorage.setItem(this.KH,JSON.stringify(next));}catch{}
+    return next;
+  },
+  addHS(list,e){
+    const same=list.filter(x=>(x.difficulty||'normal')===e.difficulty);
+    const other=list.filter(x=>(x.difficulty||'normal')!==e.difficulty);
+    const nextSame=[...same,e].sort((a,b)=>b.score-a.score).slice(0,10);
+    const next=[...other,...nextSame];
+    try{localStorage.setItem(this.KH,JSON.stringify(next));}catch{}
+    return next;
+  },
 };
 
 /* ===== SFX (東方風効果音) ===== */
@@ -509,10 +550,18 @@ const K={
 };
 
 const DIFF={
-  easy:   {life:8, bomb:5,maxBomb:6,growth:.035,spd:.58,bDmg:1.25,recover:true, label:'Easy'},
-  normal: {life:6, bomb:2,maxBomb:3,growth:.065,spd:.78,bDmg:1.0, recover:true, label:'Normal'},
-  hard:   {life:5, bomb:1,maxBomb:2,growth:.10, spd:.95,bDmg:.85, recover:false,label:'Hard'},
-  lunatic:{life:4, bomb:0,maxBomb:1,growth:.14, spd:1.15,bDmg:.7,recover:false,label:'Lunatic'},
+  easy:   {life:6, bomb:3,maxBomb:4,growth:.065,spd:.78,bDmg:1.0, recover:true, label:'Easy'},
+  normal: {life:5, bomb:1,maxBomb:2,growth:.10, spd:.95,bDmg:.85,recover:true, label:'Normal'},
+  hard:   {life:4, bomb:0,maxBomb:1,growth:.14, spd:1.15,bDmg:.7, recover:false,label:'Hard'},
+  lunatic:{life:3, bomb:0,maxBomb:1,growth:.196,spd:1.39,bDmg:.58,recover:false,label:'Lunatic'},
+};
+const HS_DIFFS=['easy','normal','hard','lunatic'];
+const DIFF_DOT={easy:'#2ecc71',normal:'#3498db',hard:'#c0392b',lunatic:'#8e44ad'};
+const DIFF_DESC={
+  easy:'最も攻撃が少なく、穏やかな難易度です',
+  normal:'標準的な難易度です',
+  hard:'ある程度攻撃が激しい状態で始まります',
+  lunatic:'向こうの難易度です',
 };
 
 /* 東方風カラーパレット */
@@ -1247,7 +1296,7 @@ function grade(acc){
 }
 
 function showResult(title,cls,subtitle,gr,acc){
-  hs=Store.addHS(hs,{score:G.score,stage:G.stage,combo:G.maxCombo,graze:G.graze,acc});
+  hs=Store.addHS(hs,{score:G.score,stage:G.stage,combo:G.maxCombo,graze:G.graze,acc,difficulty:cfg.difficulty});
   $('r-title').textContent=title;$('r-title').className=cls;
   $('r-title-en').textContent=subtitle;
   $('r-grade').textContent=gr;
@@ -1498,7 +1547,8 @@ function drawInGameMessages(){
 /* ===== HUD更新（DOM） ===== */
 function updateHUD(){
   $('hud-score').textContent=G.score.toLocaleString();
-  const topScore=hs.length?hs[0].score:0;
+  const curHS=hs.filter(s=>(s.difficulty||'normal')===cfg.difficulty);
+  const topScore=curHS.length?Math.max(...curHS.map(s=>s.score)):0;
   $('hud-hiscore').textContent=Math.max(topScore,G.score).toLocaleString();
   $('hud-stage-val').textContent=G.stage+' / '+K.MAX_STAGE;
 
@@ -1563,7 +1613,7 @@ function setupInput(){
   document.addEventListener('keydown',G._kd=e=>{
     if(G.state!=='play')return;
     if(KM[e.code]){e.preventDefault();inp[KM[e.code]]=true;}
-    if(e.code==='KeyZ'||e.code==='Space'){e.preventDefault();useBomb(false);}
+    if(e.code==='KeyX'||e.code==='Space'){e.preventDefault();useBomb(false);}
     if(e.code==='ShiftLeft'||e.code==='ShiftRight'){e.preventDefault();inp.slow=true;}
     if(e.code==='Escape'||e.code==='KeyP')pauseGame();
   });
@@ -1599,6 +1649,21 @@ function gameStart(){
   });
 }
 
+function renderDiffSelect(){
+  const el=$('diff-list');el.innerHTML='';
+  const cur=cfg.difficulty;
+  HS_DIFFS.forEach((key,i)=>{
+    const d=DIFF[key];
+    const b=document.createElement('button');
+    b.className='cw-row'+(key===cur?' sel':'');
+    b.innerHTML=`<span class="nm"><span class="cw-dot diff-${key}" style="background:${DIFF_DOT[key]}"></span>${d.label.toUpperCase()}</span><span class="ds">${DIFF_DESC[key]}</span>`;
+    b.onclick=()=>{cfg.difficulty=key;Store.saveCfg(cfg);updateDiffBadge();hide('o-diff');renderCharSelect();show('o-char');};
+    b.addEventListener('mouseenter',()=>setSel('o-diff',i));
+    el.appendChild(b);
+  });
+  const ci=HS_DIFFS.indexOf(cur);
+  resetMenuIdx('o-diff');setSel('o-diff',ci>=0?ci:1);
+}
 function renderCharSelect(){
   const el=$('char-list');el.innerHTML='';
   CHAR_DEFS.forEach((c,i)=>{
@@ -1629,7 +1694,6 @@ function renderWeaponSelect(ci){
 
 /* ===== オプション ===== */
 const OPT_ROWS=[
-  {key:'difficulty',label:'難易度',type:'cycle',values:['easy','normal','hard','lunatic'],labels:['EASY','NORMAL','HARD','LUNATIC']},
   {key:'sound',label:'サウンド',type:'bool'},
   {key:'scorePop',label:'スコア表示',type:'bool'},
   {key:'shake',label:'画面シェイク',type:'bool'},
@@ -1644,7 +1708,6 @@ function cycleOption(idx,dir){
   else{let i=row.values.indexOf(cfg[row.key]);i=(i<0?0:i)+dir;if(i<0)i=row.values.length-1;if(i>=row.values.length)i=0;cfg[row.key]=row.values[i];}
   Store.saveCfg(cfg);
   if(row.key==='sound')refreshSfxBtn();
-  if(row.key==='difficulty')updateDiffBadge();
   renderSettings(false);
 }
 function renderSettings(reset){
@@ -1664,15 +1727,22 @@ function renderSettings(reset){
 function refreshSfxBtn(){$('ss').textContent=cfg.sound?'S':'M';Sfx.on=cfg.sound;}
 function updateDiffBadge(){const el=$('hud-diff');el.textContent=DIFF[cfg.difficulty].label.toUpperCase();el.className='diff-badge diff-'+cfg.difficulty;}
 
+function selectHSTab(diff){
+  hsTab=diff;
+  HS_DIFFS.forEach(d=>{const el=$('hs-tab-'+d);if(el)el.classList.toggle('active',d===hsTab);});
+  renderHS();
+}
 function renderHS(){
   const el=$('hs-list');
-  if(!hs.length){el.innerHTML='<div class="pr" style="justify-content:center;color:rgba(245,240,232,.3);font-size:.5rem;letter-spacing:.2em">記録なし</div>';return;}
-  el.innerHTML=hs.map((s,i)=>`<div class="pr"><span class="k">${i+1}位　ST.${s.stage}</span><span class="v">${s.score.toLocaleString()}</span></div>`).join('');
+  const list=hs.filter(s=>(s.difficulty||'normal')===hsTab);
+  if(!list.length){el.innerHTML='<div class="pr" style="justify-content:center;color:rgba(245,240,232,.3);font-size:.5rem;letter-spacing:.2em">記録なし</div>';return;}
+  el.innerHTML=list.map((s,i)=>`<div class="pr"><span class="k">${i+1}位　ST.${s.stage}</span><span class="v">${s.score.toLocaleString()}</span></div>`).join('');
 }
 
 /* ===== 初期化 ===== */
 let cfg=Store.loadCfg();
 let hs=Store.loadHS();
+let hsTab=cfg.difficulty;
 
 window.addEventListener('load',()=>{
   // 強制全画面：ロード直後に試み、失敗した場合は最初のユーザー操作時に実行
@@ -1697,15 +1767,17 @@ window.addEventListener('load',()=>{
   document.addEventListener('click',()=>Sfx.init(),{once:true});
   document.addEventListener('keydown',()=>Sfx.init(),{once:true});
 
-  $('b-start').onclick=()=>{hide('o-title');renderCharSelect();show('o-char');};
-  $('b-char-back').onclick=()=>{hide('o-char');show('o-title');};
+  $('b-start').onclick=()=>{hide('o-title');renderDiffSelect();show('o-diff');};
+  $('b-diff-back').onclick=()=>{hide('o-diff');show('o-title');};
+  $('b-char-back').onclick=()=>{hide('o-char');renderDiffSelect();show('o-diff');};
   $('b-weapon-back').onclick=()=>{hide('o-weapon');renderCharSelect();show('o-char');};
-  $('b-hs').onclick=()=>{renderHS();hide('o-title');show('o-hs');};
+  HS_DIFFS.forEach((d,i)=>{$('hs-tab-'+d).onclick=()=>{selectHSTab(d);setSel('o-hs',i);};});
+  $('b-hs').onclick=()=>{hide('o-title');show('o-hs');};
   $('b-set').onclick=()=>{setReturnTo='o-title';hide('o-title');renderSettings();show('o-set');};
   $('b-set-back').onclick=()=>{hide('o-set');show(setReturnTo);};
 
   $('b-hs-back').onclick=()=>{hide('o-hs');show('o-title');};
-  $('b-hs-clr').onclick=()=>{if(confirm('ハイスコアを全て削除しますか？')){Store.clearHS();hs=[];renderHS();}};
+  $('b-hs-clr').onclick=()=>{if(confirm(DIFF[hsTab].label+'難易度の記録を削除しますか？')){hs=Store.clearHS(hsTab);renderHS();}};
 
   const pH=e=>{e.preventDefault();if(G.state==='play')pauseGame();};
   $('sp').addEventListener('click',pH);
@@ -1718,7 +1790,8 @@ window.addEventListener('load',()=>{
   $('ss').onclick=()=>{cfg.sound=!cfg.sound;Store.saveCfg(cfg);refreshSfxBtn();};
 
   refreshSysBar();
-  const topScore=hs.length?hs[0].score:0;
+  const curHS=hs.filter(s=>(s.difficulty||'normal')===cfg.difficulty);
+  const topScore=curHS.length?Math.max(...curHS.map(s=>s.score)):0;
   $('hud-hiscore').textContent=topScore.toLocaleString();
 
   (function idle(){if(G.state!=='menu')return;tickStars();draw();requestAnimationFrame(idle);})();
