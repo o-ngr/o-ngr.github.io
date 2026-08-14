@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>メディアプレイヤ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;color:#e8e8e8;font-family:"Segoe UI",sans-serif;padding:40px 20px;max-width:1200px;margin:0 auto}
+h1{color:#ffe700;border-left:5px solid yellow;padding-left:12px;margin-bottom:30px;font-size:28px}
+.container{display:flex;gap:20px}
+.left-panel{flex:1;min-width:300px}
+.right-panel{flex:2}
+.section{background:#111;border:2px solid #ffe700;padding:25px;border-radius:8px;margin-bottom:20px}
+.section h2{color:#ffe700;font-size:18px;margin-bottom:15px;font-weight:normal}
+input[type="file"],input[type="text"]{padding:12px;border-radius:6px;border:1px solid #333;width:100%;background:#222;color:#fff;font-size:14px;transition:border-color .2s}
+input[type="file"]:hover,input[type="text"]:hover{border-color:#ffe700}
+input[type="file"]:focus,input[type="text"]:focus{outline:none;border-color:#ffe700}
+button{background:#ffe700;color:#000;border:none;padding:12px 24px;font-size:14px;border-radius:6px;cursor:pointer;margin-top:10px;transition:background .2s}
+button:hover{background:#ffed33}
+button:active{background:#e6d000}
+button.secondary{background:#333;color:#fff;margin-left:10px}
+button.secondary:hover{background:#444}
+#previewArea{margin-bottom:20px}
+#preview{max-width:100%;max-height:60vh;display:block;border-radius:4px;background:#000}
+.error{color:#ff5555;background:#221111;padding:15px;border-radius:6px;border-left:3px solid #ff5555}
+.controls{display:flex;gap:15px;margin-bottom:15px;flex-wrap:wrap}
+.control-group{display:flex;align-items:center;gap:8px}
+.control-group label{font-size:13px;color:#aaa}
+input[type="range"]{width:100px;height:4px;background:#333;border-radius:2px;outline:none}
+input[type="range"]::-webkit-slider-thumb{width:14px;height:14px;background:#ffe700;border-radius:50%;cursor:pointer}
+input[type="range"]::-moz-range-thumb{width:14px;height:14px;background:#ffe700;border-radius:50%;cursor:pointer;border:none}
+input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
+.playlist{max-height:400px;overflow-y:auto}
+.playlist-item{background:#1a1a1a;padding:12px;margin-bottom:8px;border-radius:4px;border:1px solid #333;cursor:pointer;transition:.2s;display:flex;justify-content:space-between;align-items:center}
+.playlist-item:hover{background:#222;border-color:#ffe700}
+.playlist-item.active{background:#2a2a00;border-color:#ffe700}
+.playlist-item-info{flex:1}
+.playlist-item-name{color:#fff;font-size:14px;margin-bottom:4px}
+.playlist-item-meta{color:#888;font-size:12px}
+.playlist-item-remove{background:#ff5555;color:#fff;border:none;padding:6px 12px;font-size:12px;border-radius:4px;cursor:pointer;margin:0}
+.playlist-item-remove:hover{background:#ff3333}
+.info-box{background:#1a1a1a;padding:15px;border-radius:4px;border:1px solid #333;font-size:13px;line-height:1.6}
+.info-box div{margin-bottom:8px}
+.info-box span{color:#ffe700}
+.drop-zone{border:2px dashed #333;padding:40px;text-align:center;color:#666;border-radius:8px;transition:.2s;margin-top:15px}
+.drop-zone.drag-over{border-color:#ffe700;background:#1a1a00;color:#ffe700}
+@media(max-width:768px){.container{flex-direction:column}}
+</style>
+</head>
+<body>
+<h1>メディアプレイヤ</h1>
+<a href="/index"><img src="https://counter.256server.com/ms0101?theme=moebooru" alt="アクセスカウンタ" width="200" height="65"></a>
+<div class="container">
+<div class="left-panel">
+<div class="section">
+<h2>エクスプローラーから追加</h2>
+<input id="fileInput" type="file" accept="video/*,audio/*,image/*" multiple>
+<div class="drop-zone" id="dropZone">ファイルをドラッグ&ドロップ</div>
+</div>
+<div class="section">
+<h2>ファイル名から追加</h2>
+<input id="urlInput" type="text" placeholder="https://example.com/video.mp4">
+<button id="loadUrlBtn">追加</button>
+</div>
+<div class="section">
+<h2>プレイリスト</h2>
+<div class="playlist" id="playlist"></div>
+<button id="clearPlaylistBtn" class="secondary">すべて削除</button>
+</div>
+</div>
+<div class="right-panel">
+<div class="section">
+<h2>再生エリア</h2>
+<div id="previewArea"></div>
+<div class="controls" id="controls" style="display:none;">
+<div class="control-group"><label>再生速度</label><input type="range" id="speedControl" min="0.25" max="2" step="0.25" value="1"><span id="speedValue">1.0x</span></div>
+<div class="control-group"><label>音量</label><input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1"><span id="volumeValue">100%</span></div>
+<div class="control-group"><label>ループ</label><input type="checkbox" id="loopControl"></div>
+</div>
+</div>
+<div class="section" id="infoSection" style="display:none;">
+<h2>ファイル情報</h2>
+<div class="info-box" id="fileInfo"></div>
+</div>
+</div>
+</div>
+
+<script>
+let playlist=[],currentIndex=-1,currentMedia=null;
+const formatFileSize=b=>b<1024?b+" B":b<1048576?(b/1024).toFixed(1)+" KB":(b/1048576).toFixed(1)+" MB";
+const formatDuration=s=>!s||!isFinite(s)?"--:--":`${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,"0")}`;
+function getMediaType(url,type){const l=url.toLowerCase(),t=type.toLowerCase();if(l.match(/\.(mp4|webm|mov|avi|mkv|flv)$/)||t.startsWith("video/"))return"video";if(l.match(/\.(mp3|wav|m4a|ogg|flac|aac)$/)||t.startsWith("audio/"))return"audio";if(l.match(/\.(png|jpg|jpeg|gif|bmp|webp|svg|ico)$/)||t.startsWith("image/"))return"image";return"unknown"}
+function addToPlaylist(url,name,size,type){playlist.push({url,name,size,type,mediaType:getMediaType(url,type)});updatePlaylistUI();if(playlist.length===1)playMedia(0)}
+function updatePlaylistUI(){const el=document.getElementById("playlist");if(!playlist.length){el.innerHTML="<div style='color:#666;text-align:center;padding:20px;'>プレイリストは空です</div>";return}
+el.innerHTML=playlist.map((item,i)=>`
+<div class="playlist-item ${i===currentIndex?"active":""}" onclick="playMedia(${i})">
+<div class="playlist-item-info">
+<div class="playlist-item-name">${item.name}</div>
+<div class="playlist-item-meta">${item.mediaType.toUpperCase()} ${item.size?`- ${formatFileSize(item.size)}`:""}</div>
+</div>
+<button class="playlist-item-remove" onclick="event.stopPropagation();removeFromPlaylist(${i})">削除</button>
+</div>`).join("")}
+function removeFromPlaylist(i){if(i===currentIndex){document.getElementById("previewArea").innerHTML="";document.getElementById("controls").style.display="none";document.getElementById("infoSection").style.display="none";currentMedia=null}
+playlist.splice(i,1);if(i<currentIndex)currentIndex--;else if(i===currentIndex)currentIndex=-1;updatePlaylistUI()}
+function playMedia(i){if(i<0||i>=playlist.length)return;currentIndex=i;const item=playlist[i],area=document.getElementById("previewArea");area.innerHTML="";const c=document.getElementById("controls"),info=document.getElementById("infoSection");
+if(item.mediaType==="video"){const v=document.createElement("video");v.src=item.url;v.controls=true;v.autoplay=true;v.id="preview";area.appendChild(v);currentMedia=v;c.style.display="flex";setupMediaControls(v);v.addEventListener("loadedmetadata",()=>updateFileInfo(item,v.duration));v.addEventListener("ended",()=>{if(!v.loop)playMedia(currentIndex<playlist.length-1?currentIndex+1:0)})}
+else if(item.mediaType==="audio"){const a=document.createElement("audio");a.src=item.url;a.controls=true;a.autoplay=true;a.id="preview";area.appendChild(a);currentMedia=a;c.style.display="flex";setupMediaControls(a);a.addEventListener("loadedmetadata",()=>updateFileInfo(item,a.duration));a.addEventListener("ended",()=>{if(!a.loop)playMedia(currentIndex<playlist.length-1?currentIndex+1:0)})}
+else if(item.mediaType==="image"){const img=document.createElement("img");img.src=item.url;img.id="preview";area.appendChild(img);currentMedia=null;c.style.display="none";updateFileInfo(item)}
+else{area.innerHTML="<div class='error'>この形式は再生できません</div>";c.style.display="none";info.style.display="none";currentMedia=null}
+updatePlaylistUI()}
+function setupMediaControls(m){const s=document.getElementById("speedControl"),sv=document.getElementById("speedValue"),v=document.getElementById("volumeControl"),vv=document.getElementById("volumeValue"),l=document.getElementById("loopControl");
+s.value=m.playbackRate;sv.textContent=m.playbackRate.toFixed(1)+"x";v.value=m.volume;vv.textContent=Math.round(m.volume*100)+"%";l.checked=m.loop;
+s.oninput=e=>{m.playbackRate=e.target.value;sv.textContent=parseFloat(e.target.value).toFixed(1)+"x"};
+v.oninput=e=>{m.volume=e.target.value;vv.textContent=Math.round(e.target.value*100)+"%"};
+l.onchange=e=>m.loop=e.target.checked}
+function updateFileInfo(item,d=null){const info=document.getElementById("infoSection"),box=document.getElementById("fileInfo");info.style.display="block";let h=`<div><span>ファイル名:</span> ${item.name}</div><div><span>形式:</span> ${item.mediaType.toUpperCase()}</div>`;if(item.size)h+=`<div><span>サイズ:</span> ${formatFileSize(item.size)}</div>`;if(d)h+=`<div><span>再生時間:</span> ${formatDuration(d)}</div>`;if(item.type)h+=`<div><span>MIME:</span> ${item.type}</div>`;box.innerHTML=h}
+document.getElementById("fileInput").addEventListener("change",e=>{Array.from(e.target.files).forEach(f=>addToPlaylist(URL.createObjectURL(f),f.name,f.size,f.type));e.target.value=""})
+const dropZone=document.getElementById("dropZone");
+dropZone.addEventListener("dragover",e=>{e.preventDefault();dropZone.classList.add("drag-over")});
+dropZone.addEventListener("dragleave",()=>dropZone.classList.remove("drag-over"));
+dropZone.addEventListener("drop",e=>{e.preventDefault();dropZone.classList.remove("drag-over");Array.from(e.dataTransfer.files).forEach(f=>addToPlaylist(URL.createObjectURL(f),f.name,f.size,f.type))});
+document.getElementById("loadUrlBtn").addEventListener("click",async()=>{const url=document.getElementById("urlInput").value.trim();if(!url){alert("URLを入力してください");return}
+try{const r=await fetch(url);if(!r.ok)throw new Error("URLの読み込みに失敗しました");const b=await r.blob();addToPlaylist(URL.createObjectURL(b),url.split('/').pop()||"media",b.size,b.type);document.getElementById("urlInput").value=""}
+catch(e){alert("エラー: "+e.message)}})
+document.getElementById("clearPlaylistBtn").addEventListener("click",()=>{if(!playlist.length)return;if(!confirm("プレイリストをすべて削除しますか?"))return;playlist=[];currentIndex=-1;currentMedia=null;document.getElementById("previewArea").innerHTML="";document.getElementById("controls").style.display="none";document.getElementById("infoSection").style.display="none";updatePlaylistUI()})
+document.addEventListener("keydown",e=>{if(!currentMedia||e.target.tagName==="INPUT")return;
+switch(e.code){case"Space":e.preventDefault();currentMedia.paused?currentMedia.play():currentMedia.pause();break;case"ArrowLeft":e.preventDefault();currentMedia.currentTime=Math.max(0,currentMedia.currentTime-5);break;case"ArrowRight":e.preventDefault();currentMedia.currentTime=Math.min(currentMedia.duration,currentMedia.currentTime+5);break;case"ArrowUp":e.preventDefault();currentMedia.volume=Math.min(1,currentMedia.volume+.1);document.getElementById("volumeControl").value=currentMedia.volume;document.getElementById("volumeValue").textContent=Math.round(currentMedia.volume*100)+"%";break;case"ArrowDown":e.preventDefault();currentMedia.volume=Math.max(0,currentMedia.volume-.1);document.getElementById("volumeControl").value=currentMedia.volume;document.getElementById("volumeValue").textContent=Math.round(currentMedia.volume*100)+"%"}})
+updatePlaylistUI();
+</script>
+</body>
+</html>
