@@ -90,7 +90,7 @@ input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
 let playlist=[],currentIndex=-1,currentMedia=null;
 const formatFileSize=b=>b<1024?b+" B":b<1048576?(b/1024).toFixed(1)+" KB":(b/1048576).toFixed(1)+" MB";
 const formatDuration=s=>!s||!isFinite(s)?"--:--":`${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,"0")}`;
-function getMediaType(url,type){const l=url.toLowerCase(),t=type.toLowerCase();if(l.match(/\.(mp4|webm|mov|avi|mkv|flv)$/)||t.startsWith("video/"))return"video";if(l.match(/\.(mp3|wav|m4a|ogg|flac|aac)$/)||t.startsWith("audio/"))return"audio";if(l.match(/\.(png|jpg|jpeg|gif|bmp|webp|svg|ico)$/)||t.startsWith("image/"))return"image";return"unknown"}
+function getMediaType(url,type){const l=url.toLowerCase(),t=type.toLowerCase();if(l.match(/\.(mp4|webm|mov|avi|mkv|flv)$/)||t.startsWith("video/"))return"video";if(l.match(/\.(mp3|wav|m4a|ogg|flac|aac|aiff|aif)$/)||t.startsWith("audio/"))return"audio";if(l.match(/\.(png|jpg|jpeg|gif|bmp|webp|svg|ico)$/)||t.startsWith("image/"))return"image";return"unknown"}
 function addToPlaylist(url,name,size,type){playlist.push({url,name,size,type,mediaType:getMediaType(url,type)});updatePlaylistUI();if(playlist.length===1)playMedia(0)}
 function updatePlaylistUI(){const el=document.getElementById("playlist");if(!playlist.length){el.innerHTML="<div style='color:#666;text-align:center;padding:20px;'>プレイリストは空です</div>";return}
 el.innerHTML=playlist.map((item,i)=>`
