@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ただかっこよくリロードするだけのページ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+html, body {margin: 0;height: 100%;overflow: hidden;background: #000;font-family: 'Share Tech Mono', onospace;color: #00ff41;display: flex;justify-content: center;align-items: center;flex-direction: column;user-select: none;-webkit-user-select: none;}
+
+canvas {position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 0;pointer-events: none;}
+
+.swipe-zone {position: relative;width: 300px;height: 80px;border: 2px solid #00ff41;border-radius: 15px;overflow: visible;z-index: 10;box-shadow: 0 0 15px #00ff41;background: rgba(0, 0, 0, 0.7);touch-action: none;}
+
+.track {position: absolute;top: 0;left: 0;height: 100%;width: 100%;display: flex;align-items: center;justify-content: center;color: #00ff41;font-size: 1.2rem;opacity: 0.6;letter-spacing: 1px;text-shadow: 0 0 8px #00ff41;transition: opacity 0.3s ease;}
+
+.track.hidden {opacity: 0;}
+
+.handle {position: absolute;top: 0;left: 0;width: 70px;height: 100%;background: rgba(0, 255, 65, 0.6);border-right: 2px solid #00ff41;border-radius: 10px;cursor: grab;box-shadow: 0 0 10px #00ff41;display: flex;align-items: center;justify-content: center;color: #000;font-weight: bold;font-size: 1.5rem;}
+
+.handle:active {cursor: grabbing;}
+
+.trail {position: absolute;top: 0;left: 0;height: 100%;background: rgba(0, 255, 65, 0.2);pointer-events: none;transition: width 0.1s linear;}
+
+.progress-bar {position: absolute;bottom: -12px;left: 0;height: 4px;background: #00ff41;width: 0%;transition: width 0.1s linear;box-shadow: 0 0 8px #00ff41;}
+
+.particle {position: fixed;width: 4px;height: 4px;background: #00ff41;border-radius: 50%;pointer-events: none;z-index: 100;box-shadow: 0 0 6px #00ff41;}
+
+.countdown {position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);font-size: 2.5rem;color: #00ff41;text-shadow: 0 0 20px #00ff41;opacity: 0;transition: opacity 0.2s ease;pointer-events: none;z-index: 20;}
+
+.countdown.active {opacity: 1;}
+
+.flash {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: #00ff41;opacity: 0;transition: opacity 0.25s ease;z-index: 50;pointer-events: none;}
+
+.flash.active {opacity: 1;}
+
+.hint {margin-top: 40px;color: #00ff41aa;font-size: 0.9rem;letter-spacing: 1px;}
+
+.keyboard-hint {margin-top: 10px;color: #00ff4166;font-size: 0.8rem;letter-spacing: 1px;}
+
+@media (max-width: 600px) {.swipe-zone {width: 260px;height: 70px;}
+
+.handle {width: 60px;}
+
+.track {font-size: 1rem;}
+
+.hint, .keyboard-hint {font-size: 0.8rem;padding: 0 20px;text-align: center;}
+
+.countdown {font-size: 2rem;}
+    }
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="swipe-zone" id="swipeZone">
+ <div class="trail" id="trail"></div>
+ <div class="track" id="track">SWIPE → TO RELOAD</div>
+ <div class="handle" id="handle">→</div>
+ <div class="progress-bar" id="progressBar"></div>
+ <div class="countdown" id="countdown"></div>
+</div>
+ <div class="hint">左から右へスワイプでリロード</div>
+ <div class="keyboard-hint">Space / Enter キーでもリロード可能</div>
+ <div class="flash" id="flash"></div>
+<a href="/index"><img src="https://counter.256server.com/ms0101?theme=moebooru" alt="アクセスカウンタ" width="200" height="65"></a>
+<script>
+    //マトリックスっぽいエフェクト
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+
+    const chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
+    const fontSize = 18;
+    let columns = Math.floor(canvas.width / fontSize);
+    let drops = Array(columns).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ff41';
+      ctx.font = fontSize + 'px Share Tech Mono';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 33);
+
+    //パーティクル始めました
+    function createParticles(x, y, count = 30) {
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        document.body.appendChild(particle);
+
+        const angle = (Math.PI * 2 * i) / count;
+        const velocity = 2 + Math.random() * 3;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+
+        let px = x;
+        let py = y;
+        let opacity = 1;
+
+        const animate = () => {
+          px += vx;
+          py += vy;
+          opacity -= 0.02;
+
+          if (opacity <= 0) {
+            particle.remove();
+            return;
+          }
+
+          particle.style.left = px + 'px';
+          particle.style.top = py + 'px';
+          particle.style.opacity = opacity;
+          requestAnimationFrame(animate);
+        };
+
+        requestAnimationFrame(animate);
+      }
+    }
+
+    //スワイプでリロード
+    const handle = document.getElementById('handle');
+    const swipeZone = document.getElementById('swipeZone');
+    const track = document.getElementById('track');
+    const trail = document.getElementById('trail');
+    const progressBar = document.getElementById('progressBar');
+    const countdown = document.getElementById('countdown');
+    const flash = document.getElementById('flash');
+
+    let isDragging = false;
+    let startX = 0;
+    let currentX = 0;
+
+    function getEventX(e) {
+      return e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    }
+
+    function startDrag(e) {
+      e.preventDefault();
+      isDragging = true;
+      startX = getEventX(e);
+      handle.style.transition = 'none';
+      trail.style.transition = 'none';
+    }
+
+    function moveDrag(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+      currentX = getEventX(e) - startX;
+      const maxX = swipeZone.clientWidth - handle.clientWidth;
+      if (currentX < 0) currentX = 0;
+      if (currentX > maxX) currentX = maxX;
+      
+      //ハンドル位置更新
+      handle.style.transform = `translateX(${currentX}px)`;
+      
+      //軌跡の更新
+      trail.style.width = currentX + 'px';
+      
+      //バーの更新
+      const progress = currentX / maxX;
+      progressBar.style.width = (progress * 100) + '%';
+      
+      //テキスト透明度
+      track.style.opacity = 0.6 - (progress * 0.6);
+    }
+
+    function performReload() {
+      const rect = handle.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      createParticles(centerX, centerY, 40);
+      track.classList.add('hidden');
+      
+      //カウントダウン表示
+      countdown.classList.add('active');
+      let count = 3;
+      countdown.textContent = count;
+      
+      const countInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdown.textContent = count;
+        } else {
+          clearInterval(countInterval);
+          flash.classList.add('active');
+          setTimeout(() => location.reload(), 250);
+        }
+      }, 333);
+    }
+
+    function endDrag() {
+      if (!isDragging) return;
+      isDragging = false;
+      const maxX = swipeZone.clientWidth - handle.clientWidth;
+      const velocity = currentX / maxX;
+      
+      //スワイプ完了判定（90%以上）
+      if (currentX >= maxX * 0.9) {
+        // イージング: ease-back効果
+        handle.style.transition = 'transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        handle.style.transform = `translateX(${maxX}px)`;
+        trail.style.transition = 'width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        trail.style.width = maxX + 'px';
+        progressBar.style.width = '100%';
+        
+        setTimeout(() => performReload(), 400);
+      } else {
+        //元の位置に戻すease-back効果設定
+        const easing = velocity > 0.5 ? 'cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'ease-out';
+        handle.style.transition = `transform 0.5s ${easing}`;
+        trail.style.transition = `width 0.5s ${easing}`;
+        handle.style.transform = 'translateX(0)';
+        trail.style.width = '0px';
+        progressBar.style.width = '0%';
+        track.style.opacity = '0.6';
+      }
+    }
+
+    //マウスイベント
+    handle.addEventListener('mousedown', startDrag);
+    window.addEventListener('mousemove', moveDrag);
+    window.addEventListener('mouseup', endDrag);
+
+    //タッチイベント
+    handle.addEventListener('touchstart', startDrag);
+    window.addEventListener('touchmove', moveDrag, { passive: false });
+    window.addEventListener('touchend', endDrag);
+
+    //キーボード操作
+    window.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (!isDragging && !countdown.classList.contains('active')) {
+          //スワイプ完了と同じアニメーションに飛ばす
+          const maxX = swipeZone.clientWidth - handle.clientWidth;
+          handle.style.transition = 'transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+          handle.style.transform = `translateX(${maxX}px)`;
+          trail.style.transition = 'width 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+          trail.style.width = maxX + 'px';
+          progressBar.style.transition = 'width 0.6s ease';
+          progressBar.style.width = '100%';
+          track.style.opacity = '0';
+          
+          setTimeout(() => performReload(), 600);
+        }
+      }
+    });
+
+    //ウィンドウサイズ変更対応
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      columns = Math.floor(canvas.width / fontSize);
+      drops = Array(columns).fill(1);
+    });
+  </script>
+</body>
+</html>
