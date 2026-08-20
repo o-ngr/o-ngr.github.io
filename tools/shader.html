@@ -13,6 +13,10 @@ html,body{height:100%;margin:0;background:#000;color:#fff;font-family:system-ui,
 .credits{position:fixed;right:12px;bottom:12px;color:#ddd;font-size:12px}
 pre.shader-log{position:fixed;left:12px;bottom:12px;max-width:50vw;max-height:40vh;overflow:auto;background:#200;color:#f88;padding:8px;border-radius:6px;font-size:12px}
 .small{font-size:11px;color:#ccc}
+.gpu-meter{position:fixed;right:12px;top:12px;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);padding:8px 10px;border-radius:8px;font-family:Consolas,"Roboto Mono",monospace;font-size:12px;color:#fff;letter-spacing:1px;white-space:nowrap}
+.gpu-bar{color:#e60012}
+.gpu-warn{color:#e60012;font-weight:bold;margin-top:4px;display:none}
+.gpu-warn.show{display:block}
 </style>
 </head><body>
 <canvas id="glcanvas"></canvas>
@@ -22,6 +26,7 @@ pre.shader-log{position:fixed;left:12px;bottom:12px;max-width:50vw;max-height:40
 <div><label>Intensity <input id="intensity" type="range" min="0" max="2" step="0.01" value="1.0"></label></div>
 <div><label>Quality <input id="quality" type="range" min="0.5" max="1.0" step="0.1" value="0.85"></label></div>
 </div>
+<div class="gpu-meter" id="gpuMeter">GPU BUSYNESS: <span id="gpuBar" class="gpu-bar">░░░░░░░░░░░░</span> <span id="gpuPct">0%</span><div id="gpuWarn" class="gpu-warn">GPU IS SUFFERING</div></div>
 <div class="credits">©:made by ms0101</div>
 <pre id="log" class="shader-log" style="display:none"></pre>
 
@@ -47,7 +52,8 @@ in vec2 v_uv;
 out vec4 outColor;
 uniform float u_time;
 uniform vec2 u_resolution,u_mouse;
-uniform float u_speed,u_scale,u_intensity;
+uniform float u_speed,u_scale,u_intensity,u_gravity;
+uniform int u_octaves;
 
 mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
 
@@ -66,7 +72,10 @@ return mix(mix(a,b,u.x),mix(c,d,u.x),u.y);
 
 float fbm(vec2 p){
 float v=0.,a=.55;
-for(int i=0;i<4;i++){v+=a*noise(p);p*=2.;a*=.5;}
+for(int i=0;i<10;i++){
+if(i>=u_octaves)break;
+v+=a*noise(p);p*=2.;a*=.5;
+}
 return v;
 }
 
@@ -74,23 +83,77 @@ vec3 palette(float t){
 return .5+.5*cos(6.28318*(vec3(0.,.33,.67)+t)+vec3(0.,.2,.4));
 }
 
+/* ---- 無駄な物理演算群:計算はするが結果はほぼ捨てる ---- */
+float vortexField(vec2 p,float t){
+vec2 c=vec2(sin(t*.31)*.4,cos(t*.27)*.4);
+vec2 d=p-c;
+float r=length(d)+1e-3;
+return sin(r*8.-t*2.)*exp(-r*2.);
+}
+
+float viscosity(vec2 p,float t){
+float v=noise(p*3.+t*.5)-noise(p*3.1-t*.4);
+return v*v;
+}
+
+vec2 velocityField(vec2 p,float t){
+float a=fbm(p*2.+t*.2)*6.2831;
+return vec2(cos(a),sin(a))*fbm(p*1.3-t*.15);
+}
+
+float waveField(vec2 p,float t){
+float w=0.;
+for(int i=0;i<3;i++){
+float fi=float(i);
+w+=sin(dot(p,vec2(cos(fi*2.1),sin(fi*2.1)))*6.-t*(1.+fi*.3))*.33;
+}
+return w;
+}
+/* -------------------------------------------------- */
+
 void main(){
 vec2 uv=v_uv;
-vec2 p=(uv-.5)*vec2(u_resolution.x/u_resolution.y,1.);
+vec2 asp=vec2(u_resolution.x/u_resolution.y,1.);
+vec2 p=(uv-.5)*asp;
 float t=u_time*u_speed;
-vec2 m=(u_mouse-.5)*2.;
-float md=length(m);
-float q=fbm(p*u_scale*.6+t*.18);
-float r=fbm(p*u_scale*1.1-t*.36+vec2(q));
-float f=sin((p.x+p.y)*1.8+r*2.6+t);
-f+=sin(length(p+rot(t*.08)*m*.55)*2.8+t*1.25);
-f*=.5+.5*fbm(p*u_scale*.85+t*.55+md*1.8);
+vec2 m=(u_mouse-.5)*asp*2.;
+
+/* 段1:ドメインワーピング */
+vec2 w1=vec2(fbm(p*u_scale+t*.1),fbm(p*u_scale+vec2(5.2,1.3)+t*.13));
+vec2 pw=p+w1*.6;
+
+/* マウス重力場:近いほど強く吸い寄せられ、動きを止めるとゆっくり緩む */
+vec2 toM=m-pw;
+float dM=length(toM)+.001;
+float pull=u_gravity*exp(-dM*2.2);
+pw+=normalize(toM)*pull;
+
+/* 段2:さらにドメインワーピング */
+vec2 w2=vec2(fbm(pw*u_scale*1.7-t*.22),fbm(pw*u_scale*1.7+vec2(3.1,7.7)+t*.19));
+vec2 pw2=pw+w2*.8;
+
+float q=fbm(pw2*u_scale*.6+t*.18);
+float r=fbm(pw2*u_scale*1.1-t*.36+vec2(q));
+float f=sin((pw2.x+pw2.y)*1.8+r*2.6+t);
+f+=sin(length(pw2+rot(t*.08)*m*.55)*2.8+t*1.25);
+f*=.5+.5*fbm(pw2*u_scale*.85+t*.55+dM*.4);
+
 vec3 col;
 col.r=palette(f*u_intensity+r*.26+q*.18).r;
 col.g=palette(f*u_intensity+r*.24+q*.2).g;
 col.b=palette(f*u_intensity+r*.22+q*.22).b;
+
 float vig=smoothstep(.9,.15,length(uv-.5));
 col*=mix(.6,1.,vig);
+
+/* 無駄な物理演算を実行するが、画面にはほぼ影響させない */
+float vort=vortexField(pw2,t);
+float visc=viscosity(pw2,t);
+vec2 vel=velocityField(pw2,t);
+float wav=waveField(pw2,t);
+float wasted=vort+visc+vel.x+vel.y+wav;
+col+=wasted*0.0002;
+
 outColor=vec4(col,1.);
 }`;
 
@@ -128,6 +191,8 @@ const u_mouse=gl.getUniformLocation(program,"u_mouse");
 const u_speed=gl.getUniformLocation(program,"u_speed");
 const u_scale=gl.getUniformLocation(program,"u_scale");
 const u_intensity=gl.getUniformLocation(program,"u_intensity");
+const u_gravity=gl.getUniformLocation(program,"u_gravity");
+const u_octaves=gl.getUniformLocation(program,"u_octaves");
 
 const vao=gl.createVertexArray();gl.bindVertexArray(vao);
 
@@ -135,12 +200,19 @@ const speedEl=document.getElementById("speed");
 const scaleEl=document.getElementById("scale");
 const intensityEl=document.getElementById("intensity");
 const qualityEl=document.getElementById("quality");
+const gpuBarEl=document.getElementById("gpuBar");
+const gpuPctEl=document.getElementById("gpuPct");
+const gpuWarnEl=document.getElementById("gpuWarn");
 
 let mouse=[.5,.5];
+let mouseGravity=0;
 function setMouse(x,y){
 const r=canvas.getBoundingClientRect();
-mouse[0]=(x-r.left)/r.width;
-mouse[1]=1-(y-r.top)/r.height;
+const nx=(x-r.left)/r.width;
+const ny=1-(y-r.top)/r.height;
+const dx=nx-mouse[0],dy=ny-mouse[1];
+mouseGravity=Math.min(3.2,mouseGravity+Math.hypot(dx,dy)*22);
+mouse[0]=nx;mouse[1]=ny;
 }
 addEventListener("pointermove",e=>setMouse(e.clientX,e.clientY));
 addEventListener("pointerdown",e=>setMouse(e.clientX,e.clientY));
@@ -150,6 +222,25 @@ let smSpeed=parseFloat(speedEl.value);
 let smScale=parseFloat(scaleEl.value);
 let smIntensity=parseFloat(intensityEl.value);
 function smooth(c,t,k=.12){return c+(t-c)*k;}
+
+/* Quality → FBMのoctave数(=GPUへの実仕事量)を決める */
+function qualityToOctaves(q){
+if(q<.6)return 2;
+if(q<.8)return 4;
+if(q<.95)return 6;
+return 10;
+}
+
+function updateGpuMeter(octaves){
+const q=parseFloat(qualityEl.value);
+const base=(octaves/10)*40+(parseFloat(scaleEl.value)/6)*15+(parseFloat(speedEl.value)/3)*10+(parseFloat(intensityEl.value)/2)*10+q*15;
+const jitter=(Math.sin(performance.now()*.002)+1)*5+Math.random()*6;
+const busy=Math.min(100,base+jitter+mouseGravity*8);
+const fill=Math.round(busy/100*12);
+gpuBarEl.textContent="█".repeat(fill)+"░".repeat(12-fill);
+gpuPctEl.textContent=Math.round(busy)+"%";
+gpuWarnEl.classList.toggle("show",busy>88);
+}
 
 const DPR_CAP=1.75;
 function resize(){
@@ -174,6 +265,8 @@ const time=(n-start)*.001;
 smSpeed=smooth(smSpeed,parseFloat(speedEl.value));
 smScale=smooth(smScale,parseFloat(scaleEl.value));
 smIntensity=smooth(smIntensity,parseFloat(intensityEl.value));
+mouseGravity*=.94;
+const octaves=qualityToOctaves(parseFloat(qualityEl.value));
 gl.viewport(0,0,canvas.width,canvas.height);
 gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);
 gl.useProgram(program);
@@ -183,7 +276,301 @@ gl.uniform2f(u_mouse,mouse[0],mouse[1]);
 gl.uniform1f(u_speed,smSpeed);
 gl.uniform1f(u_scale,smScale);
 gl.uniform1f(u_intensity,smIntensity);
+gl.uniform1f(u_gravity,mouseGravity);
+gl.uniform1i(u_octaves,octaves);
 gl.drawArrays(gl.TRIANGLES,0,3);
+updateGpuMeter(octaves);
+requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+}catch(e){
+if(!logEl.textContent)showLog(String(e));
+console.error(e);
+}
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>シェーダー</title>
+<style>
+html,body{height:100%;margin:0;background:#000;color:#fff;font-family:system-ui,Segoe UI,Roboto,sans-serif}
+#glcanvas{display:block;width:100vw;height:100vh}
+.ui{position:fixed;left:12px;top:12px;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);padding:10px;border-radius:10px;font-size:13px}
+.ui label{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.ui input[type=range]{width:160px}
+.credits{position:fixed;right:12px;bottom:12px;color:#ddd;font-size:12px}
+pre.shader-log{position:fixed;left:12px;bottom:12px;max-width:50vw;max-height:40vh;overflow:auto;background:#200;color:#f88;padding:8px;border-radius:6px;font-size:12px}
+.small{font-size:11px;color:#ccc}
+.gpu-meter{position:fixed;right:12px;top:12px;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);padding:8px 10px;border-radius:8px;font-family:Consolas,"Roboto Mono",monospace;font-size:12px;color:#fff;letter-spacing:1px;white-space:nowrap}
+.gpu-bar{color:#e60012}
+.gpu-warn{color:#e60012;font-weight:bold;margin-top:4px;display:none}
+.gpu-warn.show{display:block}
+</style>
+</head><body>
+<canvas id="glcanvas"></canvas>
+<div class="ui">
+<div><label>Speed <input id="speed" type="range" min="0" max="3" step="0.01" value="1"></label></div>
+<div><label>Scale <input id="scale" type="range" min="0.5" max="6" step="0.01" value="2.0"></label></div>
+<div><label>Intensity <input id="intensity" type="range" min="0" max="2" step="0.01" value="1.0"></label></div>
+<div><label>Quality <input id="quality" type="range" min="0.5" max="1.0" step="0.1" value="0.85"></label></div>
+</div>
+<div class="gpu-meter" id="gpuMeter">GPU BUSYNESS: <span id="gpuBar" class="gpu-bar">░░░░░░░░░░░░</span> <span id="gpuPct">0%</span><div id="gpuWarn" class="gpu-warn">GPU IS SUFFERING</div></div>
+<div class="credits">©:made by ms0101</div>
+<pre id="log" class="shader-log" style="display:none"></pre>
+
+<script>
+const canvas=document.getElementById("glcanvas");
+const gl=canvas.getContext("webgl2",{antialias:true});
+const logEl=document.getElementById("log");
+if(!gl){document.body.innerHTML='<p style="color:red">WebGL2 is not supported in this browser.</p>';throw new Error("WebGL2 not supported");}
+
+const vsSource=`#version 300 es
+precision highp float;
+out vec2 v_uv;
+void main(){
+const vec2 pos[3]=vec2[3](vec2(-1.,-1.),vec2(3.,-1.),vec2(-1.,3.));
+vec2 p=pos[gl_VertexID];
+v_uv=.5*(p+1.);
+gl_Position=vec4(p,0.,1.);
+}`;
+
+const fsSource=`#version 300 es
+precision highp float;
+in vec2 v_uv;
+out vec4 outColor;
+uniform float u_time;
+uniform vec2 u_resolution,u_mouse;
+uniform float u_speed,u_scale,u_intensity,u_gravity;
+uniform int u_octaves;
+
+mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+
+float hash21(vec2 p){
+p=fract(p*vec2(123.34,456.21));
+p+=dot(p,p+78.233);
+return fract(p.x*p.y);
+}
+
+float noise(vec2 p){
+vec2 i=floor(p),f=fract(p);
+float a=hash21(i),b=hash21(i+vec2(1.,0.)),c=hash21(i+vec2(0.,1.)),d=hash21(i+vec2(1.,1.));
+vec2 u=f*f*(3.-2.*f);
+return mix(mix(a,b,u.x),mix(c,d,u.x),u.y);
+}
+
+float fbm(vec2 p){
+float v=0.,a=.55;
+for(int i=0;i<10;i++){
+if(i>=u_octaves)break;
+v+=a*noise(p);p*=2.;a*=.5;
+}
+return v;
+}
+
+vec3 palette(float t){
+return .5+.5*cos(6.28318*(vec3(0.,.33,.67)+t)+vec3(0.,.2,.4));
+}
+
+/* ---- 無駄な物理演算群:計算はするが結果はほぼ捨てる ---- */
+float vortexField(vec2 p,float t){
+vec2 c=vec2(sin(t*.31)*.4,cos(t*.27)*.4);
+vec2 d=p-c;
+float r=length(d)+1e-3;
+return sin(r*8.-t*2.)*exp(-r*2.);
+}
+
+float viscosity(vec2 p,float t){
+float v=noise(p*3.+t*.5)-noise(p*3.1-t*.4);
+return v*v;
+}
+
+vec2 velocityField(vec2 p,float t){
+float a=fbm(p*2.+t*.2)*6.2831;
+return vec2(cos(a),sin(a))*fbm(p*1.3-t*.15);
+}
+
+float waveField(vec2 p,float t){
+float w=0.;
+for(int i=0;i<3;i++){
+float fi=float(i);
+w+=sin(dot(p,vec2(cos(fi*2.1),sin(fi*2.1)))*6.-t*(1.+fi*.3))*.33;
+}
+return w;
+}
+/* -------------------------------------------------- */
+
+void main(){
+vec2 uv=v_uv;
+vec2 asp=vec2(u_resolution.x/u_resolution.y,1.);
+vec2 p=(uv-.5)*asp;
+float t=u_time*u_speed;
+vec2 m=(u_mouse-.5)*asp*2.;
+
+/* 段1ドメインワーピング */
+vec2 w1=vec2(fbm(p*u_scale+t*.1),fbm(p*u_scale+vec2(5.2,1.3)+t*.13));
+vec2 pw=p+w1*.6;
+
+/* マウス重力場:近いほど強く吸い寄せられ、動きを止めるとゆっくり緩む */
+vec2 toM=m-pw;
+float dM=length(toM)+.001;
+float pull=u_gravity*exp(-dM*2.2);
+pw+=normalize(toM)*pull;
+
+/* 段2ドメインワーピング意味はないw */
+vec2 w2=vec2(fbm(pw*u_scale*1.7-t*.22),fbm(pw*u_scale*1.7+vec2(3.1,7.7)+t*.19));
+vec2 pw2=pw+w2*.8;
+
+float q=fbm(pw2*u_scale*.6+t*.18);
+float r=fbm(pw2*u_scale*1.1-t*.36+vec2(q));
+float f=sin((pw2.x+pw2.y)*1.8+r*2.6+t);
+f+=sin(length(pw2+rot(t*.08)*m*.55)*2.8+t*1.25);
+f*=.5+.5*fbm(pw2*u_scale*.85+t*.55+dM*.4);
+
+vec3 col;
+col.r=palette(f*u_intensity+r*.26+q*.18).r;
+col.g=palette(f*u_intensity+r*.24+q*.2).g;
+col.b=palette(f*u_intensity+r*.22+q*.22).b;
+
+float vig=smoothstep(.9,.15,length(uv-.5));
+col*=mix(.6,1.,vig);
+
+/* 無駄な物理演算w */
+float vort=vortexField(pw2,t);
+float visc=viscosity(pw2,t);
+vec2 vel=velocityField(pw2,t);
+float wav=waveField(pw2,t);
+float wasted=vort+visc+vel.x+vel.y+wav;
+col+=wasted*0.0002;
+
+outColor=vec4(col,1.);
+}`;
+
+function compile(t,src){
+const s=gl.createShader(t);
+gl.shaderSource(s,src);
+gl.compileShader(s);
+if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){
+const log=gl.getShaderInfoLog(s);showLog("Shader compile error:\n"+log);
+throw new Error(log);
+}
+return s;
+}
+
+function showLog(m){
+logEl.style.display="block";
+logEl.textContent=m;
+}
+
+try{
+const vs=compile(gl.VERTEX_SHADER,vsSource);
+const fs=compile(gl.FRAGMENT_SHADER,fsSource);
+const program=gl.createProgram();
+gl.attachShader(program,vs);
+gl.attachShader(program,fs);
+gl.linkProgram(program);
+if(!gl.getProgramParameter(program,gl.LINK_STATUS)){
+const log=gl.getProgramInfoLog(program);showLog("Program link error:\n"+log);throw new Error(log);
+}
+gl.useProgram(program);
+
+const u_time=gl.getUniformLocation(program,"u_time");
+const u_resolution=gl.getUniformLocation(program,"u_resolution");
+const u_mouse=gl.getUniformLocation(program,"u_mouse");
+const u_speed=gl.getUniformLocation(program,"u_speed");
+const u_scale=gl.getUniformLocation(program,"u_scale");
+const u_intensity=gl.getUniformLocation(program,"u_intensity");
+const u_gravity=gl.getUniformLocation(program,"u_gravity");
+const u_octaves=gl.getUniformLocation(program,"u_octaves");
+
+const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+
+const speedEl=document.getElementById("speed");
+const scaleEl=document.getElementById("scale");
+const intensityEl=document.getElementById("intensity");
+const qualityEl=document.getElementById("quality");
+const gpuBarEl=document.getElementById("gpuBar");
+const gpuPctEl=document.getElementById("gpuPct");
+const gpuWarnEl=document.getElementById("gpuWarn");
+
+let mouse=[.5,.5];
+let mouseGravity=0;
+function setMouse(x,y){
+const r=canvas.getBoundingClientRect();
+const nx=(x-r.left)/r.width;
+const ny=1-(y-r.top)/r.height;
+const dx=nx-mouse[0],dy=ny-mouse[1];
+mouseGravity=Math.min(3.2,mouseGravity+Math.hypot(dx,dy)*22);
+mouse[0]=nx;mouse[1]=ny;
+}
+addEventListener("pointermove",e=>setMouse(e.clientX,e.clientY));
+addEventListener("pointerdown",e=>setMouse(e.clientX,e.clientY));
+addEventListener("touchmove",e=>{e.preventDefault();const t=e.touches[0];setMouse(t.clientX,t.clientY)},{passive:false});
+
+let smSpeed=parseFloat(speedEl.value);
+let smScale=parseFloat(scaleEl.value);
+let smIntensity=parseFloat(intensityEl.value);
+function smooth(c,t,k=.12){return c+(t-c)*k;}
+
+/* Quality → FBMのoctave数(=GPUへの実仕事量)を決める */
+function qualityToOctaves(q){
+if(q<.6)return 2;
+if(q<.8)return 4;
+if(q<.95)return 6;
+return 10;
+}
+
+function updateGpuMeter(octaves){
+const q=parseFloat(qualityEl.value);
+const base=(octaves/10)*40+(parseFloat(scaleEl.value)/6)*15+(parseFloat(speedEl.value)/3)*10+(parseFloat(intensityEl.value)/2)*10+q*15;
+const jitter=(Math.sin(performance.now()*.002)+1)*5+Math.random()*6;
+const busy=Math.min(100,base+jitter+mouseGravity*8);
+const fill=Math.round(busy/100*12);
+gpuBarEl.textContent="█".repeat(fill)+"░".repeat(12-fill);
+gpuPctEl.textContent=Math.round(busy)+"%";
+gpuWarnEl.classList.toggle("show",busy>88);
+}
+
+const DPR_CAP=1.75;
+function resize(){
+const dpr=Math.min(devicePixelRatio||1,DPR_CAP);
+const s=parseFloat(qualityEl.value);
+const w=Math.max(1,Math.floor(innerWidth*dpr*s));
+const h=Math.max(1,Math.floor(innerHeight*dpr*s));
+if(canvas.width!==w||canvas.height!==h){
+canvas.width=w;canvas.height=h;
+canvas.style.width=innerWidth+"px";
+canvas.style.height=innerHeight+"px";
+gl.viewport(0,0,w,h);
+}
+}
+addEventListener("resize",resize);
+resize();
+
+let start=performance.now();
+function render(n){
+resize();
+const time=(n-start)*.001;
+smSpeed=smooth(smSpeed,parseFloat(speedEl.value));
+smScale=smooth(smScale,parseFloat(scaleEl.value));
+smIntensity=smooth(smIntensity,parseFloat(intensityEl.value));
+mouseGravity*=.94;
+const octaves=qualityToOctaves(parseFloat(qualityEl.value));
+gl.viewport(0,0,canvas.width,canvas.height);
+gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);
+gl.useProgram(program);
+gl.uniform1f(u_time,time);
+gl.uniform2f(u_resolution,canvas.width,canvas.height);
+gl.uniform2f(u_mouse,mouse[0],mouse[1]);
+gl.uniform1f(u_speed,smSpeed);
+gl.uniform1f(u_scale,smScale);
+gl.uniform1f(u_intensity,smIntensity);
+gl.uniform1f(u_gravity,mouseGravity);
+gl.uniform1i(u_octaves,octaves);
+gl.drawArrays(gl.TRIANGLES,0,3);
+updateGpuMeter(octaves);
 requestAnimationFrame(render);
 }
 requestAnimationFrame(render);
