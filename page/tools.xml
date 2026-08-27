@@ -54,8 +54,18 @@
       <tag>テキスト</tag>
       <tag>URL</tag>
     </tags>
-  </tool>
+  </tool> 
   <tool id="7">
+    <url>/tools/musicvisualizer.html</url>
+    <name>ミュージックビジュアライザ</name>
+    <desc>音声を音程、音量で可視化する程度の能力</desc>
+    <tags>
+      <tag>プロキシ</tag>
+      <tag>HTML</tag>
+      <tag>Web</tag>
+    </tags>
+  </tool>
+  <tool id="8">
     <url>/tools/shader.html</url>
     <name>シェーダー</name>
     <desc>ノイズを可視化する程度の能力</desc>
@@ -65,7 +75,7 @@
       <tag>ビジュアル</tag>
     </tags>
   </tool>
-  <tool id="8">
+  <tool id="9">
     <url>/tools/proxy.html</url>
     <name>プロキシ</name>
     <desc>プロキシ通信する程度の能力</desc>
