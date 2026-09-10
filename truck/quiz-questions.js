@@ -138,13 +138,22 @@ window.QUIZ_QUESTIONS = [
 　{ text: "ニューヨークは太平洋に面している", answer: false },
 　{ text: "100年ほど前はメキシコの領土は今の約2倍あった", answer: true},
 　{ text: "エジプトにはピラミッドがいくつほど残っている　100個未満(〇)100個以上(×)", answer: false },
-　{ text: "まち針の語源はどっち　仮止めで待たせる(〇)城下町で刀のついでに作られていた(×)", answer: true },
-　{ text: "より大きいのはどっちトトロ(〇)ロボット兵(ラピュタ)(×)", answer: false },
+　{ text: "まち針の語源はどっち　仮止めで待たせる(〇)城下町で刀と一緒に作っていた(×)", answer: true },
+　{ text: "より大きいのはどっち トトロ(〇)ロボット兵(ラピュタ)(×)", answer: false },
 　{ text: "マングースは英語でファイアフォックスとも言う", answer: false },
-　{ text: "豚の体脂肪率は平均的な人間より低い(〇)", answer: true },
+　{ text: "豚の体脂肪率は平均的な人間より低い", answer: true },
 　{ text: "上へ昇る雷を竜雷という", answer: false },
 　{ text: "東大寺は13世紀に平家に焼かれたことがある", answer: false },
+　{ text: "医師免許証の大きさはパスポートより小さい", answer: false },
+　{ text: "ピザが生まれた国はどっち　イタリア(〇)スイス(×)", answer: true },
+　{ text: "国際連合の本部はどこにある　イギリス(〇)アメリカ(×)", answer: false },
+　{ text: "ひよこのオスメスを調べる仕事がある", answer: true },
+　{ text: "赤ちゃんのガラガラの正式名称は　ブリトル(〇)ラトル(×)", answer: false },
   { text: "フルートは木管楽器(〇)金管楽器(×)", answer: true }
 
+
+
 ];
+
+
 
