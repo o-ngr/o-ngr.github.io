@@ -151,9 +151,4 @@ window.QUIZ_QUESTIONS = [
 　{ text: "赤ちゃんのガラガラの正式名称は　ブリトル(〇)ラトル(×)", answer: false },
   { text: "フルートは木管楽器(〇)金管楽器(×)", answer: true }
 
-
-
 ];
-
-
-
