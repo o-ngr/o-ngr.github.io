@@ -126,11 +126,25 @@ window.QUIZ_QUESTIONS = [
 　{ text: "総理大臣を最も多く輩出した県は　山口県(〇)鹿児島県(×)", answer: true },
 　{ text: "先に発売されたゲーム機は　ゲームキューブ(〇)プレイステーション2(×)", answer: false },
 　{ text: "より寒いのは　北極(〇)南極(×)", answer: false },
+　{ text: "アメリカは独立当時は州が13個だった", answer: true },
+　{ text: "竹は一日に1m以上伸びることもある", answer: true },
+　{ text: "世界最長の戦争は英仏百年戦争である", answer: false },
+　{ text: "イルカの寿命は20年ほどである", answer: false },
+　{ text: "人間の骨の重さは体重の約8％である", answer: false },
+　{ text: "白みそのほうが赤みそより早くできる", answer: true },
+　{ text: "ハイエナは猫より犬に近い動物である", answer: false },
+　{ text: "鳥は背中の筋肉で羽ばたく", answer: false },
+　{ text: "西暦1年にあった国はどっち　古代ローマ(〇)神聖ローマ帝国(×)", answer: true },
+　{ text: "ニューヨークは太平洋に面している", answer: false },
+　{ text: "100年ほど前はメキシコの領土は今の約2倍あった", answer: true},
+　{ text: "エジプトにはピラミッドがいくつほど残っている　100個未満(〇)100個以上(×)", answer: false },
+　{ text: "まち針の語源はどっち　仮止めで待たせる(〇)城下町で刀のついでに作られていた(×)", answer: true },
+　{ text: "より大きいのはどっちトトロ(〇)ロボット兵(ラピュタ)(×)", answer: false },
+　{ text: "マングースは英語でファイアフォックスとも言う", answer: false },
+　{ text: "豚の体脂肪率は平均的な人間より低い(〇)", answer: true },
+　{ text: "上へ昇る雷を竜雷という", answer: false },
+　{ text: "東大寺は13世紀に平家に焼かれたことがある", answer: false },
   { text: "フルートは木管楽器(〇)金管楽器(×)", answer: true }
 
-
-
 ];
-
-
 
