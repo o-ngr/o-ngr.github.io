@@ -9,5 +9,6 @@ const LINKS = [
     { id: 7, title: 'Proxy tool', desc: 'プロキシ通信が可能', url: '/tools/proxy.html', category: 'tools' },
     { id: 8, title: 'Link collection', desc: 'ショートカット一覧 (外部)', url: 'https://a-b-c.3do1.jp/', category: 'tools' },
     { id: 9, title: 'Link collection 2', desc: 'ショートカット一覧', url: '/page/links.html', category: 'tools' },
-    { id: 10, title: 'Feeder open chat', desc: 'ショートカット一覧', url: 'https://www2.x-feeder.info/ms05', category: 'tools' },
+    { id: 10, title: 'Feeder open chat', desc: 'オープンチャット', url: 'https://www2.x-feeder.info/ms05', category: 'tools' },
+    { id: 10, title: 'truck game', desc: 'トロッコゲーム', url: '/truck/index.html', category: 'tools' },
 ];
