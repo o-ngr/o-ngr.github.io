@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>index</title>
+<title>TruckGameInterfacr</title>
 <style>
   :root {
     color-scheme: light;
@@ -73,7 +73,14 @@
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   }
 
-  #gameover-overlay h2 { color: #ef4444; }
+  /* 満身創痍の文字を見やすく大きく調整 */
+  #gameover-overlay h2 { 
+    color: #ef4444; 
+    font-size: clamp(48px, 9vw, 84px); 
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-shadow: 0 4px 20px rgba(239, 68, 68, 0.6), 0 2px 8px rgba(0, 0, 0, 0.9);
+  }
   #gameclear-overlay h2 { color: #22c55e; }
 
   /* 問題表示パネル */
