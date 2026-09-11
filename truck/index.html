@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-<title>TruckGameInterfacr</title>
+<title>index</title>
 <style>
   :root {
     color-scheme: light;
@@ -73,7 +73,6 @@
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   }
 
-  /* 満身創痍の文字を見やすく大きく調整 */
   #gameover-overlay h2 { 
     color: #ef4444; 
     font-size: clamp(48px, 9vw, 84px); 
@@ -83,7 +82,6 @@
   }
   #gameclear-overlay h2 { color: #22c55e; }
 
-  /* 問題表示パネル */
   .question-panel {
     position: absolute; inset: 0;
     margin: auto;
@@ -183,7 +181,6 @@
   .choice-btn:hover { transform: translateY(-3px); }
   .choice-btn:active { transform: scale(0.94); }
 
-  /* 画面左右に配置する常時タイマーバーのスタイル */
   .side-timer-bar {
     position: absolute;
     top: 15%;
@@ -225,7 +222,6 @@
     animation: timerUrgent 0.45s ease-in-out infinite;
   }
 
-  /* 回答方向を示す中央の大きな矢印アニメーション（出現→分岐到達まで表示保持→到達時に退場） */
   .center-choice-arrow {
     position: absolute;
     top: 50%;
@@ -247,7 +243,6 @@
     color: #e5e7eb;
     filter: drop-shadow(0 0 18px rgba(229,231,235,0.85)) drop-shadow(0 6px 20px rgba(0,0,0,0.6));
   }
-  /* 出現後、分岐に到達するまでこの位置で保持される */
   .center-choice-arrow.show.dir-left {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1) translateX(-16px);
@@ -256,7 +251,6 @@
     opacity: 1;
     transform: translate(-50%, -50%) scale(1) translateX(16px);
   }
-  /* 保持中はゆっくり脈動させ、待たされている印象を出さない */
   .center-choice-arrow.pulse.dir-left {
     animation: centerArrowPulseLeft 0.9s ease-in-out infinite;
   }
@@ -271,7 +265,6 @@
     0%, 100% { transform: translate(-50%, -50%) scale(1) translateX(16px); }
     50%      { transform: translate(-50%, -50%) scale(1.1) translateX(20px); }
   }
-  /* 分岐到達時にその方向へ抜けて消える */
   .center-choice-arrow.exit.dir-left {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.85) translateX(-140px);
@@ -294,16 +287,45 @@
     transition: transform 0.1s, background-color 0.2s;
   }
   .btn-retry:active { transform: scale(0.95); }
+
+  canvas#leaves {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    display: block; pointer-events: none;
+  }
+
+  .progress-dots {
+    display: flex; flex-wrap: wrap; gap: 5px;
+    margin-top: 8px; max-width: 230px;
+  }
+  .progress-dot {
+    width: 15px; height: 15px; border-radius: 50%;
+    border: 2px solid #cfcfcf; background: #fff; box-sizing: border-box;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 900; line-height: 1; color: transparent;
+    transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease 0.1s;
+  }
+  .progress-dot.correct {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+    transform: scale(1.12);
+  }
+  .progress-dot.correct::after { content: '○'; }
+  .progress-dot.incorrect {
+    background: #4b5563; border-color: #4b5563; color: #fff;
+    transform: scale(1.12);
+  }
+  .progress-dot.incorrect::after { content: '✕'; }
 </style>
 </head>
 <body>
   <div id="wrap">
     <canvas id="sim" aria-label="トロッコ描写" role="img"></canvas>
+    <canvas id="leaves" aria-hidden="true"></canvas>
     <div class="hud">
       <div class="panel" id="panel">
         <h1>トロッコアドベンチャー</h1>
         <div class="row"><div>正解</div><div class="val big"><span id="score"></span><span style="font-size:14px;color:#888;">/<span id="score-max"></span></span></div></div>
         <div class="row"><div>ミス</div><div class="val big" style="color:#ef4444;"><span id="misses">0</span><span style="font-size:14px;color:#888;">/<span id="max-misses">1</span></span></div></div>
+        <div class="progress-dots" id="progress-dots"></div>
         <div class="hint" id="hint" style="margin-top:8px;">
           <span class="key">←</span>○<span style="margin:0 8px;"></span><span class="key">→</span>✕
         </div>
@@ -365,6 +387,115 @@
   const canvas = document.getElementById('sim');
   const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
   let W=0, H=0, DPR=1;
+
+  // ---- イチョウの落ち葉演出（常時ループする独立レイヤー） ----
+  const leavesCanvas = document.getElementById('leaves');
+  const leavesCtx = leavesCanvas ? leavesCanvas.getContext('2d') : null;
+  let LW = 0, LH = 0, LDPR = 1;
+
+  function resizeLeaves() {
+    if (!leavesCanvas) return;
+    LDPR = Math.min(2, window.devicePixelRatio || 1);
+    LW = leavesCanvas.clientWidth * LDPR;
+    LH = leavesCanvas.clientHeight * LDPR;
+    leavesCanvas.width = LW;
+    leavesCanvas.height = LH;
+  }
+  window.addEventListener('resize', resizeLeaves, { passive: true });
+
+  // イチョウらしい黄金色・黄緑・オレンジのカラーパレットに変更
+  const LEAF_COLORS = ['#facc15', '#eab308', '#fde047', '#ca8a04', '#d97706'];
+  const LEAF_COUNT = 24;
+  let leaves = [];
+
+  function makeLeaf(spawnAnywhere) {
+    const size = (16 + Math.random() * 18) * LDPR;
+    return {
+      x: Math.random() * LW,
+      y: spawnAnywhere ? Math.random() * LH : -size * 1.4,
+      size,
+      speed: (16 + Math.random() * 20) * LDPR,
+      swayAmp: (18 + Math.random() * 28) * LDPR,
+      swaySpeed: 0.5 + Math.random() * 0.9,
+      swayPhase: Math.random() * Math.PI * 2,
+      rot: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 1.3,
+      flip: Math.random() < 0.5 ? 1 : -1,
+      color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
+      alpha: 0.55 + Math.random() * 0.35,
+      t: Math.random() * 100,
+    };
+  }
+
+  function initLeaves() {
+    leaves = [];
+    for (let i = 0; i < LEAF_COUNT; i++) leaves.push(makeLeaf(true));
+  }
+
+  function drawGinkgoLeafShape(g, s) {
+  g.beginPath();
+  g.moveTo(0, s * 0.95); // 茎の付け根
+  
+  // 左下の裂片
+  g.bezierCurveTo(-s * 0.1, s * 0.7, -s * 0.4, s * 0.85, -s * 0.9, s * 0.4);
+  g.bezierCurveTo(-s * 0.6, s * 0.35, -s * 0.5, s * 0.1, -s * 0.95, -s * 0.1);
+  
+  // 左上の裂片
+  g.bezierCurveTo(-s * 0.6, -s * 0.05, -s * 0.7, -s * 0.3, -s * 0.5, -s * 0.6);
+  g.bezierCurveTo(-s * 0.35, -s * 0.45, -s * 0.2, -s * 0.6, -s * 0.05, -s * 0.95); // 中央の頂点
+  
+  // 右上の裂片
+  g.bezierCurveTo(s * 0.2, -s * 0.6, s * 0.35, -s * 0.45, s * 0.5, -s * 0.6);
+  g.bezierCurveTo(s * 0.7, -s * 0.3, s * 0.6, -s * 0.05, s * 0.95, -s * 0.1);
+  
+  // 右下の裂片
+  g.bezierCurveTo(s * 0.5, s * 0.1, s * 0.6, s * 0.35, s * 0.9, s * 0.4);
+  g.bezierCurveTo(s * 0.4, s * 0.85, s * 0.1, s * 0.7, 0, s * 0.95);
+  
+  g.closePath();
+}
+
+  function updateLeaves(dt) {
+    if (!leaves.length) return;
+    for (const lf of leaves) {
+      lf.t += dt;
+      lf.y += lf.speed * dt;
+      lf.x += Math.sin(lf.t * lf.swaySpeed + lf.swayPhase) * lf.swayAmp * dt * 0.6;
+      lf.rot += lf.rotSpeed * dt;
+      if (lf.y - lf.size > LH + 20) {
+        const fresh = makeLeaf(false);
+        Object.assign(lf, fresh);
+      }
+      if (lf.x < -40) lf.x = LW + 40;
+      if (lf.x > LW + 40) lf.x = -40;
+    }
+  }
+
+  function drawLeaves() {
+    if (!leavesCtx) return;
+    leavesCtx.clearRect(0, 0, LW, LH);
+    for (const lf of leaves) {
+      leavesCtx.save();
+      leavesCtx.globalAlpha = lf.alpha;
+      leavesCtx.translate(lf.x, lf.y);
+      leavesCtx.rotate(lf.rot);
+      leavesCtx.scale(lf.flip, 1);
+      drawGinkgoLeafShape(leavesCtx, lf.size * 0.5);
+      leavesCtx.fillStyle = lf.color;
+      leavesCtx.fill();
+      leavesCtx.restore();
+    }
+  }
+
+  let lastLeafTime = performance.now();
+  function leafFrame(now) {
+    const dt = Math.min(0.05, (now - lastLeafTime) / 1000);
+    lastLeafTime = now;
+    updateLeaves(dt);
+    drawLeaves();
+    requestAnimationFrame(leafFrame);
+  }
+  // ---- 落ち葉演出ここまで ----
 
   const startBgImage = new Image();
   startBgImage.src = 'startoverlay.jpg';
@@ -736,6 +867,7 @@
     nextSleeperDist = 0; nextPillarDist = 0;
     scoreEl.textContent = '0';
     if (missesEl) missesEl.textContent = '0';
+    buildProgressDots();
     gameoverOverlay.classList.remove('show'); gameoverOverlay.style.display = 'none';
     gameclearOverlay.classList.remove('show'); gameclearOverlay.style.display = 'none';
     overlayEl.classList.remove('show', 'minimized'); overlayEl.style.display = 'none';
@@ -771,6 +903,23 @@
   if (scoreMaxEl) scoreMaxEl.textContent = CLEAR_SCORE;
   if (maxMissesEl) maxMissesEl.textContent = ALLOWED_MISSES;
   if (clearTargetNumEl) clearTargetNumEl.textContent = CLEAR_SCORE;
+
+  const progressDotsEl = document.getElementById('progress-dots');
+  function buildProgressDots() {
+    if (!progressDotsEl) return;
+    progressDotsEl.innerHTML = '';
+    for (let i = 0; i < MAX_QUESTIONS; i++) {
+      const d = document.createElement('div');
+      d.className = 'progress-dot';
+      progressDotsEl.appendChild(d);
+    }
+  }
+  function markProgressDot(index, isCorrect) {
+    if (!progressDotsEl) return;
+    const d = progressDotsEl.children[index];
+    if (d) d.classList.add(isCorrect ? 'correct' : 'incorrect');
+  }
+  buildProgressDots();
 
   const overlayEl = document.getElementById('question-panel'), questionTextEl = document.getElementById('question-text');
   const timerFillEl = document.getElementById('timer-fill'), timerNumEl = document.getElementById('timer-num');
@@ -925,6 +1074,7 @@
 
     const choice = pendingBranch.chosenDir;
     const chosenTail = choice === 'left' ? pendingBranch.leftTail : pendingBranch.rightTail;
+    const answeredIndex = state.score + state.misses;
 
     if (choice === pendingBranch.correct) {
       playSE(seCorrectEl);
@@ -934,6 +1084,7 @@
       void scoreEl.offsetWidth; 
       scoreEl.classList.add('score-pop');
       feedbackFlash = 1; feedbackFlashColor = '34,197,94';
+      markProgressDot(answeredIndex, true);
 
       if (state.score >= CLEAR_SCORE) {
         clearAtDistance = chosenTail.dist + TERMINUS_DISTANCE;
@@ -945,6 +1096,7 @@
       state.misses++;
       if (missesEl) missesEl.textContent = state.misses;
       feedbackFlash = 1; feedbackFlashColor = '239,68,68';
+      markProgressDot(answeredIndex, false);
 
       if (state.misses >= ALLOWED_MISSES + 1) { 
         fallAtDistance = chosenTail.dist;
@@ -1347,6 +1499,10 @@
       ctx.fillRect(0, 0, W, H);
     }
   }
+
+  resizeLeaves();
+  initLeaves();
+  requestAnimationFrame(leafFrame);
 
   seed();
   requestAnimationFrame(frame);
