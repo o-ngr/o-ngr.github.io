@@ -209,6 +209,12 @@ window.QUIZ_QUESTIONS = [
 　{ text: "栄徳高校の校長先生は岩崎先生である", answer: false },
 　{ text: "先に発明されたのは　カメラ(〇)ラジオ(×)", answer: true },
 　{ text: "ドラゴンクエスト最新作はドラクエ13", answer: false },
+　{ text: "ユーカリの葉には毒がある", answer: true },
+　{ text: "ピカチュウの重さは　9Kg(〇)6Kg(×)", answer: false },
+　{ text: "ダイナマイトを発明したのは　ノーベル(〇)フランクリン(×)", answer: true },
+　{ text: "日本銀行が設立されたのは　1882年(〇)1900年(×)", answer: true },
+　{ text: "塩は燃える", answer: false },
+　{ text: "アルミニウムはさびない", answer: false },
   { text: "フルートは木管楽器(〇)金管楽器(×)", answer: true }
 
 ];
