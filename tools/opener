@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>about_blankt</title>
+<style>
+    :root {
+        --bg: #0a0a0a;
+        --panel: #161616;
+        --panel2: #202020;
+        --border: #333333;
+        --border-light: #444444;
+        --accent: #ff3b3b;
+        --accent-dim: #b32424;
+        --on-accent: #ffffff;
+        --text: #e8e8e8;
+        --text-muted: #999999;
+        --text-faint: #666666;
+        --danger: #ff6b6b;
+        --success: #6bcf6b;
+        --info: #7ec8ff;
+    }
+
+    [data-theme="light"] {
+        --bg: #ffffff;
+        --panel: #f7f7f7;
+        --panel2: #eeeeee;
+        --border: #dddddd;
+        --border-light: #cccccc;
+        --accent: #e02424;
+        --accent-dim: #a81b1b;
+        --on-accent: #ffffff;
+        --text: #1a1a1a;
+        --text-muted: #666666;
+        --text-faint: #999999;
+        --danger: #d62828;
+        --success: #2e7d32;
+        --info: #1565c0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Roboto Mono', 'Consolas', monospace;
+        margin: 0;
+        padding: 12px;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    #container {
+        position: relative;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 20px;
+        max-width: 1100px;
+        width: 100%;
+        margin-top: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    @media (min-width: 768px) {
+        #container { padding: 28px; margin-top: 24px; }
+    }
+
+    #ring-deco {
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 160px;
+        height: 160px;
+        pointer-events: none;
+        opacity: 0.35;
+    }
+    #ring-deco circle { fill: var(--accent); }
+
+    h1 {
+        position: relative;
+        z-index: 1;
+        font-size: 1.25em;
+        margin: 0 0 14px 0;
+        color: var(--accent);
+        font-weight: 500;
+        letter-spacing: 0.02em;
+    }
+
+    @media (min-width: 768px) {
+        h1 { font-size: 1.6em; margin-bottom: 16px; }
+    }
+
+    .info-note {
+        background-color: var(--panel2);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent-dim);
+        border-radius: 4px;
+        padding: 10px 12px;
+        margin-bottom: 18px;
+        font-size: 11.5px;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    @media (min-width: 768px) {
+        .info-note { padding: 12px 16px; font-size: 12.5px; }
+    }
+
+    .info-note strong { color: var(--accent); }
+
+    .input-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    @media (min-width: 768px) {
+        .input-row { flex-direction: row; align-items: stretch; }
+    }
+
+    input[type="text"] {
+        flex: 1;
+        padding: 13px 14px;
+        background-color: var(--panel2);
+        color: var(--text);
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+        min-width: 0;
+        transition: border-color 0.15s;
+    }
+
+    input[type="text"]:focus { outline: none; border-color: var(--accent); }
+    input[type="text"]::placeholder { color: var(--text-faint); }
+
+    .status-log {
+        background-color: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin-bottom: 16px;
+        height: 60px;
+        overflow-y: auto;
+        font-size: 11.5px;
+        line-height: 1.8;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-light) var(--bg);
+    }
+
+    .status-log::-webkit-scrollbar { width: 6px; }
+    .status-log::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+
+    .log-entry {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+        color: var(--text-muted);
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+
+    .log-dot {
+        flex-shrink: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-faint);
+        margin-top: 2px;
+    }
+
+    .log-entry.info .log-dot { background: var(--info); }
+    .log-entry.loading .log-dot { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
+    .log-entry.success .log-dot { background: var(--success); }
+    .log-entry.error .log-dot { background: var(--danger); }
+    .log-entry.warn .log-dot { background: var(--accent); }
+
+    .log-entry.success { color: var(--success); }
+    .log-entry.error { color: var(--danger); }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .button-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    button {
+        background-color: var(--accent);
+        color: var(--on-accent);
+        border: none;
+        padding: 10px 16px;
+        font-size: 13px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        font-weight: 500;
+    }
+
+    button:hover:not(:disabled) { background-color: var(--accent-dim); }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button:disabled { background-color: var(--border-light); color: var(--text-faint); cursor: not-allowed; }
+
+    button.secondary {
+        background-color: var(--panel2);
+        color: var(--text-muted);
+        border: 1px solid var(--border-light);
+    }
+    button.secondary:hover:not(:disabled) { color: var(--text); background-color: var(--panel); }
+    button.secondary:active:not(:disabled) { transform: translateY(1px); }
+
+    .view-area {
+        position: relative;
+        background-color: var(--panel);
+        transition: background-color 0.2s;
+    }
+
+    .view-area.is-fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        background-color: var(--bg);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .view-area.is-fullscreen #renderFrame {
+        height: 100%;
+        flex: 1;
+    }
+
+    .view-area.is-fullscreen .fullscreen-btn {
+        top: 24px;
+        right: 24px;
+    }
+
+    #renderFrame {
+        width: 100%;
+        height: 550px;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        background-color: #ffffff;
+        display: block;
+    }
+
+    .fullscreen-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 2;
+        background-color: var(--panel2);
+        color: var(--text-muted);
+        border: 1px solid var(--border-light);
+        padding: 6px 10px;
+        font-size: 11px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        opacity: 0.85;
+    }
+
+    .fullscreen-btn:hover { color: var(--text); background-color: var(--panel); opacity: 1; }
+    .fullscreen-btn:active { transform: translateY(1px); }
+
+    .placeholder {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-faint);
+        font-size: 12.5px;
+        pointer-events: none;
+    }
+</style>
+</head>
+<body>
+<div id="container">
+    <svg id="ring-deco" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="80" cy="80" r="3" fill-opacity="1"/>
+        <circle cx="80" cy="40" r="3" fill-opacity="0.9"/>
+        <circle cx="112" cy="52" r="3" fill-opacity="0.8"/>
+        <circle cx="120" cy="80" r="3" fill-opacity="0.7"/>
+        <circle cx="112" cy="108" r="3" fill-opacity="0.6"/>
+        <circle cx="80" cy="120" r="3" fill-opacity="0.5"/>
+        <circle cx="48" cy="108" r="3" fill-opacity="0.4"/>
+        <circle cx="40" cy="80" r="3" fill-opacity="0.3"/>
+        <circle cx="48" cy="52" r="3" fill-opacity="0.2"/>
+        <circle cx="80" cy="80" r="60" fill="none" stroke="var(--accent)" stroke-width="1" stroke-opacity="0.15"/>
+        <circle cx="80" cy="80" r="30" fill="none" stroke="var(--accent)" stroke-width="1" stroke-opacity="0.15"/>
+    </svg>
+
+    <h1>フレームオープナー</h1>
+
+    <div class="info-note">
+        <strong>注意:</strong> 表示先サイトのセキュリティ設定（X-Frame-OptionsやCSP）により、枠内表示がブロックされる場合があります。
+    </div>
+
+    <div class="input-row">
+        <input type="text" id="urlInput" placeholder="URLを入力（例: https://example.com）">
+        <button id="fetchBtn" onclick="loadPage()">開く</button>
+    </div>
+
+    <div class="status-log" id="statusLog"></div>
+
+    <div class="toolbar">
+        <div class="button-group">
+            <button class="secondary" id="openNewTabBtn" onclick="openInNewTab()">別タブでこの枠で開く</button>
+            <button class="secondary" id="clearBtn" onclick="clearAll()">クリア</button>
+        </div>
+    </div>
+
+    <div class="view-area" id="viewArea">
+        <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()">全画面</button>
+        <!-- CSS/JSを実行させるため sandbox 属性で各種パーミッションを付与 -->
+        <iframe id="renderFrame" 
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads" 
+                referrerpolicy="no-referrer"></iframe>
+        <div class="placeholder" id="placeholder">URLを入力して「開く」を押してください</div>
+    </div>
+</div>
+
+<script>
+    // ---- テーマ（システム設定に自動追従） ----
+    (function initTheme() {
+        const root = document.documentElement;
+        const mql = window.matchMedia('(prefers-color-scheme: light)');
+        function applyTheme() { root.setAttribute('data-theme', mql.matches ? 'light' : 'dark'); }
+        applyTheme();
+        mql.addEventListener('change', applyTheme);
+    })();
+
+    const frame = document.getElementById('renderFrame');
+    const urlInput = document.getElementById('urlInput');
+    const placeholder = document.getElementById('placeholder');
+    let currentURL = '';
+
+    urlInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') loadPage();
+    });
+
+    // 初期化（URLパラメーターがあれば自動で読み込む）
+    window.addEventListener('DOMContentLoaded', () => {
+        resetLog();
+        const params = new URLSearchParams(window.location.search);
+        const targetUrl = params.get('url');
+        if (targetUrl) {
+            urlInput.value = targetUrl;
+            loadPage(targetUrl);
+        }
+    });
+
+    // ---- メイン読み込み処理 ----
+    function loadPage(specifiedUrl) {
+        let url = specifiedUrl || urlInput.value.trim();
+        if (!url) { resetLog('URLを入力してください', 'error'); return; }
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        if (!isValidURL(url)) { resetLog('有効なURLを入力してください', 'error'); return; }
+
+        urlInput.value = url;
+        currentURL = url;
+        resetLog('読み込み中...', 'loading');
+
+        placeholder.style.display = 'none';
+        
+        // iframeに直接指定することでCSS/JSが実行される
+        frame.src = url;
+
+        addLog(`表示リクエストを送信しました: ${url}`, 'success');
+        addLog('※表示されない場合は、対象サイト側で埋め込み(X-Frame-Options)が拒否されている可能性があります。', 'info');
+    }
+
+    // iframeが読み込まれた際の制御
+    frame.addEventListener('load', () => {
+        if (frame.src && frame.src !== 'about:blank') {
+            updateLastEntry('読み込み完了 (表示中)', 'success');
+        }
+    });
+
+    // 別タブで開く際もこのビューア枠で開く関数
+    function openInNewTab() {
+        const url = urlInput.value.trim();
+        if (!url) {
+            addLog('開くURLがありません', 'error');
+            return;
+        }
+        // 自分自身のURLのクエリパラメータに表示対象URLを載せて別タブで開く
+        const currentViewerUrl = window.location.origin + window.location.pathname;
+        const shareableUrl = `${currentViewerUrl}?url=${encodeURIComponent(url)}`;
+        window.open(shareableUrl, '_blank');
+    }
+
+    // ---- システムログ ----
+    function resetLog(message, type) {
+        const log = document.getElementById('statusLog');
+        log.innerHTML = '';
+        addLog(message || 'URLを入力して「開く」を押してください', type || 'info');
+    }
+
+    function addLog(message, type = 'info') {
+        const log = document.getElementById('statusLog');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.innerHTML = `<span class="log-dot"></span><span class="log-text"></span>`;
+        entry.querySelector('.log-text').textContent = message;
+        log.appendChild(entry);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function updateLastEntry(message, type) {
+        const log = document.getElementById('statusLog');
+        const last = log.lastElementChild;
+        if (!last) { addLog(message, type); return; }
+        last.className = `log-entry ${type}`;
+        last.querySelector('.log-text').textContent = message;
+    }
+
+    // ---- ユーティリティ ----
+    function isValidURL(string) {
+        try {
+            const url = new URL(string);
+            return url.protocol === 'http:' || url.protocol === 'https:';
+        } catch { return false; }
+    }
+
+    function toggleFullscreen() {
+        const area = document.getElementById('viewArea');
+        const btn = document.getElementById('fullscreenBtn');
+        const active = area.classList.toggle('is-fullscreen');
+        btn.textContent = active ? '解除' : '全画面表示';
+        document.body.style.overflow = active ? 'hidden' : '';
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        const area = document.getElementById('viewArea');
+        if (area.classList.contains('is-fullscreen')) toggleFullscreen();
+    });
+
+    function clearAll() {
+        currentURL = '';
+        urlInput.value = '';
+        frame.src = 'about:blank';
+        placeholder.style.display = 'flex';
+        resetLog();
+    }
+</script>
+</body>
+</html>
