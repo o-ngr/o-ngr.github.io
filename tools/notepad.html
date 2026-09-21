@@ -29,7 +29,6 @@
   --warning:    #b7791f;
   --tab-active: #ffffff;
   --tab-hover:  rgba(0,0,0,0.04);
-  --editor-bg:  #ffffff;
   --scrollbar:  rgba(0,0,0,0.12);
   --overlay:    rgba(15,15,12,0.45);
   --shadow-sm:  0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
@@ -39,12 +38,51 @@
   --radius-md:  10px;
   --radius-lg:  14px;
   --font-ui:    'DM Sans', -apple-system, sans-serif;
-  --font-mono:  'DM Mono', 'SF Mono', Menlo, monospace;
+  --font-mono:  'DM Mono', 'SF Mono', Menlo, Consolas, monospace;
   --transition: 0.18s cubic-bezier(0.4,0,0.2,1);
+
+  /* Editor metrics */
+  --editor-fs:  13.5px;
+  --editor-lh:  22px;
+  --editor-px:  18px;
+  --editor-py:  14px;
+
+  /* Editor surface (VS Code Light+ inspired) */
+  --editor-bg:   #ffffff;
+  --editor-fg:   #1f1f1f;
+  --gutter-fg:   #a6a6a6;
+  --gutter-active:#0b60a5;
+  --line-hl:     rgba(0,0,0,0.035);
+  --line-hl-border: rgba(0,0,0,0.07);
+  --editor-sel:  rgba(0,110,220,0.22);
+  --indent-guide:rgba(0,0,0,0.08);
+  --bracket-hl:  rgba(0,110,220,0.28);
+
+  /* Syntax tokens — Light+ */
+  --t-comment:  #3f8f3f;
+  --t-string:   #a31515;
+  --t-keyword:  #0000d6;
+  --t-ctrl:     #9016b5;
+  --t-number:   #0b7a56;
+  --t-func:     #7a5c12;
+  --t-var:      #12308f;
+  --t-type:     #1f7a8c;
+  --t-constant: #0000d6;
+  --t-op:       #444444;
+  --t-punct:    #5c5c5c;
+  --t-tag:      #8a1414;
+  --t-attr:     #c3402a;
+  --t-selector: #8a1414;
+  --t-property: #12308f;
+  --t-regexp:   #8b1f47;
+  --t-meta:     #6f6f6f;
+  --t-heading:  #0b60a5;
+  --t-link:     #a31515;
+  --t-value:    #a31515;
 }
 
 @media (prefers-color-scheme:dark){
-  :root{
+  :root:not([data-theme="light"]){
     --bg:         #111110;
     --surface:    #1a1a18;
     --surface2:   #222220;
@@ -61,10 +99,92 @@
     --warning:    #f6ad55;
     --tab-active: #2a2a28;
     --tab-hover:  rgba(255,255,255,0.04);
-    --editor-bg:  #141413;
     --scrollbar:  rgba(255,255,255,0.1);
     --overlay:    rgba(0,0,0,0.6);
+
+    --editor-bg:   #161615;
+    --editor-fg:   #d4d4d4;
+    --gutter-fg:   #666660;
+    --gutter-active:#cfcfc6;
+    --line-hl:     rgba(255,255,255,0.045);
+    --line-hl-border: rgba(255,255,255,0.07);
+    --editor-sel:  rgba(99,179,237,0.26);
+    --indent-guide:rgba(255,255,255,0.08);
+    --bracket-hl:  rgba(99,179,237,0.32);
+
+    --t-comment:  #6a9955;
+    --t-string:   #ce9178;
+    --t-keyword:  #569cd6;
+    --t-ctrl:     #c586c0;
+    --t-number:   #b5cea8;
+    --t-func:     #dcdcaa;
+    --t-var:      #9cdcfe;
+    --t-type:     #4ec9b0;
+    --t-constant: #569cd6;
+    --t-op:       #d4d4d4;
+    --t-punct:    #b0b0aa;
+    --t-tag:      #569cd6;
+    --t-attr:     #9cdcfe;
+    --t-selector: #d7ba7d;
+    --t-property: #9cdcfe;
+    --t-regexp:   #d16969;
+    --t-meta:     #808080;
+    --t-heading:  #569cd6;
+    --t-link:     #ce9178;
+    --t-value:    #ce9178;
   }
+}
+
+:root[data-theme="dark"]{
+  --bg:         #111110;
+  --surface:    #1a1a18;
+  --surface2:   #222220;
+  --text:       #e8e8e0;
+  --text-2:     #8a8a80;
+  --text-3:     #5a5a52;
+  --border:     rgba(255,255,255,0.07);
+  --border-2:   rgba(255,255,255,0.04);
+  --accent:     #63b3ed;
+  --accent-dim: rgba(99,179,237,0.1);
+  --accent-glow:rgba(99,179,237,0.18);
+  --danger:     #fc8181;
+  --success:    #68d391;
+  --warning:    #f6ad55;
+  --tab-active: #2a2a28;
+  --tab-hover:  rgba(255,255,255,0.04);
+  --scrollbar:  rgba(255,255,255,0.1);
+  --overlay:    rgba(0,0,0,0.6);
+
+  --editor-bg:   #161615;
+  --editor-fg:   #d4d4d4;
+  --gutter-fg:   #666660;
+  --gutter-active:#cfcfc6;
+  --line-hl:     rgba(255,255,255,0.045);
+  --line-hl-border: rgba(255,255,255,0.07);
+  --editor-sel:  rgba(99,179,237,0.26);
+  --indent-guide:rgba(255,255,255,0.08);
+  --bracket-hl:  rgba(99,179,237,0.32);
+
+  --t-comment:  #6a9955;
+  --t-string:   #ce9178;
+  --t-keyword:  #569cd6;
+  --t-ctrl:     #c586c0;
+  --t-number:   #b5cea8;
+  --t-func:     #dcdcaa;
+  --t-var:      #9cdcfe;
+  --t-type:     #4ec9b0;
+  --t-constant: #569cd6;
+  --t-op:       #d4d4d4;
+  --t-punct:    #b0b0aa;
+  --t-tag:      #569cd6;
+  --t-attr:     #9cdcfe;
+  --t-selector: #d7ba7d;
+  --t-property: #9cdcfe;
+  --t-regexp:   #d16969;
+  --t-meta:     #808080;
+  --t-heading:  #569cd6;
+  --t-link:     #ce9178;
+  --t-value:    #ce9178;
 }
 
 html,body{height:100%;height:100dvh;overflow:hidden}
@@ -78,11 +198,7 @@ body{
   position:fixed;width:100%;
 }
 
-.app{
-  display:flex;
-  height:100vh;
-  height:100dvh;
-}
+.app{display:flex;height:100vh;height:100dvh}
 
 .sidebar{
   width:220px;
@@ -132,12 +248,9 @@ body{
 .logo-mark svg{width:10px;height:10px;fill:#fff}
 
 .logo-text{
-  font-size:13px;
-  font-weight:600;
-  letter-spacing:-0.01em;
-  color:var(--text);
-  white-space:nowrap;
-  overflow:hidden;
+  font-size:13px;font-weight:600;
+  letter-spacing:-0.01em;color:var(--text);
+  white-space:nowrap;overflow:hidden;
 }
 
 .sidebar-collapse-btn{
@@ -146,9 +259,7 @@ body{
   border-radius:5px;
   display:flex;align-items:center;justify-content:center;
   color:var(--text-3);
-  cursor:pointer;
-  margin-left:auto;
-  flex-shrink:0;
+  cursor:pointer;margin-left:auto;flex-shrink:0;
   transition:all var(--transition);
 }
 .sidebar-collapse-btn:hover{background:var(--tab-hover);color:var(--text)}
@@ -157,149 +268,96 @@ body{
 .sidebar.collapsed .sidebar-collapse-btn svg{transform:rotate(180deg)}
 
 .tab-list{
-  flex:1;
-  overflow-y:auto;
-  overflow-x:hidden;
-  padding:8px 6px;
-  list-style:none;
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:8px 6px;list-style:none;
 }
 
 .tab-item{
-  display:flex;
-  align-items:center;
-  padding:0 10px;
-  height:36px;
+  display:flex;align-items:center;
+  padding:0 10px;height:36px;
   border-radius:var(--radius-sm);
-  cursor:pointer;
-  gap:8px;
-  margin-bottom:1px;
+  cursor:pointer;gap:8px;margin-bottom:1px;
   transition:background var(--transition),color var(--transition),transform 0.12s ease;
-  min-width:0;
-  position:relative;
-  user-select:none;
+  min-width:0;position:relative;user-select:none;
 }
 .sidebar.collapsed .tab-item{padding:0;justify-content:center}
 .tab-item:hover{background:var(--tab-hover)}
 .tab-item:hover .tab-close{opacity:1}
-.tab-item.active{
-  background:var(--tab-active);
-  box-shadow:var(--shadow-sm);
-  color:var(--text);
-}
+.tab-item.active{background:var(--tab-active);box-shadow:var(--shadow-sm);color:var(--text)}
 .tab-item.active::before{
-  content:'';
-  position:absolute;
-  left:-6px;top:6px;bottom:6px;
-  width:3px;
-  border-radius:0 3px 3px 0;
-  background:var(--accent);
+  content:'';position:absolute;
+  left:-6px;top:6px;bottom:6px;width:3px;
+  border-radius:0 3px 3px 0;background:var(--accent);
 }
 .sidebar.collapsed .tab-item.active::before{left:0}
-.tab-item.active .tab-dot{background:var(--accent)}
 .tab-item.modified .tab-dot{background:var(--warning)}
 
 .tab-item.dragging{opacity:0.4}
 .tab-item.drag-over-top::before{
-  content:'';
-  position:absolute;
-  left:6px;right:6px;top:-1px;
-  height:2px;
-  border-radius:2px;
-  background:var(--accent);
+  content:'';position:absolute;left:6px;right:6px;top:-1px;
+  height:2px;border-radius:2px;background:var(--accent);
 }
 .tab-item.drag-over-bottom::after{
-  content:'';
-  position:absolute;
-  left:6px;right:6px;bottom:-1px;
-  height:2px;
-  border-radius:2px;
-  background:var(--accent);
+  content:'';position:absolute;left:6px;right:6px;bottom:-1px;
+  height:2px;border-radius:2px;background:var(--accent);
 }
 
+/* File-type dot, colour-coded by language */
 .tab-dot{
-  width:6px;height:6px;
-  border-radius:50%;
-  background:var(--text-3);
-  flex-shrink:0;
+  width:7px;height:7px;border-radius:2px;
+  background:var(--text-3);flex-shrink:0;
   transition:background var(--transition);
 }
+.tab-dot[data-lang="html"]{background:#e34c26}
+.tab-dot[data-lang="css"]{background:#2965f1}
+.tab-dot[data-lang="js"]{background:#e8bf27}
+.tab-dot[data-lang="json"]{background:#8a8a80}
+.tab-dot[data-lang="md"]{background:#4a7ebb}
+.tab-dot[data-lang="py"]{background:#3572a5}
+.tab-dot[data-lang="xml"]{background:#9b59b6}
+.tab-dot[data-lang="text"]{background:var(--text-3)}
 
 .tab-label{
-  flex:1;
-  font-size:12.5px;
-  font-weight:400;
-  color:var(--text-2);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  letter-spacing:0.01em;
+  flex:1;font-size:12.5px;font-weight:400;
+  color:var(--text-2);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;letter-spacing:0.01em;
 }
 .sidebar.collapsed .tab-label{display:none}
-.tab-item.active .tab-label{
-  color:var(--text);
-  font-weight:500;
-}
+.tab-item.active .tab-label{color:var(--text);font-weight:500}
 
 .tab-label-input{
-  flex:1;
-  min-width:0;
-  border:none;
-  outline:none;
-  background:var(--surface2);
-  border-radius:4px;
-  padding:2px 5px;
-  font-family:var(--font-ui);
-  font-size:12.5px;
-  font-weight:500;
-  color:var(--text);
-  box-shadow:0 0 0 1.5px var(--accent);
+  flex:1;min-width:0;border:none;outline:none;
+  background:var(--surface2);border-radius:4px;padding:2px 5px;
+  font-family:var(--font-ui);font-size:12.5px;font-weight:500;
+  color:var(--text);box-shadow:0 0 0 1.5px var(--accent);
 }
 
 .tab-close{
-  width:20px;height:20px;
-  border-radius:4px;
+  width:20px;height:20px;border-radius:4px;
   display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-  opacity:0;
-  color:var(--text-3);
+  flex-shrink:0;opacity:0;color:var(--text-3);
   transition:opacity var(--transition),background var(--transition),color var(--transition);
   cursor:pointer;
 }
 .sidebar.collapsed .tab-close{display:none}
-.tab-close:hover{
-  background:var(--border);
-  color:var(--text);
-}
+.tab-close:hover{background:var(--border);color:var(--text)}
 .tab-close svg{width:10px;height:10px}
 
 .sidebar-bottom{
-  flex-shrink:0;
-  padding:10px 6px;
+  flex-shrink:0;padding:10px 6px;
   border-top:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  gap:2px;
+  display:flex;flex-direction:column;gap:2px;
 }
 
 .action-btn{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  padding:0 10px;
-  height:34px;
+  display:flex;align-items:center;gap:9px;
+  padding:0 10px;height:34px;
   border-radius:var(--radius-sm);
-  border:none;
-  background:transparent;
+  border:none;background:transparent;
   color:var(--text-2);
-  font-family:var(--font-ui);
-  font-size:12.5px;
-  font-weight:400;
-  cursor:pointer;
-  transition:all var(--transition);
-  width:100%;
-  text-align:left;
-  letter-spacing:0.01em;
-  position:relative;
+  font-family:var(--font-ui);font-size:12.5px;font-weight:400;
+  cursor:pointer;transition:all var(--transition);
+  width:100%;text-align:left;letter-spacing:0.01em;position:relative;
 }
 .sidebar.collapsed .action-btn{justify-content:center;padding:0}
 .sidebar.collapsed .action-btn span{display:none}
@@ -313,189 +371,220 @@ body{
 .action-btn.options-btn.open svg{opacity:1}
 
 .action-shortcut{
-  margin-left:auto;
-  font-size:10px;
-  color:var(--text-3);
-  font-family:var(--font-mono);
-  letter-spacing:0;
+  margin-left:auto;font-size:10px;color:var(--text-3);
+  font-family:var(--font-mono);letter-spacing:0;
 }
 .sidebar.collapsed .action-shortcut{display:none}
 
-main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  min-width:0;
-  position:relative;
-  overflow:hidden;
-}
+main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;overflow:hidden}
 
 .top-bar{
-  display:none;
-  height:52px;
+  display:none;height:52px;
   background:var(--surface);
   border-bottom:1px solid var(--border);
-  align-items:center;
-  padding:0 8px;
-  gap:4px;
-  flex-shrink:0;
+  align-items:center;padding:0 8px;gap:4px;flex-shrink:0;
 }
 .top-bar-title{
-  flex:1;
-  text-align:center;
-  font-size:13.5px;
-  font-weight:500;
-  color:var(--text);
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  padding:0 4px;
+  flex:1;text-align:center;font-size:13.5px;font-weight:500;
+  color:var(--text);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;padding:0 4px;
 }
 
 .icon-btn{
-  width:36px;height:36px;
-  border:none;background:transparent;
+  width:36px;height:36px;border:none;background:transparent;
   border-radius:var(--radius-sm);
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;
-  color:var(--text-2);
-  transition:all var(--transition);
-  flex-shrink:0;
+  cursor:pointer;color:var(--text-2);
+  transition:all var(--transition);flex-shrink:0;
 }
 .icon-btn:hover{background:var(--tab-hover);color:var(--text)}
 .icon-btn:active{opacity:0.6}
 .icon-btn svg{width:18px;height:18px}
 
 .toolbar{
-  height:40px;
-  background:var(--surface2);
+  height:40px;background:var(--surface2);
   border-bottom:1px solid var(--border-2);
-  display:flex;
-  align-items:center;
-  padding:0 16px;
-  gap:4px;
-  flex-shrink:0;
+  display:flex;align-items:center;padding:0 16px;gap:4px;flex-shrink:0;
 }
-
-.toolbar-sep{
-  width:1px;height:16px;
-  background:var(--border);
-  margin:0 4px;
-  flex-shrink:0;
-}
+.toolbar-sep{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0}
 
 .tool-btn{
-  height:26px;
-  padding:0 10px;
-  border-radius:5px;
+  height:26px;padding:0 10px;border-radius:5px;
   border:none;background:transparent;
-  font-family:var(--font-ui);
-  font-size:11.5px;
-  font-weight:500;
-  color:var(--text-2);
-  cursor:pointer;
+  font-family:var(--font-ui);font-size:11.5px;font-weight:500;
+  color:var(--text-2);cursor:pointer;
   display:flex;align-items:center;gap:5px;
-  transition:all var(--transition);
-  white-space:nowrap;
-  letter-spacing:0.01em;
+  transition:all var(--transition);white-space:nowrap;letter-spacing:0.01em;
 }
 .tool-btn:hover{background:var(--tab-hover);color:var(--text)}
 .tool-btn:active{opacity:0.7}
 .tool-btn svg{width:12px;height:12px;opacity:0.8}
-.tool-btn.primary-tool{
-  background:var(--accent);
-  color:#fff;
-  padding:0 12px;
-}
+.tool-btn.on{background:var(--accent-dim);color:var(--accent)}
+.tool-btn.primary-tool{background:var(--accent);color:#fff;padding:0 12px}
 .tool-btn.primary-tool:hover{opacity:0.88}
 .tool-btn.primary-tool svg{opacity:1}
 
 .toolbar-right{margin-left:auto;display:flex;align-items:center;gap:4px}
 
-.status-bar{
-  height:24px;
-  background:var(--surface2);
-  border-top:1px solid var(--border-2);
-  display:flex;
-  align-items:center;
-  padding:0 16px;
-  gap:16px;
-  flex-shrink:0;
-}
-.status-item{
-  font-size:11px;
-  color:var(--text-3);
-  font-family:var(--font-mono);
-  letter-spacing:0.02em;
-}
-.status-item.right{margin-left:auto}
-
-/* Editor */
+/* ── Editor ─────────────────────────────────────────── */
 .editor-wrap{
-  flex:1;
-  overflow:hidden;
-  position:relative;
-}
-#editor{
-  width:100%;height:100%;
-  padding:28px 32px;
-  border:none;
-  background:var(--editor-bg);
-  color:var(--text);
+  flex:1;overflow:hidden;position:relative;
+  display:flex;background:var(--editor-bg);
   font-family:var(--font-mono);
-  font-size:14px;
-  line-height:1.75;
-  font-weight:400;
-  resize:none;
-  outline:none;
+  font-size:var(--editor-fs);
+  line-height:var(--editor-lh);
+  tab-size:4;-moz-tab-size:4;
+}
+
+.gutter{
+  flex-shrink:0;
+  width:var(--gutter-w,52px);
+  padding:var(--editor-py) 10px var(--editor-py) 0;
+  overflow:hidden;
+  text-align:right;
+  color:var(--gutter-fg);
+  background:var(--editor-bg);
+  user-select:none;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:0;
+  position:relative;
+  z-index:2;
+}
+.gutter.hidden{display:none}
+.gl{height:var(--editor-lh);font-size:calc(var(--editor-fs) - 0.5px)}
+.gl.active{color:var(--gutter-active);font-weight:500}
+
+.code-area{flex:1;position:relative;min-width:0;overflow:hidden}
+
+.current-line{
+  position:absolute;left:0;right:0;top:0;
+  height:var(--editor-lh);
+  background:var(--line-hl);
+  border-top:1px solid var(--line-hl-border);
+  border-bottom:1px solid var(--line-hl-border);
+  pointer-events:none;z-index:0;opacity:0;
+}
+.current-line.show{opacity:1}
+
+.highlight{
+  position:absolute;inset:0;
+  overflow:hidden;
+  padding:var(--editor-py) var(--editor-px);
+  color:var(--editor-fg);
+  pointer-events:none;
+  z-index:1;
+  letter-spacing:0.01em;
+  white-space:pre;
+  word-break:normal;
+  overflow-wrap:normal;
+}
+.cl{min-height:var(--editor-lh)}
+.cl.active-line{}
+
+#editor{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  padding:var(--editor-py) var(--editor-px);
+  border:none;background:transparent;
+  color:transparent;
+  font-family:inherit;font-size:inherit;line-height:inherit;
+  font-weight:400;resize:none;outline:none;
   -webkit-appearance:none;
   letter-spacing:0.01em;
   caret-color:var(--accent);
+  overflow:auto;
+  white-space:pre;
+  word-break:normal;
+  overflow-wrap:normal;
+  z-index:2;
+  tab-size:4;-moz-tab-size:4;
 }
 #editor::placeholder{color:var(--text-3);font-style:italic}
-#editor::selection{background:var(--accent-glow)}
+#editor::selection{background:var(--editor-sel)}
+
+/* word wrap on */
+.editor-wrap.wrap .highlight,.editor-wrap.wrap #editor{
+  white-space:pre-wrap;word-break:break-word;overflow-wrap:break-word;
+}
+.editor-wrap.wrap #editor{overflow-x:hidden}
+
+/* plain mode for very large files */
+.editor-wrap.plain .highlight{color:var(--editor-fg)}
+
+/* token colours */
+.t-comment{color:var(--t-comment);font-style:italic}
+.t-string,.t-template{color:var(--t-string)}
+.t-keyword{color:var(--t-keyword)}
+.t-ctrl{color:var(--t-ctrl)}
+.t-number{color:var(--t-number)}
+.t-func{color:var(--t-func)}
+.t-var{color:var(--t-var)}
+.t-type{color:var(--t-type)}
+.t-builtin{color:var(--t-type)}
+.t-constant{color:var(--t-constant)}
+.t-op{color:var(--t-op)}
+.t-punct{color:var(--t-punct)}
+.t-tag{color:var(--t-tag)}
+.t-attr{color:var(--t-attr)}
+.t-selector{color:var(--t-selector)}
+.t-property{color:var(--t-property)}
+.t-value{color:var(--t-value)}
+.t-regexp{color:var(--t-regexp)}
+.t-meta{color:var(--t-meta)}
+.t-heading{color:var(--t-heading);font-weight:600}
+.t-link{color:var(--t-link);text-decoration:underline}
+.t-strong{font-weight:700}
+.t-em{font-style:italic}
+.t-text{color:var(--editor-fg)}
+.t-invalid{color:var(--danger);text-decoration:underline wavy var(--danger)}
+
+/* ── Status bar ─────────────────────────────────────── */
+.status-bar{
+  height:26px;background:var(--surface2);
+  border-top:1px solid var(--border-2);
+  display:flex;align-items:center;
+  padding:0 8px 0 16px;gap:4px;flex-shrink:0;
+  overflow-x:auto;
+}
+.status-bar::-webkit-scrollbar{display:none}
+.status-item{
+  font-size:11px;color:var(--text-3);
+  font-family:var(--font-mono);letter-spacing:0.02em;
+  padding:0 7px;height:20px;
+  display:flex;align-items:center;border-radius:4px;
+  white-space:nowrap;
+}
+.status-item.btn{cursor:pointer;transition:background var(--transition),color var(--transition)}
+.status-item.btn:hover{background:var(--tab-hover);color:var(--text-2)}
+.status-item.lang{color:var(--text-2)}
+.status-item.right{margin-left:auto}
 
 .drawer-overlay{
-  display:none;
-  position:fixed;inset:0;
-  background:var(--overlay);
-  z-index:100;
-  opacity:0;
+  display:none;position:fixed;inset:0;
+  background:var(--overlay);z-index:100;opacity:0;
   transition:opacity 0.22s ease;
-  backdrop-filter:blur(2px);
-  -webkit-backdrop-filter:blur(2px);
+  backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
 }
 .drawer-overlay.show{display:block}
 .drawer-overlay.visible{opacity:1}
 .drawer-overlay.popover-mode{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
 
 .drawer{
-  position:fixed;
-  top:0;right:0;
-  height:100%;
-  width:300px;
-  max-width:85vw;
-  background:var(--surface);
-  z-index:101;
+  position:fixed;top:0;right:0;height:100%;
+  width:300px;max-width:85vw;
+  background:var(--surface);z-index:101;
   transform:translateX(100%);
   transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
   display:flex;flex-direction:column;
-  border-left:1px solid var(--border);
-  box-shadow:var(--shadow-lg);
+  border-left:1px solid var(--border);box-shadow:var(--shadow-lg);
 }
 .drawer.open{transform:translateX(0)}
 
-/* Popover mode (desktop options panel) */
 .drawer.popover{
-  top:auto;right:auto;
-  height:auto;
-  max-height:min(560px,80vh);
-  width:320px;
-  max-width:320px;
-  border:1px solid var(--border);
-  border-radius:var(--radius-lg);
-  transform:scale(0.96) translateY(4px);
-  opacity:0;
+  top:auto;right:auto;height:auto;
+  max-height:min(620px,80vh);width:320px;max-width:320px;
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  transform:scale(0.96) translateY(4px);opacity:0;
   transform-origin:bottom left;
   transition:transform 0.16s cubic-bezier(0.4,0,0.2,1),opacity 0.14s ease;
   box-shadow:var(--shadow-lg);
@@ -504,233 +593,161 @@ main{
 .drawer.popover .drawer-header{border-radius:var(--radius-lg) var(--radius-lg) 0 0}
 
 .mobile-tabs{
-  position:fixed;
-  top:0;left:0;
-  height:100%;
-  width:260px;
-  max-width:80vw;
-  background:var(--surface);
-  z-index:101;
+  position:fixed;top:0;left:0;height:100%;
+  width:260px;max-width:80vw;
+  background:var(--surface);z-index:101;
   transform:translateX(-100%);
   transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
   display:flex;flex-direction:column;
-  border-right:1px solid var(--border);
-  box-shadow:var(--shadow-lg);
+  border-right:1px solid var(--border);box-shadow:var(--shadow-lg);
 }
 .mobile-tabs.open{transform:translateX(0)}
 
 .mobile-tabs-header{
-  height:52px;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 12px;
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
+  height:52px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.mobile-tabs-title{
-  font-size:13px;font-weight:600;
-  color:var(--text);letter-spacing:-0.01em;
-}
+.mobile-tabs-title{font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.01em}
 
 .drawer-header{
-  height:52px;
-  display:flex;align-items:center;
-  padding:0 16px;
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-  gap:12px;
+  height:52px;display:flex;align-items:center;
+  padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;gap:12px;
 }
-.drawer-title{
-  flex:1;
-  font-size:13px;font-weight:600;
-  color:var(--text);letter-spacing:-0.01em;
-}
+.drawer-title{flex:1;font-size:13px;font-weight:600;color:var(--text);letter-spacing:-0.01em}
 
 .drawer-body{flex:1;overflow-y:auto;padding:16px}
 
 .drawer-section{margin-bottom:24px}
 .drawer-section:last-child{margin-bottom:4px}
 .drawer-section-label{
-  font-size:10.5px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:0.08em;
-  color:var(--text-3);
-  margin-bottom:10px;
+  font-size:11px;font-weight:600;
+  letter-spacing:0.02em;color:var(--text-3);margin-bottom:10px;
 }
 
 .field-group{display:flex;flex-direction:column;gap:8px}
-
-.field{
-  display:flex;flex-direction:column;gap:5px;
-}
-.field-label{
-  font-size:11px;color:var(--text-3);
-  font-weight:500;letter-spacing:0.03em;
-}
+.field{display:flex;flex-direction:column;gap:5px}
+.field-label{font-size:11px;color:var(--text-3);font-weight:500;letter-spacing:0.03em}
 .field input,.field select{
-  height:36px;
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  padding:0 10px;
-  font-family:var(--font-ui);
-  font-size:13px;
-  color:var(--text);
-  outline:none;
+  height:36px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:0 10px;font-family:var(--font-ui);font-size:13px;
+  color:var(--text);outline:none;
   transition:border-color var(--transition),box-shadow var(--transition);
-  width:100%;
-  -webkit-appearance:none;
-  appearance:none;
+  width:100%;-webkit-appearance:none;appearance:none;
 }
-.field input:focus,.field select:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px var(--accent-glow);
-}
+.field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
 .field select{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%238a8a80' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 8px center;
-  background-size:16px;
-  padding-right:30px;
-  cursor:pointer;
+  background-repeat:no-repeat;background-position:right 8px center;background-size:16px;
+  padding-right:30px;cursor:pointer;
 }
 
 .row{display:flex;gap:8px}
 .row .field{flex:1}
 
+.seg{
+  display:flex;background:var(--surface2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:2px;gap:2px;
+}
+.seg button{
+  flex:1;height:30px;border:none;background:transparent;
+  border-radius:4px;font-family:var(--font-ui);font-size:12px;font-weight:500;
+  color:var(--text-2);cursor:pointer;transition:all var(--transition);
+}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
+
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  height:34px;font-size:12.5px;color:var(--text-2);
+}
+.switch{
+  width:38px;height:21px;border-radius:99px;
+  background:var(--border);border:none;cursor:pointer;
+  position:relative;transition:background var(--transition);flex-shrink:0;
+}
+.switch::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:17px;height:17px;border-radius:50%;
+  background:var(--surface);box-shadow:var(--shadow-sm);
+  transition:transform var(--transition);
+}
+.switch.on{background:var(--accent)}
+.switch.on::after{transform:translateX(17px)}
+
 .drawer-btn{
   display:flex;align-items:center;justify-content:center;gap:8px;
-  height:38px;
-  border-radius:var(--radius-sm);
-  border:1px solid var(--border);
-  background:var(--surface2);
-  font-family:var(--font-ui);
-  font-size:13px;
-  font-weight:500;
-  color:var(--text);
-  cursor:pointer;
-  width:100%;
-  transition:all var(--transition);
-  margin-bottom:8px;
-  letter-spacing:0.01em;
+  height:38px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--surface2);
+  font-family:var(--font-ui);font-size:13px;font-weight:500;
+  color:var(--text);cursor:pointer;width:100%;
+  transition:all var(--transition);margin-bottom:8px;letter-spacing:0.01em;
 }
 .drawer-btn:hover{background:var(--tab-hover);border-color:var(--text-3)}
 .drawer-btn:active{opacity:0.7}
 .drawer-btn svg{width:14px;height:14px;opacity:0.7}
-.drawer-btn.cta{
-  background:var(--accent);
-  color:#fff;
-  border-color:transparent;
-}
+.drawer-btn.cta{background:var(--accent);color:#fff;border-color:transparent}
 .drawer-btn.cta:hover{opacity:0.88}
 .drawer-btn.cta svg{opacity:1}
 
-.shortcuts-grid{
-  display:flex;flex-direction:column;gap:6px;
-}
-.shortcut-row{
-  display:flex;align-items:center;justify-content:space-between;
-}
+.shortcuts-grid{display:flex;flex-direction:column;gap:6px}
+.shortcut-row{display:flex;align-items:center;justify-content:space-between}
 .shortcut-label{font-size:12px;color:var(--text-2)}
 .shortcut-keys{display:flex;gap:3px;align-items:center}
 kbd{
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:4px;
-  padding:1px 6px;
-  font-family:var(--font-ui);
-  font-size:10.5px;
-  font-weight:600;
-  color:var(--text-2);
-  display:inline-block;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:4px;padding:1px 6px;
+  font-family:var(--font-ui);font-size:10.5px;font-weight:600;
+  color:var(--text-2);display:inline-block;
 }
 
 .toast-container{
-  position:fixed;
-  top:16px;right:16px;
-  z-index:9999;
-  display:flex;flex-direction:column;gap:8px;
-  pointer-events:none;
+  position:fixed;top:16px;right:16px;z-index:9999;
+  display:flex;flex-direction:column;gap:8px;pointer-events:none;
 }
 .toast{
   display:flex;align-items:center;gap:10px;
-  padding:10px 16px;
-  background:var(--text);
-  color:var(--bg);
-  border-radius:var(--radius-md);
-  font-size:13px;
-  font-weight:500;
+  padding:10px 16px;background:var(--text);color:var(--bg);
+  border-radius:var(--radius-md);font-size:13px;font-weight:500;
   box-shadow:var(--shadow-lg);
-  transform:translateX(120%);
-  opacity:0;
+  transform:translateX(120%);opacity:0;
   transition:transform 0.28s cubic-bezier(0.4,0,0.2,1),opacity 0.28s ease;
-  pointer-events:none;
-  max-width:280px;
-  letter-spacing:0.01em;
+  pointer-events:none;max-width:280px;letter-spacing:0.01em;
 }
 .toast.show{transform:translateX(0);opacity:1}
 .toast::before{
-  content:'';
-  width:6px;height:6px;
-  border-radius:50%;
-  flex-shrink:0;
-  background:currentColor;
-  opacity:0.6;
+  content:'';width:6px;height:6px;border-radius:50%;
+  flex-shrink:0;background:currentColor;opacity:0.6;
 }
-.toast.success::before{background:var(--success);color:var(--success);opacity:1}
+.toast.success::before{background:var(--success);opacity:1}
 .toast.danger::before{background:var(--danger);opacity:1}
 .toast.warning::before{background:var(--warning);opacity:1}
 
 .save-indicator{
-  position:fixed;
-  bottom:32px;right:16px;
-  font-size:11px;
-  font-weight:500;
-  color:var(--success);
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:5px 10px;
-  border-radius:20px;
-  box-shadow:var(--shadow-sm);
-  z-index:200;
-  opacity:0;
-  transform:translateY(8px);
-  pointer-events:none;
+  position:fixed;bottom:34px;right:16px;
+  font-size:11px;font-weight:500;color:var(--success);
+  background:var(--surface);border:1px solid var(--border);
+  padding:5px 10px;border-radius:20px;box-shadow:var(--shadow-sm);
+  z-index:200;opacity:0;transform:translateY(8px);pointer-events:none;
   transition:opacity 0.2s ease,transform 0.2s ease;
   display:flex;align-items:center;gap:5px;
 }
 .save-indicator.show{opacity:1;transform:translateY(0)}
-.save-indicator::before{
-  content:'';width:6px;height:6px;
-  border-radius:50%;background:var(--success);
-}
+.save-indicator::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--success)}
 
-/* Context menu */
 .context-menu{
-  position:fixed;
-  z-index:300;
-  min-width:180px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius-md);
-  box-shadow:var(--shadow-lg);
-  padding:5px;
-  opacity:0;
-  transform:scale(0.96);
-  transform-origin:top left;
-  transition:opacity 0.12s ease,transform 0.12s ease;
-  pointer-events:none;
+  position:fixed;z-index:300;min-width:180px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-md);box-shadow:var(--shadow-lg);padding:5px;
+  opacity:0;transform:scale(0.96);transform-origin:top left;
+  transition:opacity 0.12s ease,transform 0.12s ease;pointer-events:none;
 }
 .context-menu.show{opacity:1;transform:scale(1);pointer-events:auto}
 .context-menu-item{
   display:flex;align-items:center;gap:9px;
-  height:32px;
-  padding:0 9px;
-  border-radius:6px;
-  font-size:12.5px;
-  color:var(--text);
-  cursor:pointer;
-  white-space:nowrap;
+  height:32px;padding:0 9px;border-radius:6px;
+  font-size:12.5px;color:var(--text);cursor:pointer;white-space:nowrap;
   transition:background var(--transition);
 }
 .context-menu-item:hover{background:var(--tab-hover)}
@@ -738,10 +755,11 @@ kbd{
 .context-menu-item svg{width:13px;height:13px;opacity:0.7;flex-shrink:0}
 .context-menu-sep{height:1px;background:var(--border);margin:5px 3px}
 
-*::-webkit-scrollbar{width:5px;height:5px}
+*::-webkit-scrollbar{width:11px;height:11px}
 *::-webkit-scrollbar-track{background:transparent}
-*::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:99px}
-*::-webkit-scrollbar-thumb:hover{background:var(--text-3)}
+*::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+*::-webkit-scrollbar-thumb:hover{background:var(--text-3);background-clip:content-box;border:3px solid transparent}
+.tab-list::-webkit-scrollbar,.drawer-body::-webkit-scrollbar{width:5px}
 
 @media (max-width:768px){
   .sidebar{display:none}
@@ -752,35 +770,29 @@ kbd{
   .tool-btn{padding:0 8px;min-width:32px;justify-content:center}
   .tool-btn.primary-tool span{display:inline}
   .tool-btn.primary-tool{padding:0 10px}
-  #editor{padding:16px;font-size:14px}
-  .status-bar{padding:0 10px}
+  .editor-wrap{--editor-px:12px;--editor-py:10px}
+  .gutter{width:var(--gutter-w,38px);padding-right:7px}
+  .status-bar{padding:0 6px 0 10px;gap:0}
+  .status-item{padding:0 6px}
+  .status-item.opt{display:none}
   .toast-container{top:60px;right:8px;left:8px}
   .toast{max-width:100%}
-  .save-indicator{bottom:28px;right:10px}
+  .save-indicator{bottom:30px;right:10px}
   .drawer{width:280px}
   .toolbar-sep:not(.keep){display:none}
 }
 
-@media (min-width:769px){
-  .mobile-tabs{display:none!important}
-}
+@media (min-width:769px){.mobile-tabs{display:none!important}}
 
-@keyframes slideIn{
-  from{opacity:0;transform:translateY(-6px)}
-  to{opacity:1;transform:translateY(0)}
-}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .tab-item{animation:slideIn 0.18s ease}
 
-@media (prefers-reduced-motion:reduce){
-  *{animation:none!important;transition:none!important}
-}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 
-<!-- Desktop layout -->
 <div class="app">
-  <!-- Sidebar -->
   <aside class="sidebar" id="desktopSidebar">
     <div class="sidebar-resizer" id="sidebarResizer"></div>
     <div class="sidebar-logo">
@@ -807,9 +819,7 @@ kbd{
     </div>
   </aside>
 
-  <!-- Main content -->
   <main id="mainContent">
-    <!-- Mobile top bar -->
     <div class="top-bar">
       <button class="icon-btn" onclick="toggleMobileTabs()" title="タブ" aria-label="タブ一覧">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="16" height="3" rx="1"/><rect x="2" y="9" width="12" height="3" rx="1"/><rect x="2" y="14" width="14" height="3" rx="1"/></svg>
@@ -820,7 +830,6 @@ kbd{
       </button>
     </div>
 
-    <!-- Toolbar -->
     <div class="toolbar">
       <button class="tool-btn" onclick="FileOps.preview()" title="ブラウザで実行">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="6,4 17,10 6,16" fill="currentColor" stroke="none"/></svg>
@@ -831,6 +840,15 @@ kbd{
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h14v10H3z"/><path d="M3 7l2-4h6l2 4"/></svg>
         <span>開く</span>
       </button>
+      <div class="toolbar-sep"></div>
+      <button class="tool-btn" id="btnFormat" onclick="Editor.format()" title="インデント整形">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="5" x2="17" y2="5"/><line x1="7" y1="10" x2="17" y2="10"/><line x1="7" y1="15" x2="13" y2="15"/></svg>
+        <span>整形</span>
+      </button>
+      <button class="tool-btn" id="btnWrap" onclick="Prefs.toggleWrap()" title="折り返し (Alt+Z)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h14M3 10h10a3 3 0 010 6h-2"/><path d="M13 13l-2 3 2 3" transform="translate(0,-3)"/></svg>
+        <span>折り返し</span>
+      </button>
       <div class="toolbar-right">
         <button class="tool-btn primary-tool" onclick="FileOps.download()" title="保存">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14v3h12v-3M10 3v10M6 9l4 4 4-4" stroke="white"/></svg>
@@ -839,21 +857,26 @@ kbd{
       </div>
     </div>
 
-    <!-- Editor -->
-    <div class="editor-wrap">
-      <textarea id="editor" placeholder="ここにコードやテキストを入力..." spellcheck="false" aria-label="エディタ"></textarea>
+    <div class="editor-wrap" id="editorWrap">
+      <div class="gutter" id="gutter" aria-hidden="true"></div>
+      <div class="code-area" id="codeArea">
+        <div class="current-line" id="currentLine"></div>
+        <div class="highlight" id="highlight" aria-hidden="true"></div>
+        <textarea id="editor" placeholder="ここにコードやテキストを入力..." spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="エディタ"></textarea>
+      </div>
     </div>
 
-    <!-- Status bar -->
     <div class="status-bar">
-      <span class="status-item" id="statusChars">0 chars</span>
-      <span class="status-item" id="statusLines">1 line</span>
-      <span class="status-item right" id="statusExt">.html</span>
+      <span class="status-item" id="statusChars">0 文字</span>
+      <span class="status-item opt" id="statusLines">1 行</span>
+      <span class="status-item right btn" id="statusCursor" title="カーソル位置">Ln 1, Col 1</span>
+      <span class="status-item btn opt" id="statusIndent" title="インデント幅を切り替え">スペース: 4</span>
+      <span class="status-item btn opt" id="statusWrap" title="折り返し (Alt+Z)">折り返し: オフ</span>
+      <span class="status-item btn lang" id="statusLang" title="言語（拡張子で決まります）">HTML</span>
     </div>
   </main>
 </div>
 
-<!-- Mobile tabs panel -->
 <div class="mobile-tabs" id="mobileTabs">
   <div class="mobile-tabs-header">
     <span class="mobile-tabs-title">タブ</span>
@@ -870,10 +893,8 @@ kbd{
   </div>
 </div>
 
-<!-- Overlay -->
 <div class="drawer-overlay" id="overlay" onclick="closeAll()"></div>
 
-<!-- Drawer -->
 <div class="drawer" id="drawer">
   <div class="drawer-header">
     <span class="drawer-title">オプション</span>
@@ -882,7 +903,6 @@ kbd{
     </button>
   </div>
   <div class="drawer-body">
-    <!-- File settings -->
     <div class="drawer-section">
       <div class="drawer-section-label">ファイル設定</div>
       <div class="field-group">
@@ -909,7 +929,31 @@ kbd{
       </div>
     </div>
 
-    <!-- Actions -->
+    <div class="drawer-section">
+      <div class="drawer-section-label">エディタ</div>
+      <div class="field" style="margin-bottom:12px">
+        <label class="field-label">配色テーマ</label>
+        <div class="seg" id="themeSeg">
+          <button data-theme="auto">自動</button>
+          <button data-theme="light">ライト</button>
+          <button data-theme="dark">ダーク</button>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:6px">
+        <label class="field-label">文字サイズ</label>
+        <div class="seg" id="fontSeg">
+          <button data-fs="12">小</button>
+          <button data-fs="13.5">標準</button>
+          <button data-fs="15">大</button>
+          <button data-fs="17">特大</button>
+        </div>
+      </div>
+      <div class="toggle-row"><span>シンタックスハイライト</span><button class="switch" id="swHighlight" aria-label="シンタックスハイライト"></button></div>
+      <div class="toggle-row"><span>行番号</span><button class="switch" id="swGutter" aria-label="行番号"></button></div>
+      <div class="toggle-row"><span>行の折り返し</span><button class="switch" id="swWrap" aria-label="行の折り返し"></button></div>
+      <div class="toggle-row"><span>括弧・引用符の自動補完</span><button class="switch" id="swPairs" aria-label="自動補完"></button></div>
+    </div>
+
     <div class="drawer-section">
       <div class="drawer-section-label">アクション</div>
       <button class="drawer-btn cta" onclick="FileOps.download();closeDrawer()">
@@ -926,7 +970,6 @@ kbd{
       </button>
     </div>
 
-    <!-- Import/Export -->
     <div class="drawer-section">
       <div class="drawer-section-label">インポート / エクスポート</div>
       <button class="drawer-btn" onclick="Data.exportAll()">
@@ -939,7 +982,6 @@ kbd{
       </button>
     </div>
 
-    <!-- Shortcuts -->
     <div class="drawer-section">
       <div class="drawer-section-label">ショートカット</div>
       <div class="shortcuts-grid">
@@ -947,30 +989,37 @@ kbd{
         <div class="shortcut-row"><span class="shortcut-label">新規タブ</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>T</kbd></div></div>
         <div class="shortcut-row"><span class="shortcut-label">タブを閉じる</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>W</kbd></div></div>
         <div class="shortcut-row"><span class="shortcut-label">次のタブ</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>Tab</kbd></div></div>
+        <div class="shortcut-row"><span class="shortcut-label">行コメント</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>/</kbd></div></div>
+        <div class="shortcut-row"><span class="shortcut-label">行を複製</span><div class="shortcut-keys"><kbd>⇧</kbd><kbd>⌥</kbd><kbd>↓</kbd></div></div>
+        <div class="shortcut-row"><span class="shortcut-label">行を移動</span><div class="shortcut-keys"><kbd>⌥</kbd><kbd>↑↓</kbd></div></div>
+        <div class="shortcut-row"><span class="shortcut-label">折り返し</span><div class="shortcut-keys"><kbd>Alt</kbd><kbd>Z</kbd></div></div>
+        <div class="shortcut-row"><span class="shortcut-label">文字サイズ</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>+/-</kbd></div></div>
         <div class="shortcut-row"><span class="shortcut-label">オプション</span><div class="shortcut-keys"><kbd>⌘</kbd><kbd>,</kbd></div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Hidden inputs -->
-<input id="fileInput" type="file" style="display:none" accept=".html,.txt,.js,.css,.json,.md,.xml,.svg,.py">
+<input id="fileInput" type="file" style="display:none" accept=".html,.htm,.txt,.js,.mjs,.css,.json,.md,.xml,.svg,.py">
 <input id="importInput" type="file" style="display:none" accept=".json">
 
-<!-- Toast container -->
 <div class="toast-container" id="toastContainer"></div>
-
-<!-- Save indicator -->
 <div class="save-indicator" id="saveIndicator">自動保存済み</div>
-
-<!-- Context menu -->
 <div class="context-menu" id="contextMenu"></div>
 
 <script>
 'use strict';
 
+/* ══════════════════════════════════════════════════════════
+   Refs & state
+   ══════════════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const editor       = $('editor');
+const wrapEl       = $('editorWrap');
+const codeArea     = $('codeArea');
+const highlight    = $('highlight');
+const gutter       = $('gutter');
+const currentLine  = $('currentLine');
 const desktopList  = $('desktopTabList');
 const mobileList   = $('mobileTabList');
 const drawerName   = $('drawerFilename');
@@ -978,7 +1027,10 @@ const drawerExt    = $('drawerExt');
 const mobileTitle  = $('mobileTabTitle');
 const statusChars  = $('statusChars');
 const statusLines  = $('statusLines');
-const statusExt    = $('statusExt');
+const statusCursor = $('statusCursor');
+const statusIndent = $('statusIndent');
+const statusWrap   = $('statusWrap');
+const statusLang   = $('statusLang');
 const overlay      = $('overlay');
 const drawer       = $('drawer');
 const mobileTabs   = $('mobileTabs');
@@ -989,26 +1041,1101 @@ const contextMenu  = $('contextMenu');
 
 const STORAGE_KEY = 'notes_v3';
 const SIDEBAR_KEY = 'notes_sidebar_v1';
+const PREFS_KEY   = 'notes_editor_v1';
+const BIG_LIMIT   = 220000;   // これ以上はハイライトを止めて素のテキスト表示
+
 let tabs = [];
 let current = -1;
 let saveTimer = null;
-let isMobile = () => window.innerWidth <= 768;
+const isMobile = () => window.innerWidth <= 768;
 let dragFromIndex = null;
 let renameIndex = null;
+let lang = 'html';
 
+const prefs = {
+  theme: 'auto',
+  fontSize: 13.5,
+  highlight: true,
+  gutter: true,
+  wrap: false,
+  pairs: true,
+  indent: 4
+};
+
+/* ══════════════════════════════════════════════════════════
+   Language detection
+   ══════════════════════════════════════════════════════════ */
+const LANG_LABEL = {
+  html:'HTML', xml:'XML', css:'CSS', js:'JavaScript',
+  json:'JSON', md:'Markdown', py:'Python', text:'プレーンテキスト'
+};
+
+function langFromExt(ext) {
+  switch ((ext || '').toLowerCase()) {
+    case '.html': case '.htm': return 'html';
+    case '.xml': case '.svg':  return 'xml';
+    case '.css':               return 'css';
+    case '.js': case '.mjs':   return 'js';
+    case '.json':              return 'json';
+    case '.md':                return 'md';
+    case '.py':                return 'py';
+    default:                   return 'text';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Highlighter — トークナイザ
+   各トークナイザは [type, text] の配列を push 。
+   text をすべて連結すると元のソースに戻る（欠落なし）。
+   ══════════════════════════════════════════════════════════ */
+const Highlighter = (() => {
+
+  const push = (out, type, text) => { if (text) out.push([type, text]); };
+
+  /* ---------- JavaScript ---------- */
+  const JS_CTRL = new Set(['if','else','for','while','do','switch','case','default','break','continue','return','throw','try','catch','finally','await','yield']);
+  const JS_KW = new Set(['const','let','var','function','class','extends','super','this','new','delete','typeof','instanceof','in','of','void','async','static','get','set','import','export','from','as','with','debugger']);
+  const JS_CONST = new Set(['true','false','null','undefined','NaN','Infinity','arguments']);
+  const JS_BUILTIN = new Set(['console','document','window','Math','JSON','Object','Array','String','Number','Boolean','Symbol','Promise','Date','Map','Set','WeakMap','WeakSet','RegExp','Error','TypeError','Proxy','Reflect','localStorage','sessionStorage','navigator','location','history','globalThis','performance','requestAnimationFrame','cancelAnimationFrame','setTimeout','setInterval','clearTimeout','clearInterval','fetch','alert','confirm','prompt','parseInt','parseFloat','isNaN','encodeURIComponent','decodeURIComponent','structuredClone']);
+
+  const isWS = c => c === ' ' || c === '\t' || c === '\n' || c === '\r' || c === '\f' || c === '\v';
+  const isDigit = c => c >= '0' && c <= '9';
+  const isIdStart = c => /[A-Za-z_$\u00c0-\uffff]/.test(c);
+  const isIdPart  = c => /[A-Za-z0-9_$\u00c0-\uffff]/.test(c);
+
+  function readString(code, i) {
+    const q = code[i];
+    let j = i + 1;
+    while (j < code.length) {
+      const c = code[j];
+      if (c === '\\') { j += 2; continue; }
+      if (c === q) { j++; break; }
+      if (c === '\n') break;
+      j++;
+    }
+    return j;
+  }
+
+  function canBeRegex(prev) {
+    if (!prev) return true;
+    const [t, v] = prev;
+    if (t === 'op') return true;
+    if (t === 'punct') return !(v === ')' || v === ']' || v === '}');
+    if (t === 'keyword' || t === 'ctrl') return v !== 'this' && v !== 'super';
+    return false;
+  }
+
+  function tokJS(code, out) {
+    let i = 0;
+    const n = code.length;
+    let prev = null;
+    const add = (t, v) => { if (!v) return; out.push([t, v]); if (t !== null) prev = [t, v]; };
+
+    while (i < n) {
+      const c = code[i];
+
+      if (isWS(c)) { let s = i; while (i < n && isWS(code[i])) i++; out.push([null, code.slice(s, i)]); continue; }
+
+      if (c === '/' && code[i+1] === '/') {
+        let j = code.indexOf('\n', i); if (j < 0) j = n;
+        add('comment', code.slice(i, j)); i = j; continue;
+      }
+      if (c === '/' && code[i+1] === '*') {
+        let j = code.indexOf('*/', i + 2); j = j < 0 ? n : j + 2;
+        add('comment', code.slice(i, j)); i = j; continue;
+      }
+      if (c === '"' || c === "'") {
+        const j = readString(code, i);
+        add('string', code.slice(i, j)); i = j; continue;
+      }
+      if (c === '`') { i = tokTemplate(code, i, out, add); continue; }
+
+      if (c === '/' && canBeRegex(prev)) {
+        const j = readRegex(code, i);
+        if (j > 0) { add('regexp', code.slice(i, j)); i = j; continue; }
+      }
+
+      if (isDigit(c) || (c === '.' && isDigit(code[i+1]))) {
+        const re = /0[xXbBoO][0-9a-fA-F_]+n?|(?:\d[\d_]*)?\.?\d[\d_]*(?:[eE][+-]?\d+)?n?/y;
+        re.lastIndex = i;
+        const m = re.exec(code);
+        if (m && m[0]) { add('number', m[0]); i += m[0].length; continue; }
+      }
+
+      if (isIdStart(c)) {
+        let s = i; while (i < n && isIdPart(code[i])) i++;
+        const word = code.slice(s, i);
+        let k = i; while (k < n && (code[k] === ' ' || code[k] === '\t')) k++;
+        const nextCh = code[k];
+        const afterDot = prev && prev[0] === 'punct' && prev[1] === '.';
+
+        let type;
+        if (afterDot)                       type = nextCh === '(' ? 'func' : 'property';
+        else if (JS_CTRL.has(word))         type = 'ctrl';
+        else if (JS_KW.has(word))           type = 'keyword';
+        else if (JS_CONST.has(word))        type = 'constant';
+        else if (JS_BUILTIN.has(word))      type = 'builtin';
+        else if (nextCh === '(')            type = 'func';
+        else if (/^[A-Z][A-Za-z0-9_$]*$/.test(word)) type = /^[A-Z0-9_$]+$/.test(word) ? 'constant' : 'type';
+        else if (nextCh === ':' && code[k+1] !== ':') type = 'property';
+        else                                type = 'var';
+        add(type, word);
+        continue;
+      }
+
+      if ('{}()[];,.'.includes(c)) { add('punct', c); i++; continue; }
+
+      const opRe = /[+\-*/%=<>!&|^~?:]+/y; opRe.lastIndex = i;
+      const om = opRe.exec(code);
+      if (om && om[0]) { add('op', om[0]); i += om[0].length; continue; }
+
+      add(null, c); i++;
+    }
+  }
+
+  function tokTemplate(code, i, out, add) {
+    const n = code.length;
+    let s = i, j = i + 1;
+    while (j < n) {
+      const c = code[j];
+      if (c === '\\') { j += 2; continue; }
+      if (c === '`') { j++; break; }
+      if (c === '$' && code[j+1] === '{') {
+        add('template', code.slice(s, j));
+        // find matching }
+        let depth = 1, k = j + 2;
+        while (k < n && depth > 0) {
+          const cc = code[k];
+          if (cc === '{') depth++;
+          else if (cc === '}') depth--;
+          else if (cc === '"' || cc === "'") { k = readString(code, k); continue; }
+          else if (cc === '`') { let sub = k + 1; let d2 = 0; while (sub < n) { if (code[sub] === '\\') { sub += 2; continue; } if (code[sub] === '`' && d2 === 0) { sub++; break; } sub++; } k = sub; continue; }
+          k++;
+        }
+        add('punct', '${');
+        tokJS(code.slice(j + 2, k - 1), out);
+        add('punct', '}');
+        j = k; s = k;
+        continue;
+      }
+      j++;
+    }
+    add('template', code.slice(s, j));
+    return j;
+  }
+
+  function readRegex(code, i) {
+    const n = code.length;
+    let j = i + 1, inClass = false;
+    if (code[j] === '/' || code[j] === '*' || code[j] === undefined) return -1;
+    while (j < n) {
+      const c = code[j];
+      if (c === '\\') { j += 2; continue; }
+      if (c === '\n') return -1;
+      if (inClass) { if (c === ']') inClass = false; }
+      else if (c === '[') inClass = true;
+      else if (c === '/') { j++; break; }
+      j++;
+    }
+    if (j > n) return -1;
+    while (j < n && /[dgimsuyv]/.test(code[j])) j++;
+    return j;
+  }
+
+  /* ---------- CSS ---------- */
+  function tokCSS(code, out) {
+    let i = 0;
+    const n = code.length;
+    let depth = 0, inValue = false;
+
+    while (i < n) {
+      const c = code[i];
+
+      if (isWS(c)) { let s = i; while (i < n && isWS(code[i])) i++; push(out, null, code.slice(s, i)); continue; }
+
+      if (c === '/' && code[i+1] === '*') {
+        let j = code.indexOf('*/', i + 2); j = j < 0 ? n : j + 2;
+        push(out, 'comment', code.slice(i, j)); i = j; continue;
+      }
+      if (c === '"' || c === "'") { const j = readString(code, i); push(out, 'string', code.slice(i, j)); i = j; continue; }
+
+      if (c === '{') { push(out, 'punct', c); depth++; inValue = false; i++; continue; }
+      if (c === '}') { push(out, 'punct', c); depth = Math.max(0, depth - 1); inValue = false; i++; continue; }
+      if (c === ';') { push(out, 'punct', c); inValue = false; i++; continue; }
+      if (c === ':' && depth > 0 && !inValue) { push(out, 'punct', c); inValue = true; i++; continue; }
+
+      if (c === '@') {
+        const re = /@[-\w]*/y; re.lastIndex = i;
+        const m = re.exec(code);
+        if (m) { push(out, 'ctrl', m[0]); i += m[0].length; continue; }
+      }
+
+      if (c === '#') {
+        const hex = /#[0-9a-fA-F]{3,8}\b/y; hex.lastIndex = i;
+        const hm = hex.exec(code);
+        if (inValue && hm) { push(out, 'number', hm[0]); i += hm[0].length; continue; }
+        const id = /#[-\w]+/y; id.lastIndex = i;
+        const im = id.exec(code);
+        if (im) { push(out, 'selector', im[0]); i += im[0].length; continue; }
+      }
+
+      if (c === '!') {
+        const re = /![\s]*[a-z-]+/y; re.lastIndex = i;
+        const m = re.exec(code);
+        if (m) { push(out, 'ctrl', m[0]); i += m[0].length; continue; }
+      }
+
+      if (inValue) {
+        const num = /[-+]?(?:\d*\.)?\d+(?:e[-+]?\d+)?(?:%|[a-zA-Z]+)?/y; num.lastIndex = i;
+        const nm = num.exec(code);
+        if (nm && nm[0] && /\d/.test(nm[0])) { push(out, 'number', nm[0]); i += nm[0].length; continue; }
+        const idr = /[-A-Za-z_][-\w]*/y; idr.lastIndex = i;
+        const m = idr.exec(code);
+        if (m) {
+          let k = i + m[0].length;
+          push(out, code[k] === '(' ? 'func' : 'value', m[0]);
+          i = k; continue;
+        }
+      } else {
+        if (depth > 0) {
+          const prop = /[-A-Za-z_*][-\w]*(?=\s*:)/y; prop.lastIndex = i;
+          const m = prop.exec(code);
+          if (m) { push(out, 'property', m[0]); i += m[0].length; continue; }
+        }
+        const sel = /::?[-\w]+(?:\([^)]*\))?|\.[-\w]+|\[[^\]]*\]/y; sel.lastIndex = i;
+        const sm = sel.exec(code);
+        if (sm) { push(out, 'selector', sm[0]); i += sm[0].length; continue; }
+        const tag = /[-A-Za-z_][-\w]*/y; tag.lastIndex = i;
+        const tm = tag.exec(code);
+        if (tm) { push(out, 'tag', tm[0]); i += tm[0].length; continue; }
+      }
+
+      if ('()[],'.includes(c)) { push(out, 'punct', c); i++; continue; }
+      const op = /[>~+*=/|^$-]+/y; op.lastIndex = i;
+      const om = op.exec(code);
+      if (om && om[0]) { push(out, 'op', om[0]); i += om[0].length; continue; }
+
+      push(out, null, c); i++;
+    }
+  }
+
+  /* ---------- HTML / XML ---------- */
+  const VOID_TAGS = new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr']);
+
+  function tokAttrs(code, i, out) {
+    const n = code.length;
+    while (i < n) {
+      const c = code[i];
+      if (c === '>') { push(out, 'punct', '>'); return i + 1; }
+      if (c === '/' && code[i+1] === '>') { push(out, 'punct', '/>'); return i + 2; }
+      if (isWS(c)) { let s = i; while (i < n && isWS(code[i])) i++; push(out, null, code.slice(s, i)); continue; }
+      if (c === '=') { push(out, 'op', '='); i++; continue; }
+      if (c === '"' || c === "'") {
+        let j = code.indexOf(c, i + 1); j = j < 0 ? n : j + 1;
+        push(out, 'string', code.slice(i, j)); i = j; continue;
+      }
+      const name = /[^\s=>/"'<]+/y; name.lastIndex = i;
+      const m = name.exec(code);
+      if (m && m[0]) { push(out, 'attr', m[0]); i += m[0].length; continue; }
+      push(out, null, c); i++;
+    }
+    return i;
+  }
+
+  function tokHTML(code, out, isXml) {
+    let i = 0;
+    const n = code.length;
+    const reTag = /<\/?([A-Za-z][\w:.-]*)/y;
+    const reEnt = /&(?:#\d+|#x[0-9a-fA-F]+|[a-zA-Z]+);/y;
+
+    while (i < n) {
+      if (code.startsWith('<!--', i)) {
+        let j = code.indexOf('-->', i); j = j < 0 ? n : j + 3;
+        push(out, 'comment', code.slice(i, j)); i = j; continue;
+      }
+      if (code.startsWith('<![CDATA[', i)) {
+        let j = code.indexOf(']]>', i); j = j < 0 ? n : j + 3;
+        push(out, 'meta', code.slice(i, j)); i = j; continue;
+      }
+      if (code[i] === '<' && (code[i+1] === '!' || code[i+1] === '?')) {
+        let j = code.indexOf('>', i); j = j < 0 ? n : j + 1;
+        push(out, 'meta', code.slice(i, j)); i = j; continue;
+      }
+
+      reTag.lastIndex = i;
+      const m = reTag.exec(code);
+      if (m) {
+        const closing = code[i+1] === '/';
+        const name = m[1];
+        push(out, 'punct', closing ? '</' : '<');
+        push(out, 'tag', name);
+        i += m[0].length;
+        i = tokAttrs(code, i, out);
+
+        if (!closing && !isXml && /^(script|style)$/i.test(name)) {
+          const endRe = new RegExp('</\\s*' + name + '\\s*>', 'i');
+          const rest = code.slice(i);
+          const em = endRe.exec(rest);
+          const inner = em ? rest.slice(0, em.index) : rest;
+          if (inner) {
+            if (name.toLowerCase() === 'script') tokJS(inner, out);
+            else tokCSS(inner, out);
+          }
+          i += inner.length;
+        }
+        continue;
+      }
+
+      reEnt.lastIndex = i;
+      const e = reEnt.exec(code);
+      if (e) { push(out, 'constant', e[0]); i += e[0].length; continue; }
+
+      let j = i;
+      while (j < n && code[j] !== '<' && code[j] !== '&') j++;
+      if (j === i) j = i + 1;
+      push(out, 'text', code.slice(i, j));
+      i = j;
+    }
+  }
+
+  /* ---------- JSON ---------- */
+  function tokJSON(code, out) {
+    let i = 0;
+    const n = code.length;
+    while (i < n) {
+      const c = code[i];
+      if (isWS(c)) { let s = i; while (i < n && isWS(code[i])) i++; push(out, null, code.slice(s, i)); continue; }
+      if (c === '"') {
+        const j = readString(code, i);
+        let k = j; while (k < n && isWS(code[k])) k++;
+        push(out, code[k] === ':' ? 'property' : 'string', code.slice(i, j));
+        i = j; continue;
+      }
+      if (c === '-' || isDigit(c)) {
+        const re = /-?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?/y; re.lastIndex = i;
+        const m = re.exec(code);
+        if (m && m[0]) { push(out, 'number', m[0]); i += m[0].length; continue; }
+      }
+      const kw = /true|false|null/y; kw.lastIndex = i;
+      const km = kw.exec(code);
+      if (km) { push(out, 'constant', km[0]); i += km[0].length; continue; }
+      if ('{}[]:,'.includes(c)) { push(out, 'punct', c); i++; continue; }
+      push(out, 'invalid', c); i++;
+    }
+  }
+
+  /* ---------- Python ---------- */
+  const PY_CTRL = new Set(['if','elif','else','for','while','break','continue','return','try','except','finally','raise','with','yield','pass','assert','async','await','match','case']);
+  const PY_KW = new Set(['def','class','import','from','as','global','nonlocal','lambda','del','in','is','not','and','or']);
+  const PY_CONST = new Set(['True','False','None','self','cls','__name__','NotImplemented','Ellipsis']);
+  const PY_BUILTIN = new Set(['print','len','range','int','float','str','bool','list','dict','set','tuple','open','enumerate','zip','map','filter','sum','min','max','abs','round','sorted','reversed','type','isinstance','super','input','format','any','all','repr','hasattr','getattr','setattr']);
+
+  function tokPY(code, out) {
+    let i = 0;
+    const n = code.length;
+    let prevWord = null;
+
+    while (i < n) {
+      const c = code[i];
+      if (isWS(c)) { let s = i; while (i < n && isWS(code[i])) i++; push(out, null, code.slice(s, i)); continue; }
+      if (c === '#') { let j = code.indexOf('\n', i); if (j < 0) j = n; push(out, 'comment', code.slice(i, j)); i = j; continue; }
+
+      const tri = /[rbfuRBFU]{0,2}("""|''')/y; tri.lastIndex = i;
+      const tm = tri.exec(code);
+      if (tm) {
+        const q = tm[1];
+        let j = code.indexOf(q, i + tm[0].length);
+        j = j < 0 ? n : j + 3;
+        push(out, 'string', code.slice(i, j)); i = j; continue;
+      }
+      const pre = /[rbfuRBFU]{0,2}["']/y; pre.lastIndex = i;
+      const pm = pre.exec(code);
+      if (pm) {
+        const qi = i + pm[0].length - 1;
+        const j = readString(code, qi);
+        push(out, 'string', code.slice(i, j)); i = j; continue;
+      }
+      if (c === '@') {
+        const re = /@[\w.]+/y; re.lastIndex = i;
+        const m = re.exec(code);
+        if (m) { push(out, 'func', m[0]); i += m[0].length; continue; }
+      }
+      if (isDigit(c) || (c === '.' && isDigit(code[i+1]))) {
+        const re = /0[xXbBoO][0-9a-fA-F_]+|(?:\d[\d_]*)?\.?\d[\d_]*(?:[eE][+-]?\d+)?j?/y; re.lastIndex = i;
+        const m = re.exec(code);
+        if (m && m[0]) { push(out, 'number', m[0]); i += m[0].length; continue; }
+      }
+      if (isIdStart(c)) {
+        let s = i; while (i < n && isIdPart(code[i])) i++;
+        const word = code.slice(s, i);
+        let k = i; while (k < n && (code[k] === ' ' || code[k] === '\t')) k++;
+        let type;
+        if (prevWord === 'def')            type = 'func';
+        else if (prevWord === 'class')     type = 'type';
+        else if (PY_CTRL.has(word))        type = 'ctrl';
+        else if (PY_KW.has(word))          type = 'keyword';
+        else if (PY_CONST.has(word))       type = 'constant';
+        else if (PY_BUILTIN.has(word))     type = 'builtin';
+        else if (code[k] === '(')          type = 'func';
+        else if (/^[A-Z][A-Za-z0-9_]*$/.test(word)) type = 'type';
+        else                               type = 'var';
+        push(out, type, word);
+        prevWord = word;
+        continue;
+      }
+      if ('{}()[];,.:'.includes(c)) { push(out, 'punct', c); prevWord = null; i++; continue; }
+      const op = /[+\-*/%=<>!&|^~]+/y; op.lastIndex = i;
+      const om = op.exec(code);
+      if (om && om[0]) { push(out, 'op', om[0]); prevWord = null; i += om[0].length; continue; }
+      push(out, null, c); i++;
+    }
+  }
+
+  /* ---------- Markdown ---------- */
+  function tokMDInline(line, out) {
+    let i = 0;
+    const n = line.length;
+    const rules = [
+      [/`[^`\n]+`/y, 'string'],
+      [/!?\[[^\]\n]*\]\([^)\n]*\)/y, 'link'],
+      [/<https?:\/\/[^>\s]+>/y, 'link'],
+      [/\*\*[^*\n]+\*\*|__[^_\n]+__/y, 'strong'],
+      [/\*[^*\n]+\*|_[^_\n]+_/y, 'em'],
+      [/~~[^~\n]+~~/y, 'comment']
+    ];
+    let buf = '';
+    while (i < n) {
+      let hit = null;
+      for (const [re, type] of rules) {
+        re.lastIndex = i;
+        const m = re.exec(line);
+        if (m && m[0]) { hit = [type, m[0]]; break; }
+      }
+      if (hit) {
+        if (buf) { push(out, null, buf); buf = ''; }
+        push(out, hit[0], hit[1]);
+        i += hit[1].length;
+      } else { buf += line[i]; i++; }
+    }
+    if (buf) push(out, null, buf);
+  }
+
+  function tokMD(code, out) {
+    const lines = code.split('\n');
+    let fence = null, fenceLang = null, buffer = [];
+
+    const flushFence = () => {
+      if (!buffer.length) return;
+      const inner = buffer.join('\n');
+      const sub = fenceLang && LANG_LABEL[fenceLang] ? fenceLang : null;
+      if (sub && sub !== 'text') tokenizeInto(inner, sub, out);
+      else push(out, 'string', inner);
+      buffer = [];
+    };
+
+    lines.forEach((line, idx) => {
+      const nl = idx < lines.length - 1 ? '\n' : '';
+      const fm = /^\s*(```+|~~~+)\s*([\w+-]*)\s*$/.exec(line);
+      if (fm) {
+        if (fence) { flushFence(); push(out, 'meta', line + nl); fence = null; fenceLang = null; }
+        else {
+          fence = fm[1];
+          fenceLang = ({ js:'js', javascript:'js', html:'html', xml:'xml', css:'css', json:'json', py:'py', python:'py' })[fm[2].toLowerCase()] || null;
+          push(out, 'meta', line + nl);
+        }
+        return;
+      }
+      if (fence) { buffer.push(line + nl); return; }
+
+      if (/^\s*#{1,6}\s/.test(line)) { push(out, 'heading', line + nl); return; }
+      if (/^\s*>/.test(line))        { push(out, 'comment', line + nl); return; }
+      if (/^\s*([-*_])\s*(\1\s*){2,}$/.test(line)) { push(out, 'ctrl', line + nl); return; }
+      if (/^\s*\|.*\|\s*$/.test(line)) { push(out, 'value', line + nl); return; }
+
+      const lm = /^(\s*(?:[-*+]|\d+[.)])\s+)/.exec(line);
+      if (lm) { push(out, 'ctrl', lm[1]); tokMDInline(line.slice(lm[1].length), out); push(out, null, nl); return; }
+
+      tokMDInline(line, out);
+      push(out, null, nl);
+    });
+    if (fence) flushFence();
+  }
+
+  /* ---------- dispatcher ---------- */
+  function tokenizeInto(code, language, out) {
+    switch (language) {
+      case 'html': tokHTML(code, out, false); break;
+      case 'xml':  tokHTML(code, out, true);  break;
+      case 'css':  tokCSS(code, out);  break;
+      case 'js':   tokJS(code, out);   break;
+      case 'json': tokJSON(code, out); break;
+      case 'py':   tokPY(code, out);   break;
+      case 'md':   tokMD(code, out);   break;
+      default:     push(out, null, code);
+    }
+  }
+
+  function tokenize(code, language) {
+    const out = [];
+    try { tokenizeInto(code, language, out); }
+    catch (e) { out.length = 0; out.push([null, code]); }
+    return out;
+  }
+
+  const escMap = { '&':'&amp;', '<':'&lt;', '>':'&gt;' };
+  const esc = s => s.replace(/[&<>]/g, ch => escMap[ch]);
+
+  /** ソースを行ごとの HTML 文字列配列にする */
+  function renderLines(code, language) {
+    const tokens = tokenize(code, language);
+    const lines = [''];
+    for (let t = 0; t < tokens.length; t++) {
+      const type = tokens[t][0];
+      const text = tokens[t][1];
+      if (text.indexOf('\n') === -1) {
+        lines[lines.length - 1] += type ? '<span class="t-' + type + '">' + esc(text) + '</span>' : esc(text);
+        continue;
+      }
+      const parts = text.split('\n');
+      for (let p = 0; p < parts.length; p++) {
+        if (p > 0) lines.push('');
+        const seg = parts[p];
+        if (!seg) continue;
+        lines[lines.length - 1] += type ? '<span class="t-' + type + '">' + esc(seg) + '</span>' : esc(seg);
+      }
+    }
+    return lines;
+  }
+
+  /** 文字列・コメント部分を空白に潰した「コードだけ」のマスクを作る（整形用）。複数行にまたがる文字列／コメントの途中行は protectedLines に入れて整形対象外にする。 */
+  function codeMask(code, language) {
+    const tokens = tokenize(code, language);
+    const mask = new Array(code.length).fill(' ');
+    for (let i = 0; i < code.length; i++) if (code[i] === '\n') mask[i] = '\n';
+
+    const protectedLines = new Set();
+    let offset = 0, line = 0;
+    let pendingOpen = -1, pendingVoid = false;
+    const structural = (language === 'html' || language === 'xml');
+    const literal = t => t === 'string' || t === 'template' || t === 'comment' || t === 'regexp';
+
+    for (const [type, text] of tokens) {
+      const breaks = text.split('\n').length - 1;
+
+      if (literal(type) && breaks > 0) {
+        for (let k = 1; k <= breaks; k++) protectedLines.add(line + k);
+      }
+
+      if (structural) {
+        if (type === 'punct' && text === '<') { pendingOpen = offset; pendingVoid = false; }
+        else if (type === 'punct' && text === '</') { mask[offset] = '}'; pendingOpen = -1; }
+        else if (type === 'tag' && pendingOpen >= 0) { pendingVoid = VOID_TAGS.has(text.toLowerCase()); }
+        else if (type === 'punct' && text === '>') { if (pendingOpen >= 0 && !pendingVoid) mask[offset] = '{'; pendingOpen = -1; }
+        else if (type === 'punct' && text === '/>') { pendingOpen = -1; }
+        else if (type === 'punct' || type === 'op') {
+          for (let k = 0; k < text.length; k++) if ('{}[]()'.includes(text[k])) mask[offset + k] = text[k];
+        }
+      } else if (type === 'punct' || type === 'op') {
+        for (let k = 0; k < text.length; k++) if ('{}[]()'.includes(text[k])) mask[offset + k] = text[k];
+      }
+
+      offset += text.length;
+      line += breaks;
+    }
+    return { mask: mask.join(''), protectedLines };
+  }
+
+  return { tokenize, renderLines, codeMask, esc, VOID_TAGS };
+})();
+
+/* ═══════Renderer — ハイライト層、行番号、現在行══════ */
+const Render = (() => {
+  let queued = false;
+  let lineCount = 1;
+
+  function paint() {
+    const code = editor.value;
+    const big = code.length > BIG_LIMIT;
+    const plain = big || !prefs.highlight || lang === 'text';
+    wrapEl.classList.toggle('plain', plain);
+
+    const lines = plain
+      ? code.split('\n').map(Highlighter.esc)
+      : Highlighter.renderLines(code, lang);
+
+    lineCount = lines.length;
+    highlight.innerHTML = lines.map(h => '<div class="cl">' + h + '</div>').join('');
+    paintGutter(lineCount);
+    syncScroll();
+    updateCursor();
+  }
+
+  function paintGutter(count) {
+    if (!prefs.gutter) { gutter.classList.add('hidden'); return; }
+    gutter.classList.remove('hidden');
+    const digits = String(count).length;
+    gutter.style.width = 'calc(' + Math.max(2, digits) + 'ch + 22px)';
+    let html = '';
+    for (let i = 1; i <= count; i++) html += '<div class="gl">' + i + '</div>';
+    gutter.innerHTML = html;
+    alignGutter();
+  }
+
+  /** 折り返し ON のときは実際の行の高さを測って行番号に反映する */
+  function alignGutter() {
+    const gls = gutter.children;
+    if (!prefs.wrap) {
+      for (let i = 0; i < gls.length; i++) if (gls[i].style.height) gls[i].style.height = '';
+      return;
+    }
+    const cls = highlight.children;
+    const heights = [];
+    for (let i = 0; i < cls.length; i++) heights.push(cls[i].offsetHeight);
+    for (let i = 0; i < gls.length; i++) gls[i].style.height = (heights[i] || 0) + 'px';
+  }
+
+  function syncScroll() {
+    const t = editor.scrollTop, l = editor.scrollLeft;
+    highlight.scrollTop = t;
+    highlight.scrollLeft = l;
+    gutter.scrollTop = t;
+    positionCurrentLine();
+  }
+
+  function lineIndexAt(pos) {
+    const v = editor.value;
+    let line = 0;
+    for (let i = 0; i < pos; i++) if (v.charCodeAt(i) === 10) line++;
+    return line;
+  }
+
+  function positionCurrentLine() {
+    const idx = lineIndexAt(editor.selectionStart);
+    const el = highlight.children[idx];
+    if (!el || editor.selectionStart !== editor.selectionEnd) {
+      currentLine.classList.remove('show');
+      return;
+    }
+    currentLine.classList.add('show');
+    currentLine.style.top = (el.offsetTop - editor.scrollTop) + 'px';
+    currentLine.style.height = el.offsetHeight + 'px';
+  }
+
+  function updateCursor() {
+    const v = editor.value;
+    const pos = editor.selectionStart;
+    const idx = lineIndexAt(pos);
+    const lineStart = v.lastIndexOf('\n', pos - 1) + 1;
+    const col = pos - lineStart + 1;
+
+    const selLen = editor.selectionEnd - editor.selectionStart;
+    statusCursor.textContent = selLen > 0
+      ? 'Ln ' + (idx + 1) + ', Col ' + col + ' (' + selLen.toLocaleString() + ' 選択)'
+      : 'Ln ' + (idx + 1) + ', Col ' + col;
+
+    const gls = gutter.children;
+    for (let i = 0; i < gls.length; i++) {
+      if (gls[i].classList.contains('active') && i !== idx) gls[i].classList.remove('active');
+    }
+    if (gls[idx]) gls[idx].classList.add('active');
+    positionCurrentLine();
+  }
+
+  let timer = null;
+  function schedule() {
+    const heavy = editor.value.length > 30000;
+    if (heavy) {
+      clearTimeout(timer);
+      timer = setTimeout(() => { queued = false; paint(); }, 90);
+      return;
+    }
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; paint(); });
+  }
+
+  return { paint, schedule, syncScroll, updateCursor, alignGutter, positionCurrentLine };
+})();
+
+function updateStatus() {
+  const v = editor.value;
+  statusChars.textContent = v.length.toLocaleString() + ' 文字';
+  let lines = 1;
+  for (let i = 0; i < v.length; i++) if (v.charCodeAt(i) === 10) lines++;
+  statusLines.textContent = lines.toLocaleString() + ' 行';
+}
+
+function setLang(ext) {
+  lang = langFromExt(ext);
+  statusLang.textContent = LANG_LABEL[lang];
+}
+
+/* ═══════Editor — 入力補助══════ */
+const Editor = (() => {
+  const OPEN = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'", '`': '`' };
+  const CLOSE = new Set([')', ']', '}', '"', "'", '`']);
+
+  function indentUnit() { return ' '.repeat(prefs.indent); }
+
+  /** undo 履歴を保つ挿入 */
+  function insert(text) {
+    if (!document.execCommand || !document.execCommand('insertText', false, text)) {
+      const s = editor.selectionStart, e = editor.selectionEnd;
+      editor.setRangeText(text, s, e, 'end');
+    }
+  }
+
+  function replaceRange(text, start, end, selStart, selEnd) {
+    editor.focus();
+    editor.setSelectionRange(start, end);
+    insert(text);
+    if (selStart !== undefined) editor.setSelectionRange(selStart, selEnd === undefined ? selStart : selEnd);
+    afterEdit();
+  }
+
+  function afterEdit() {
+    editor.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function lineBounds(pos) {
+    const v = editor.value;
+    const start = v.lastIndexOf('\n', pos - 1) + 1;
+    let end = v.indexOf('\n', pos);
+    if (end === -1) end = v.length;
+    return [start, end];
+  }
+
+  function selectedLineRange() {
+    const v = editor.value;
+    const start = v.lastIndexOf('\n', editor.selectionStart - 1) + 1;
+    let end = v.indexOf('\n', editor.selectionEnd);
+    if (end === -1) end = v.length;
+    return [start, end];
+  }
+
+  function handleTab(e) {
+    const s = editor.selectionStart, en = editor.selectionEnd;
+    const v = editor.value;
+    const unit = indentUnit();
+    const multiline = v.slice(s, en).indexOf('\n') !== -1;
+
+    if (!multiline && !e.shiftKey) {
+      insert(unit);
+      afterEdit();
+      return;
+    }
+    const [ls, le] = selectedLineRange();
+    const block = v.slice(ls, le);
+    let out;
+    if (e.shiftKey) {
+      const outdentRe = new RegExp('^[ \\t]{1,' + prefs.indent + '}');
+      out = block.split('\n').map(l => {
+        if (l.startsWith(unit)) return l.slice(unit.length);
+        return l.replace(outdentRe, '');
+      }).join('\n');
+    } else {
+      out = block.split('\n').map(l => (l.trim() ? unit + l : l)).join('\n');
+    }
+    const delta = out.length - block.length;
+    replaceRange(out, ls, le, s + (e.shiftKey ? Math.max(-prefs.indent, delta) : prefs.indent), en + delta);
+  }
+
+  function handleEnter(e) {
+    const v = editor.value;
+    const s = editor.selectionStart;
+    if (s !== editor.selectionEnd) return false;
+    const [ls] = lineBounds(s);
+    const lineToCursor = v.slice(ls, s);
+    const indentMatch = /^[ \t]*/.exec(lineToCursor)[0];
+    const before = lineToCursor.trimEnd();
+    const after = v.slice(s).split('\n')[0].trim();
+
+    let extra = '';
+    const opensBlock =
+      /[\{\[\(]$/.test(before) ||
+      (lang === 'py' && /:$/.test(before)) ||
+      ((lang === 'html' || lang === 'xml') && /<([A-Za-z][\w:.-]*)(\s[^<>]*)?>$/.test(before) &&
+        !Highlighter.VOID_TAGS.has((/<([A-Za-z][\w:.-]*)/.exec(before) || [])[1]?.toLowerCase() || ''));
+    if (opensBlock) extra = indentUnit();
+
+    const closesNext = /^[\}\]\)]/.test(after) || (/^<\//.test(after) && (lang === 'html' || lang === 'xml'));
+
+    e.preventDefault();
+    if (extra && closesNext) {
+      insert('\n' + indentMatch + extra + '\n' + indentMatch);
+      editor.setSelectionRange(s + 1 + indentMatch.length + extra.length, s + 1 + indentMatch.length + extra.length);
+    } else {
+      insert('\n' + indentMatch + extra);
+    }
+    afterEdit();
+    return true;
+  }
+
+  function handlePair(e) {
+    if (!prefs.pairs) return false;
+    const ch = e.key;
+    const v = editor.value;
+    const s = editor.selectionStart, en = editor.selectionEnd;
+
+    // 選択範囲を囲む
+    if (s !== en && OPEN[ch]) {
+      e.preventDefault();
+      const sel = v.slice(s, en);
+      replaceRange(ch + sel + OPEN[ch], s, en, s + 1, en + 1);
+      return true;
+    }
+    // 閉じ記号をスキップ
+    if (CLOSE.has(ch) && v[s] === ch && s === en) {
+      e.preventDefault();
+      editor.setSelectionRange(s + 1, s + 1);
+      Render.updateCursor();
+      return true;
+    }
+    if (OPEN[ch] && s === en) {
+      const next = v[s] || '';
+      const prevCh = v[s - 1] || '';
+      if ((ch === '"' || ch === "'" || ch === '`') && (/[\w"'`]/.test(prevCh) || /[\w]/.test(next))) return false;
+      if (next && !/[\s)\]\},;>]/.test(next)) return false;
+      e.preventDefault();
+      insert(ch + OPEN[ch]);
+      editor.setSelectionRange(s + 1, s + 1);
+      afterEdit();
+      return true;
+    }
+    return false;
+  }
+
+  function handleBackspace(e) {
+    const v = editor.value;
+    const s = editor.selectionStart;
+    if (s !== editor.selectionEnd || s === 0) return false;
+    const prevCh = v[s - 1], nextCh = v[s];
+    if (prefs.pairs && OPEN[prevCh] && OPEN[prevCh] === nextCh) {
+      e.preventDefault();
+      replaceRange('', s - 1, s + 1, s - 1);
+      return true;
+    }
+    const [ls] = lineBounds(s);
+    const lead = v.slice(ls, s);
+    if (lead.length && /^[ ]+$/.test(lead)) {
+      const back = ((lead.length % prefs.indent) || prefs.indent);
+      e.preventDefault();
+      replaceRange('', s - back, s, s - back);
+      return true;
+    }
+    return false;
+  }
+
+  const COMMENT = {
+    js: ['//', ''], py: ['#', ''], css: ['/*', '*/'],
+    html: ['<!--', '-->'], xml: ['<!--', '-->'],
+    md: ['<!--', '-->'], json: ['//', ''], text: ['#', '']
+  };
+
+  /** HTML の中の <script> / <style> ブロックを見分ける */
+  function contextLang(pos) {
+    if (lang !== 'html') return lang;
+    const v = editor.value.slice(0, pos).toLowerCase();
+    const sOpen = v.lastIndexOf('<script'), sClose = v.lastIndexOf('</script');
+    const yOpen = v.lastIndexOf('<style'),  yClose = v.lastIndexOf('</style');
+    if (sOpen > sClose && sOpen > yOpen) return 'js';
+    if (yOpen > yClose && yOpen > sOpen) return 'css';
+    return 'html';
+  }
+
+  function toggleComment() {
+    const [open, close] = COMMENT[contextLang(editor.selectionStart)] || COMMENT.text;
+    const v = editor.value;
+    const [ls, le] = selectedLineRange();
+    const block = v.slice(ls, le);
+    const lines = block.split('\n');
+    const nonEmpty = lines.filter(l => l.trim());
+    const isCommented = nonEmpty.length > 0 && nonEmpty.every(l => {
+      const t = l.trim();
+      return close ? (t.startsWith(open) && t.endsWith(close)) : t.startsWith(open);
+    });
+
+    const out = lines.map(l => {
+      if (!l.trim()) return l;
+      const lead = /^[ \t]*/.exec(l)[0];
+      const body = l.slice(lead.length);
+      if (isCommented) {
+        let b = body.slice(open.length);
+        if (close && b.trimEnd().endsWith(close)) b = b.trimEnd().slice(0, -close.length);
+        return lead + b.replace(/^ /, '').replace(/ $/, '');
+      }
+      return lead + open + ' ' + body + (close ? ' ' + close : '');
+    }).join('\n');
+
+    replaceRange(out, ls, le, ls, ls + out.length);
+  }
+
+  function moveLines(dir) {
+    const v = editor.value;
+    const [ls, le] = selectedLineRange();
+    const block = v.slice(ls, le);
+    if (dir < 0) {
+      if (ls === 0) return;
+      const prevStart = v.lastIndexOf('\n', ls - 2) + 1;
+      const prev = v.slice(prevStart, ls - 1);
+      const out = block + '\n' + prev;
+      const selA = editor.selectionStart - (ls - prevStart), selB = editor.selectionEnd - (ls - prevStart);
+      replaceRange(out, prevStart, le, selA, selB);
+    } else {
+      if (le >= v.length) return;
+      let nextEnd = v.indexOf('\n', le + 1);
+      if (nextEnd === -1) nextEnd = v.length;
+      const next = v.slice(le + 1, nextEnd);
+      const out = next + '\n' + block;
+      const shift = next.length + 1;
+      replaceRange(out, ls, nextEnd, editor.selectionStart + shift, editor.selectionEnd + shift);
+    }
+  }
+
+  function duplicateLines() {
+    const v = editor.value;
+    const [ls, le] = selectedLineRange();
+    const block = v.slice(ls, le);
+    replaceRange(block + '\n' + block, ls, le, editor.selectionStart + block.length + 1, editor.selectionEnd + block.length + 1);
+  }
+
+  /** インデント整形 */
+  function format() {
+    const v = editor.value;
+    if (!v.trim()) return;
+    if (v.length > BIG_LIMIT) { showToast('ファイルが大きすぎます', 'warning'); return; }
+
+    let out;
+    if (lang === 'json') {
+      try { out = JSON.stringify(JSON.parse(v), null, prefs.indent); }
+      catch (err) { showToast('JSON の解析に失敗しました', 'danger'); return; }
+    } else if (lang === 'text' || lang === 'md') {
+      showToast('この形式は整形できません', 'warning');
+      return;
+    } else {
+      out = reindent(v, lang);
+    }
+    if (out === v) { showToast('すでに整形済みです'); return; }
+
+    const scroll = editor.scrollTop;
+    editor.focus();
+    editor.setSelectionRange(0, v.length);
+    insert(out);
+    editor.setSelectionRange(0, 0);
+    editor.scrollTop = scroll;
+    afterEdit();
+    showToast('インデントを整形しました', 'success');
+  }
+
+  function reindent(code, language) {
+    const { mask, protectedLines } = Highlighter.codeMask(code, language);
+    const srcLines = code.split('\n');
+    const maskLines = mask.split('\n');
+    const unit = ' '.repeat(prefs.indent);
+    let depth = 0;
+    const out = [];
+
+    for (let i = 0; i < srcLines.length; i++) {
+      const raw = srcLines[i];
+      const trimmed = raw.trim();
+      const m = maskLines[i] || '';
+
+      if (protectedLines.has(i)) { out.push(raw); continue; }
+      if (!trimmed) { out.push(''); continue; }
+
+      let lead = 0;
+      const rawLead = raw.length - raw.trimStart().length;
+      for (let k = rawLead; k < raw.length; k++) {
+        const ch = raw[k];
+        if (ch === ' ' || ch === '\t') { if (lead === 0) break; continue; }
+        const mc = m[k];
+        if (mc === '}' || mc === ']' || mc === ')') lead++;
+        else break;
+      }
+      const indent = Math.max(0, depth - lead);
+      out.push(unit.repeat(indent) + trimmed);
+
+      let delta = 0;
+      for (let k = 0; k < m.length; k++) {
+        const c = m[k];
+        if (c === '{' || c === '[' || c === '(') delta++;
+        else if (c === '}' || c === ']' || c === ')') delta--;
+      }
+      depth = Math.max(0, depth + delta);
+    }
+    return out.join('\n');
+  }
+
+  function onKeyDown(e) {
+    const mod = e.ctrlKey || e.metaKey;
+
+    if (e.key === 'Tab' && !e.altKey && !mod) { e.preventDefault(); handleTab(e); return; }
+    if (e.key === 'Enter' && !mod && !e.shiftKey) { if (handleEnter(e)) return; }
+    if (e.key === 'Backspace' && !mod) { if (handleBackspace(e)) return; }
+    if (!mod && !e.altKey && e.key.length === 1 && (OPEN[e.key] || CLOSE.has(e.key))) {
+      if (handlePair(e)) return;
+    }
+    if (mod && (e.key === '/' || e.code === 'Slash')) { e.preventDefault(); toggleComment(); return; }
+    if (e.altKey && e.shiftKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); duplicateLines(); return; }
+    if (e.altKey && e.key === 'ArrowUp')   { e.preventDefault(); moveLines(-1); return; }
+    if (e.altKey && e.key === 'ArrowDown') { e.preventDefault(); moveLines(1);  return; }
+  }
+
+  return { onKeyDown, format, toggleComment };
+})();
+
+/* ══════Prefs══════ */
+const Prefs = {
+  load() {
+    try {
+      const raw = localStorage.getItem(PREFS_KEY);
+      if (raw) Object.assign(prefs, JSON.parse(raw));
+    } catch (e) {}
+    this.apply();
+  },
+  save() {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {}
+  },
+  apply() {
+    document.documentElement.setAttribute('data-theme', prefs.theme);
+    document.documentElement.style.setProperty('--editor-fs', prefs.fontSize + 'px');
+    document.documentElement.style.setProperty('--editor-lh', Math.round(prefs.fontSize * 1.62) + 'px');
+    wrapEl.classList.toggle('wrap', prefs.wrap);
+    gutter.classList.toggle('hidden', !prefs.gutter);
+    statusWrap.textContent = '折り返し: ' + (prefs.wrap ? 'オン' : 'オフ');
+    statusIndent.textContent = 'スペース: ' + prefs.indent;
+    $('btnWrap').classList.toggle('on', prefs.wrap);
+    $('swHighlight').classList.toggle('on', prefs.highlight);
+    $('swGutter').classList.toggle('on', prefs.gutter);
+    $('swWrap').classList.toggle('on', prefs.wrap);
+    $('swPairs').classList.toggle('on', prefs.pairs);
+    document.querySelectorAll('#themeSeg button').forEach(b => b.classList.toggle('on', b.dataset.theme === prefs.theme));
+    document.querySelectorAll('#fontSeg button').forEach(b => b.classList.toggle('on', parseFloat(b.dataset.fs) === prefs.fontSize));
+  },
+  set(key, value) {
+    prefs[key] = value;
+    this.apply();
+    this.save();
+    Render.paint();
+  },
+  toggle(key) { this.set(key, !prefs[key]); },
+  toggleWrap() { this.toggle('wrap'); },
+  cycleIndent() { this.set('indent', prefs.indent === 2 ? 4 : prefs.indent === 4 ? 8 : 2); },
+  zoom(delta) {
+    const next = Math.min(24, Math.max(10, Math.round((prefs.fontSize + delta) * 2) / 2));
+    this.set('fontSize', next);
+  }
+};
+
+/* ═══════Tabs / storage══════ */
 function showToast(msg, type = '') {
   const container = $('toastContainer');
   const el = document.createElement('div');
   el.className = 'toast' + (type ? ' ' + type : '');
   el.textContent = msg;
   container.appendChild(el);
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => el.classList.add('show'));
-  });
-  setTimeout(() => {
-    el.classList.remove('show');
-    setTimeout(() => el.remove(), 300);
-  }, 2200);
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 2200);
 }
 
 function showSave() {
@@ -1022,20 +2149,17 @@ function persist(showAnim = false) {
     tab.content   = editor.value;
     tab.name      = drawerName.value || 'Untitled';
     tab.extension = drawerExt.value;
+    tab.lastModified = Date.now();
   }
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tabs));
       if (showAnim) showSave();
-      if (tab) {
-        tab.saved = tab.content;
-        tab.modified = false;
-      }
+      if (tab) { tab.saved = tab.content; tab.modified = false; }
       renderTabs();
-    } catch(e) {
-      if (e.name === 'QuotaExceededError')
-        showToast('ストレージ容量が不足しています', 'danger');
+    } catch (e) {
+      if (e.name === 'QuotaExceededError') showToast('ストレージ容量が不足しています', 'danger');
     }
   }, 350);
 }
@@ -1052,7 +2176,7 @@ function loadStorage() {
         return true;
       }
     }
-  } catch(e) {}
+  } catch (e) {}
   return false;
 }
 
@@ -1060,10 +2184,10 @@ function loadSidebarPrefs() {
   try {
     const raw = localStorage.getItem(SIDEBAR_KEY);
     if (!raw) return;
-    const prefs = JSON.parse(raw);
-    if (prefs.width) sidebar.style.width = prefs.width + 'px';
-    if (prefs.collapsed) sidebar.classList.add('collapsed');
-  } catch(e) {}
+    const p = JSON.parse(raw);
+    if (p.width) sidebar.style.width = p.width + 'px';
+    if (p.collapsed) sidebar.classList.add('collapsed');
+  } catch (e) {}
 }
 
 function saveSidebarPrefs() {
@@ -1072,7 +2196,11 @@ function saveSidebarPrefs() {
       width: sidebar.classList.contains('collapsed') ? null : parseInt(sidebar.style.width) || 220,
       collapsed: sidebar.classList.contains('collapsed')
     }));
-  } catch(e) {}
+  } catch (e) {}
+}
+
+function escHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function renderTabs() {
@@ -1082,15 +2210,15 @@ function renderTabs() {
     tabs.forEach((tab, i) => {
       const li = document.createElement('li');
       li.className = 'tab-item' + (i === current ? ' active' : '') + (tab.modified ? ' modified' : '');
-      li.setAttribute('role','tab');
+      li.setAttribute('role', 'tab');
       li.setAttribute('aria-selected', i === current);
       li.title = tab.name + tab.extension;
       li.dataset.index = i;
-      li.innerHTML = `<span class="tab-dot"></span><span class="tab-label">${escape(tab.name)}${tab.extension}</span><span class="tab-close" title="閉じる"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></span>`;
-      li.querySelector('.tab-close').addEventListener('click', e => {
-        e.stopPropagation();
-        deleteTab(i);
-      });
+      const tl = langFromExt(tab.extension);
+      li.innerHTML = '<span class="tab-dot" data-lang="' + tl + '"></span>' +
+        '<span class="tab-label">' + escHtml(tab.name) + tab.extension + '</span>' +
+        '<span class="tab-close" title="閉じる"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></span>';
+      li.querySelector('.tab-close').addEventListener('click', e => { e.stopPropagation(); deleteTab(i); });
       li.addEventListener('click', () => {
         if (i !== current) switchTab(i);
         if (isMobile()) closeMobileTabs();
@@ -1106,7 +2234,7 @@ function renderTabs() {
         });
         li.addEventListener('dragend', () => {
           li.classList.remove('dragging');
-          document.querySelectorAll('.tab-item').forEach(x => x.classList.remove('drag-over-top','drag-over-bottom'));
+          document.querySelectorAll('.tab-item').forEach(x => x.classList.remove('drag-over-top', 'drag-over-bottom'));
           dragFromIndex = null;
         });
         li.addEventListener('dragover', e => {
@@ -1117,30 +2245,22 @@ function renderTabs() {
           li.classList.toggle('drag-over-top', before);
           li.classList.toggle('drag-over-bottom', !before);
         });
-        li.addEventListener('dragleave', () => {
-          li.classList.remove('drag-over-top','drag-over-bottom');
-        });
+        li.addEventListener('dragleave', () => li.classList.remove('drag-over-top', 'drag-over-bottom'));
         li.addEventListener('drop', e => {
           e.preventDefault();
           const from = dragFromIndex;
           const rect = li.getBoundingClientRect();
           const before = (e.clientY - rect.top) < rect.height / 2;
-          li.classList.remove('drag-over-top','drag-over-bottom');
+          li.classList.remove('drag-over-top', 'drag-over-bottom');
           if (from === null || from === i) return;
-          let to = before ? i : i + 1;
-          reorderTab(from, to);
+          reorderTab(from, before ? i : i + 1);
         });
-        li.addEventListener('dblclick', e => {
-          e.stopPropagation();
-          startRename(i);
-        });
+        li.addEventListener('dblclick', e => { e.stopPropagation(); startRename(i); });
         li.addEventListener('contextmenu', e => {
-          e.preventDefault();
-          e.stopPropagation();
+          e.preventDefault(); e.stopPropagation();
           openContextMenu(e.clientX, e.clientY, i);
         });
       }
-
       list.appendChild(li);
     });
   });
@@ -1148,31 +2268,24 @@ function renderTabs() {
   updateStatus();
 }
 
-function escape(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
 function loadTab() {
   const tab = tabs[current];
   if (!tab) return;
-  editor.value    = tab.content;
+  editor.value = tab.content;
   drawerName.value = tab.name;
-  drawerExt.value  = tab.extension;
+  drawerExt.value = tab.extension;
+  setLang(tab.extension);
+  editor.scrollTop = 0;
+  editor.scrollLeft = 0;
   updateStatus();
   updateTitleBar();
+  Render.paint();
 }
 
 function updateTitleBar() {
   const tab = tabs[current];
   const label = tab ? tab.name + tab.extension : '';
   if (mobileTitle) mobileTitle.textContent = label;
-  statusExt.textContent = tab ? tab.extension : '';
-}
-
-function updateStatus() {
-  const v = editor.value;
-  statusChars.textContent = v.length.toLocaleString() + ' chars';
-  statusLines.textContent = (v.split('\n').length).toLocaleString() + ' lines';
 }
 
 function addTab(name = 'Untitled', content = '', ext = '.html') {
@@ -1189,26 +2302,18 @@ function duplicateTab(i) {
   const src = tabs[i];
   if (!src) return;
   tabs.splice(i + 1, 0, {
-    name: src.name + ' コピー',
-    content: src.content,
-    extension: src.extension,
-    created: Date.now(),
-    lastModified: Date.now(),
-    modified: false,
-    saved: src.content
+    name: src.name + ' コピー', content: src.content, extension: src.extension,
+    created: Date.now(), lastModified: Date.now(), modified: false, saved: src.content
   });
   current = i + 1;
-  renderTabs();
-  loadTab();
-  persist();
+  renderTabs(); loadTab(); persist();
   showToast('タブを複製しました', 'success');
 }
 
 function switchTab(i) {
   persist();
   current = i;
-  renderTabs();
-  loadTab();
+  renderTabs(); loadTab();
   scrollTabIntoView(i);
 }
 
@@ -1224,42 +2329,38 @@ function reorderTab(from, to) {
   const [moved] = tabs.splice(from, 1);
   tabs.splice(to, 0, moved);
   current = tabs.indexOf(activeTab);
-  persist();
-  renderTabs();
+  persist(); renderTabs();
+}
+
+function blankTab() {
+  return { name: 'Untitled', content: '', extension: '.html', created: Date.now(), lastModified: Date.now(), modified: false, saved: '' };
 }
 
 function deleteTab(i) {
   if (tabs.length === 1) {
-    tabs[0] = { name:'Untitled', content:'', extension:'.html', created:Date.now(), lastModified:Date.now(), modified:false, saved:'' };
+    tabs[0] = blankTab();
     showToast('タブをリセットしました', 'warning');
   } else {
     const name = tabs[i].name + tabs[i].extension;
     tabs.splice(i, 1);
     if (current >= tabs.length) current = tabs.length - 1;
     else if (current > i) current--;
-    showToast(`${name} を削除しました`, 'danger');
+    showToast(name + ' を削除しました', 'danger');
   }
-  renderTabs();
-  loadTab();
-  persist();
+  renderTabs(); loadTab(); persist();
 }
 
 function closeOthers(i) {
-  const keep = tabs[i];
-  tabs = [keep];
+  tabs = [tabs[i]];
   current = 0;
-  renderTabs();
-  loadTab();
-  persist();
+  renderTabs(); loadTab(); persist();
   showToast('他のタブを閉じました', 'warning');
 }
 
 function closeAllTabs() {
-  tabs = [{ name:'Untitled', content:'', extension:'.html', created:Date.now(), lastModified:Date.now(), modified:false, saved:'' }];
+  tabs = [blankTab()];
   current = 0;
-  renderTabs();
-  loadTab();
-  persist();
+  renderTabs(); loadTab(); persist();
   showToast('すべてのタブを閉じました', 'warning');
 }
 
@@ -1275,16 +2376,14 @@ function startRename(i) {
   input.value = tab.name;
   input.spellcheck = false;
   labelEl.replaceWith(input);
-  input.focus();
-  input.select();
+  input.focus(); input.select();
 
   const commit = () => {
     const val = input.value.trim();
     tab.name = val || 'Untitled';
     renameIndex = null;
     if (i === current) drawerName.value = tab.name;
-    persist();
-    renderTabs();
+    persist(); renderTabs();
   };
   input.addEventListener('keydown', e => {
     e.stopPropagation();
@@ -1296,15 +2395,14 @@ function startRename(i) {
 }
 
 function openContextMenu(x, y, i) {
-  const tab = tabs[i];
   contextMenu.innerHTML = '';
   const items = [
-    { label:'名前を変更', icon:'<path d="M4 16l1-4L13 4l3 3-8 8-4 1z"/>', action:() => startRename(i) },
-    { label:'複製', icon:'<rect x="6" y="6" width="10" height="10" rx="1.5"/><path d="M4 14V5.5A1.5 1.5 0 015.5 4H14"/>', action:() => duplicateTab(i) },
+    { label: '名前を変更', icon: '<path d="M4 16l1-4L13 4l3 3-8 8-4 1z"/>', action: () => startRename(i) },
+    { label: '複製', icon: '<rect x="6" y="6" width="10" height="10" rx="1.5"/><path d="M4 14V5.5A1.5 1.5 0 015.5 4H14"/>', action: () => duplicateTab(i) },
     null,
-    { label:'閉じる', icon:'<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>', action:() => deleteTab(i) },
-    { label:'他のタブを閉じる', icon:'<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>', action:() => closeOthers(i), disabled: tabs.length < 2 },
-    { label:'すべて閉じる', icon:'<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>', action:() => closeAllTabs(), danger:true }
+    { label: '閉じる', icon: '<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>', action: () => deleteTab(i) },
+    { label: '他のタブを閉じる', icon: '<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>', action: () => closeOthers(i), disabled: tabs.length < 2 },
+    { label: 'すべて閉じる', icon: '<line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>', action: () => closeAllTabs(), danger: true }
   ];
   items.forEach(item => {
     if (item === null) {
@@ -1316,7 +2414,7 @@ function openContextMenu(x, y, i) {
     if (item.disabled) return;
     const el = document.createElement('div');
     el.className = 'context-menu-item' + (item.danger ? ' danger' : '');
-    el.innerHTML = `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">${item.icon}</svg>${item.label}`;
+    el.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">' + item.icon + '</svg>' + item.label;
     el.addEventListener('click', () => { closeContextMenu(); item.action(); });
     contextMenu.appendChild(el);
   });
@@ -1326,52 +2424,48 @@ function openContextMenu(x, y, i) {
   contextMenu.classList.add('show');
   requestAnimationFrame(() => {
     const r = contextMenu.getBoundingClientRect();
-    const left = Math.min(x, window.innerWidth - r.width - 8);
-    const top = Math.min(y, window.innerHeight - r.height - 8);
-    contextMenu.style.left = left + 'px';
-    contextMenu.style.top = top + 'px';
+    contextMenu.style.left = Math.min(x, window.innerWidth - r.width - 8) + 'px';
+    contextMenu.style.top = Math.min(y, window.innerHeight - r.height - 8) + 'px';
   });
 }
 
-function closeContextMenu() {
-  contextMenu.classList.remove('show');
-}
+function closeContextMenu() { contextMenu.classList.remove('show'); }
 
+/* ═══════File ops══════ */
 const FileOps = {
   download() {
     const tab = tabs[current];
     const content = editor.value;
     const filename = (drawerName.value || 'file') + drawerExt.value;
-    const blob = new Blob([content], {type:'text/plain;charset=utf-8'});
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
     a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
     if (tab) { tab.saved = content; tab.modified = false; renderTabs(); }
-    showToast(`${filename} を保存しました`, 'success');
+    showToast(filename + ' を保存しました', 'success');
     closeDrawer();
   },
   openFile(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = e => {
-      const dot  = file.name.lastIndexOf('.');
+      const dot = file.name.lastIndexOf('.');
       const name = dot !== -1 ? file.name.slice(0, dot) : file.name;
-      const ext  = dot !== -1 ? file.name.slice(dot) : '.txt';
+      const ext = dot !== -1 ? file.name.slice(dot) : '.txt';
       addTab(name, e.target.result, ext);
+      showToast(file.name + ' を開きました', 'success');
     };
     reader.onerror = () => showToast('読み込みに失敗しました', 'danger');
     reader.readAsText(file);
   },
   preview() {
-    const content = editor.value;
-    const blob = new Blob([content], {type:'text/html;charset=utf-8'});
-    const url  = URL.createObjectURL(blob);
-    const w    = window.open(url, '_blank');
+    const blob = new Blob([editor.value], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank');
     if (w) { w.onload = () => URL.revokeObjectURL(url); showToast('ブラウザで実行しました', 'success'); }
-    else   { URL.revokeObjectURL(url); showToast('ポップアップがブロックされました', 'warning'); }
+    else { URL.revokeObjectURL(url); showToast('ポップアップがブロックされました', 'warning'); }
     closeDrawer();
   }
 };
@@ -1379,12 +2473,11 @@ const FileOps = {
 const Data = {
   exportAll() {
     persist();
-    const blob = new Blob([JSON.stringify(tabs, null, 2)], {type:'application/json'});
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = `notes_backup_${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
+    const blob = new Blob([JSON.stringify(tabs, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'notes_backup_' + new Date().toISOString().split('T')[0] + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast('エクスポートしました', 'success');
     closeDrawer();
@@ -1400,10 +2493,8 @@ const Data = {
           current = 0;
           tabs.forEach(t => { if (t.saved === undefined) t.saved = t.content; t.modified = false; });
           renderTabs(); loadTab(); persist();
-          showToast(`${data.length}個のタブをインポートしました`, 'success');
-        } else {
-          showToast('無効なファイルです', 'danger');
-        }
+          showToast(data.length + '個のタブをインポートしました', 'success');
+        } else showToast('無効なファイルです', 'danger');
       } catch { showToast('インポートに失敗しました', 'danger'); }
       closeDrawer();
     };
@@ -1411,6 +2502,7 @@ const Data = {
   }
 };
 
+/* ══════Panels══════ */
 function showDrawer() {
   const tab = tabs[current];
   if (tab) { drawerName.value = tab.name; drawerExt.value = tab.extension; }
@@ -1438,20 +2530,10 @@ function toggleMobileTabs() {
   if (mobileTabs.classList.contains('open')) closeMobileTabs();
   else { showOverlay(); mobileTabs.classList.add('open'); }
 }
-function closeMobileTabs() {
-  mobileTabs.classList.remove('open');
-  hideOverlay();
-}
-function showOverlay() {
-  overlay.classList.add('show');
-  requestAnimationFrame(() => overlay.classList.add('visible'));
-}
-function hideOverlay() {
-  overlay.classList.remove('visible');
-  setTimeout(() => overlay.classList.remove('show'), 220);
-}
+function closeMobileTabs() { mobileTabs.classList.remove('open'); hideOverlay(); }
+function showOverlay() { overlay.classList.add('show'); requestAnimationFrame(() => overlay.classList.add('visible')); }
+function hideOverlay() { overlay.classList.remove('visible'); setTimeout(() => overlay.classList.remove('show'), 220); }
 function closeAll() { closeDrawer(); closeMobileTabs(); closeContextMenu(); }
-
 function openFilePicker() { $('fileInput').click(); }
 function openImportPicker() { $('importInput').click(); }
 
@@ -1461,9 +2543,11 @@ function toggleSidebarCollapse() {
   if (drawer.classList.contains('open') && drawer.classList.contains('popover')) positionPopover();
 }
 
+/* ══════Events══════ */
 editor.addEventListener('input', () => {
   persist(true);
   updateStatus();
+  Render.schedule();
   const tab = tabs[current];
   if (tab) {
     tab.modified = editor.value !== tab.saved;
@@ -1471,46 +2555,57 @@ editor.addEventListener('input', () => {
   }
 });
 
-editor.addEventListener('keydown', e => {
-  if (e.key === 'Tab') {
-    e.preventDefault();
-    const s = editor.selectionStart, end = editor.selectionEnd;
-    editor.value = editor.value.slice(0,s) + '    ' + editor.value.slice(end);
-    editor.selectionEnd = s + 4;
-    persist(true); updateStatus();
-  }
+editor.addEventListener('keydown', Editor.onKeyDown);
+editor.addEventListener('scroll', Render.syncScroll, { passive: true });
+editor.addEventListener('click', Render.updateCursor);
+editor.addEventListener('keyup', Render.updateCursor);
+editor.addEventListener('select', Render.updateCursor);
+editor.addEventListener('blur', () => currentLine.classList.remove('show'));
+editor.addEventListener('focus', Render.updateCursor);
+document.addEventListener('selectionchange', () => {
+  if (document.activeElement === editor) Render.updateCursor();
 });
 
-// Drawer filename/ext sync
 drawerName.addEventListener('input', () => {
   const tab = tabs[current];
   if (tab) { tab.name = drawerName.value; renderTabs(); persist(); }
 });
 drawerExt.addEventListener('change', () => {
   const tab = tabs[current];
-  if (tab) { tab.extension = drawerExt.value; statusExt.textContent = drawerExt.value; renderTabs(); persist(); }
+  if (tab) {
+    tab.extension = drawerExt.value;
+    setLang(tab.extension);
+    renderTabs(); persist(); Render.paint();
+  }
 });
 
-// File inputs
-$('fileInput').addEventListener('change', e => {
-  FileOps.openFile(e.target.files[0]);
-  e.target.value = '';
-});
-$('importInput').addEventListener('change', e => {
-  Data.importAll(e.target.files[0]);
-  e.target.value = '';
-});
+$('fileInput').addEventListener('change', e => { FileOps.openFile(e.target.files[0]); e.target.value = ''; });
+$('importInput').addEventListener('change', e => { Data.importAll(e.target.files[0]); e.target.value = ''; });
 
-// Add tab / options buttons
 $('desktopAddTab').addEventListener('click', () => addTab());
 $('mobileAddTab').addEventListener('click', () => { addTab(); closeMobileTabs(); });
 optionsBtn.addEventListener('click', () => {
-  if (drawer.classList.contains('open')) closeDrawer();
-  else showDrawer();
+  if (drawer.classList.contains('open')) closeDrawer(); else showDrawer();
 });
 $('sidebarCollapseBtn').addEventListener('click', toggleSidebarCollapse);
 
-// Sidebar resize
+// ステータスバー
+statusWrap.addEventListener('click', () => Prefs.toggleWrap());
+statusIndent.addEventListener('click', () => Prefs.cycleIndent());
+statusLang.addEventListener('click', () => showDrawer());
+statusCursor.addEventListener('click', () => editor.focus());
+
+// オプションパンネル
+$('swHighlight').addEventListener('click', () => Prefs.toggle('highlight'));
+$('swGutter').addEventListener('click', () => Prefs.toggle('gutter'));
+$('swWrap').addEventListener('click', () => Prefs.toggle('wrap'));
+$('swPairs').addEventListener('click', () => Prefs.toggle('pairs'));
+document.querySelectorAll('#themeSeg button').forEach(b =>
+  b.addEventListener('click', () => Prefs.set('theme', b.dataset.theme)));
+document.querySelectorAll('#fontSeg button').forEach(b =>
+  b.addEventListener('click', () => Prefs.set('fontSize', parseFloat(b.dataset.fs))));
+
+// サイドバー　調節
 (function initResizer() {
   const resizer = $('sidebarResizer');
   let dragging = false;
@@ -1524,8 +2619,7 @@ $('sidebarCollapseBtn').addEventListener('click', toggleSidebarCollapse);
   });
   window.addEventListener('mousemove', e => {
     if (!dragging) return;
-    const w = Math.min(360, Math.max(180, e.clientX));
-    sidebar.style.width = w + 'px';
+    sidebar.style.width = Math.min(360, Math.max(180, e.clientX)) + 'px';
     if (drawer.classList.contains('open') && drawer.classList.contains('popover')) positionPopover();
   });
   window.addEventListener('mouseup', () => {
@@ -1535,31 +2629,32 @@ $('sidebarCollapseBtn').addEventListener('click', toggleSidebarCollapse);
     sidebar.classList.remove('no-transition');
     document.body.style.userSelect = '';
     saveSidebarPrefs();
+    Render.alignGutter();
   });
 })();
 
-// Context menu dismissal
-document.addEventListener('click', e => {
-  if (!contextMenu.contains(e.target)) closeContextMenu();
-});
+document.addEventListener('click', e => { if (!contextMenu.contains(e.target)) closeContextMenu(); });
 window.addEventListener('resize', () => {
   closeContextMenu();
   if (drawer.classList.contains('open') && drawer.classList.contains('popover')) positionPopover();
+  Render.alignGutter();
+  Render.positionCurrentLine();
 });
 window.addEventListener('scroll', closeContextMenu, true);
 
-// Keyboard shortcuts
 document.addEventListener('keydown', e => {
   const mod = e.ctrlKey || e.metaKey;
   if (mod && e.key === 's') { e.preventDefault(); FileOps.download(); }
   if (mod && e.key === 't') { e.preventDefault(); addTab(); }
   if (mod && e.key === 'w') { e.preventDefault(); deleteTab(current); }
   if (mod && e.key === ',') { e.preventDefault(); showDrawer(); }
+  if (mod && (e.key === '=' || e.key === '+')) { e.preventDefault(); Prefs.zoom(1); }
+  if (mod && e.key === '-') { e.preventDefault(); Prefs.zoom(-1); }
+  if (mod && e.key === '0') { e.preventDefault(); Prefs.set('fontSize', 13.5); }
+  if (e.altKey && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); Prefs.toggleWrap(); }
   if (mod && e.key === 'Tab') {
     e.preventDefault();
-    const next = e.shiftKey
-      ? (current === 0 ? tabs.length - 1 : current - 1)
-      : (current + 1) % tabs.length;
+    const next = e.shiftKey ? (current === 0 ? tabs.length - 1 : current - 1) : (current + 1) % tabs.length;
     switchTab(next);
   }
   if (e.key === 'Escape') {
@@ -1569,7 +2664,7 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// Swipe gesture (mobile)
+// swipe モバイルの方
 let touchStartX = 0, touchStartY = 0;
 document.addEventListener('touchstart', e => {
   touchStartX = e.touches[0].clientX;
@@ -1584,7 +2679,6 @@ document.addEventListener('touchend', e => {
   }
 }, { passive: true });
 
-// Beforeunload
 window.addEventListener('beforeunload', e => {
   persist();
   if (tabs.some(t => t.modified)) {
@@ -1593,14 +2687,27 @@ window.addEventListener('beforeunload', e => {
   }
 });
 
+// drag & drop ファイルを開く
+window.addEventListener('dragover', e => { if (e.dataTransfer.types.includes('Files')) e.preventDefault(); });
+window.addEventListener('drop', e => {
+  if (!e.dataTransfer.files.length) return;
+  e.preventDefault();
+  FileOps.openFile(e.dataTransfer.files[0]);
+});
+
+document.fonts && document.fonts.ready.then(() => { Render.alignGutter(); Render.positionCurrentLine(); });
+
 function init() {
+  Prefs.load();
   loadSidebarPrefs();
   if (!loadStorage()) addTab();
   else { renderTabs(); loadTab(); }
+  Render.paint();
   editor.focus();
 }
 
 init();
+
 </script>
 </body>
 </html>
