@@ -37,7 +37,7 @@
     </tags>
   </tool>
   <tool id="5">
-    <url>/tools/memo.html</url>
+    <url>/tools/notepad.html</url>
     <name>ms0101 めも</name>
     <desc>テキストを記録し、HTMLとして実行する程度の能力</desc>
     <tags>
@@ -81,6 +81,16 @@
     <desc>プロキシ通信する程度の能力</desc>
     <tags>
       <tag>プロキシ</tag>
+      <tag>HTML</tag>
+      <tag>Web</tag>
+    </tags>
+  </tool>
+  <tool id="10">
+    <url>/tools/opener.html</url>
+    <name>フレームオープナー</name>
+    <desc>ウェブをフレーム越しに表示する程度の能力</desc>
+    <tags>
+      <tag>フレームオープナー</tag>
       <tag>HTML</tag>
       <tag>Web</tag>
     </tags>
