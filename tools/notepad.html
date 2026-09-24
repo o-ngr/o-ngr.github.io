@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Notes</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='3' width='22' height='2.4' rx='1.2' fill='%235bc8ea'/%3E%3Crect x='3.4' y='6.2' width='17.2' height='2' rx='1' fill='%235bc8ea'/%3E%3Crect x='5.3' y='8.4' width='2.3' height='12.4' fill='%235bc8ea'/%3E%3Crect x='16.4' y='8.4' width='2.3' height='12.4' fill='%235bc8ea'/%3E%3Crect x='4.3' y='12.6' width='15.4' height='1.6' fill='%235bc8ea'/%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -79,6 +80,9 @@
   --t-heading:  #0b60a5;
   --t-link:     #a31515;
   --t-value:    #a31515;
+
+  --error-line-bg: rgba(197,48,48,0.07);
+  --error-tick:     var(--danger);
 }
 
 @media (prefers-color-scheme:dark){
@@ -132,6 +136,9 @@
     --t-heading:  #569cd6;
     --t-link:     #ce9178;
     --t-value:    #ce9178;
+
+    --error-line-bg: rgba(252,129,129,0.13);
+    --error-tick:     var(--danger);
   }
 }
 
@@ -185,6 +192,9 @@
   --t-heading:  #569cd6;
   --t-link:     #ce9178;
   --t-value:    #ce9178;
+
+  --error-line-bg: rgba(252,129,129,0.13);
+  --error-tick:     var(--danger);
 }
 
 html,body{height:100%;height:100dvh;overflow:hidden}
@@ -239,13 +249,11 @@ body{
 .sidebar.collapsed .logo-text{display:none}
 
 .logo-mark{
-  width:20px;height:20px;
-  background:var(--accent);
-  border-radius:5px;
+  width:22px;height:22px;
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
 }
-.logo-mark svg{width:10px;height:10px;fill:#fff}
+.logo-mark svg{width:22px;height:22px;fill:#5bc8ea}
 
 .logo-text{
   font-size:13px;font-weight:600;
@@ -405,8 +413,29 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;ove
   height:40px;background:var(--surface2);
   border-bottom:1px solid var(--border-2);
   display:flex;align-items:center;padding:0 16px;gap:4px;flex-shrink:0;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
 }
+.toolbar::-webkit-scrollbar{display:none}
 .toolbar-sep{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0}
+
+/* PC 用: オプションパネルの内容をツールバーへ */
+.toolbar-desktop-extra{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.toolbar-ext-select{
+  height:26px;padding:0 6px;border-radius:5px;
+  border:1px solid transparent;background:transparent;
+  font-family:var(--font-mono);font-size:11px;font-weight:500;
+  color:var(--text-2);cursor:pointer;-webkit-appearance:none;appearance:none;
+  transition:all var(--transition);
+}
+.toolbar-ext-select:hover{background:var(--tab-hover);color:var(--text)}
+.toolbar-ext-select:focus{outline:none;border-color:var(--accent)}
+.font-stepper{display:flex;align-items:center;gap:2px}
+.font-stepper .tool-btn{width:22px;padding:0;justify-content:center;font-size:13px;font-weight:600}
+.font-stepper-value{
+  font-family:var(--font-mono);font-size:11px;color:var(--text-2);
+  min-width:34px;text-align:center;letter-spacing:0;
+}
+@media (max-width:768px){.toolbar-desktop-extra{display:none}}
 
 .tool-btn{
   height:26px;padding:0 10px;border-radius:5px;
@@ -420,6 +449,7 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;ove
 .tool-btn:active{opacity:0.7}
 .tool-btn svg{width:12px;height:12px;opacity:0.8}
 .tool-btn.on{background:var(--accent-dim);color:var(--accent)}
+.tool-btn.open{background:var(--accent-dim);color:var(--accent)}
 .tool-btn.primary-tool{background:var(--accent);color:#fff;padding:0 12px}
 .tool-btn.primary-tool:hover{opacity:0.88}
 .tool-btn.primary-tool svg{opacity:1}
@@ -465,6 +495,46 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;ove
   pointer-events:none;z-index:0;opacity:0;
 }
 .current-line.show{opacity:1}
+
+/* ── 構文エラー表示 ─────────────────────────────────── */
+.error-ruler{
+  position:absolute;top:0;right:2px;width:6px;height:100%;
+  pointer-events:none;z-index:4;
+}
+.viewport-indicator{
+  position:absolute;left:0;width:100%;min-height:16px;
+  background:var(--tab-hover);border-radius:3px;
+  pointer-events:none;
+}
+.error-tick{
+  position:absolute;left:-2px;width:10px;height:3px;
+  background:var(--error-tick);border-radius:1px;
+  opacity:0.85;pointer-events:auto;cursor:pointer;
+  transition:opacity 0.12s ease,width 0.12s ease;
+}
+.error-tick:hover{opacity:1;width:14px;left:-4px}
+
+.edge-indicator{
+  position:absolute;right:14px;
+  display:none;align-items:center;gap:4px;
+  padding:4px 9px;border-radius:20px;
+  background:var(--danger);color:#fff;
+  font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:0.01em;
+  cursor:pointer;z-index:6;box-shadow:var(--shadow-md);
+  opacity:0.94;transition:opacity var(--transition),transform var(--transition);
+}
+.edge-indicator svg{width:9px;height:9px;flex-shrink:0}
+.edge-indicator:hover{opacity:1}
+.edge-indicator.show{display:flex}
+.edge-indicator.top{top:10px}
+.edge-indicator.top:hover{transform:translateY(-2px)}
+.edge-indicator.bottom{bottom:10px}
+.edge-indicator.bottom:hover{transform:translateY(2px)}
+
+.gl{position:relative}
+.gl.error{color:var(--danger);font-weight:600}
+
+.cl.error-line{background:var(--error-line-bg);box-shadow:inset 3px 0 0 var(--danger)}
 
 .highlight{
   position:absolute;inset:0;
@@ -558,6 +628,8 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;ove
 .status-item.btn:hover{background:var(--tab-hover);color:var(--text-2)}
 .status-item.lang{color:var(--text-2)}
 .status-item.right{margin-left:auto}
+.status-item.error{color:var(--danger);font-weight:500}
+.status-item.error:hover{background:var(--accent-dim)}
 
 .drawer-overlay{
   display:none;position:fixed;inset:0;
@@ -591,6 +663,9 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;ove
 }
 .drawer.popover.open{transform:scale(1) translateY(0);opacity:1}
 .drawer.popover .drawer-header{border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+/* PC ではファイル設定・エディタ設定を上部ツールバーに集約するため、ポップオーバー表示時は非表示にする */
+.drawer.popover .drawer-section-file,
+.drawer.popover .drawer-section-editor{display:none}
 
 .mobile-tabs{
   position:fixed;top:0;left:0;height:100%;
@@ -677,7 +752,7 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;ove
 .switch.on::after{transform:translateX(17px)}
 
 .drawer-btn{
-  display:flex;align-items:center;justify-content:center;gap:8px;
+  display:flex;align-items:center;justify-content:flex-start;gap:8px;
   height:38px;border-radius:var(--radius-sm);
   border:1px solid var(--border);background:var(--surface2);
   font-family:var(--font-ui);font-size:13px;font-weight:500;
@@ -797,7 +872,7 @@ kbd{
     <div class="sidebar-resizer" id="sidebarResizer"></div>
     <div class="sidebar-logo">
       <div class="logo-mark">
-        <svg viewBox="0 0 12 12"><rect x="1" y="1" width="4" height="4" rx="1"/><rect x="7" y="1" width="4" height="4" rx="1"/><rect x="1" y="7" width="4" height="4" rx="1"/><rect x="7" y="7" width="4" height="4" rx="1"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="22" height="2.4" rx="1.2"/><rect x="3.4" y="6.2" width="17.2" height="2" rx="1"/><rect x="5.3" y="8.4" width="2.3" height="12.4"/><rect x="16.4" y="8.4" width="2.3" height="12.4"/><rect x="4.3" y="12.6" width="15.4" height="1.6"/></svg>
       </div>
       <span class="logo-text">Notes</span>
       <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="サイドバーを折りたたむ" aria-label="サイドバーを折りたたむ">
@@ -810,11 +885,6 @@ kbd{
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
         <span>新規タブ</span>
         <span class="action-shortcut">⌘T</span>
-      </button>
-      <button class="action-btn options-btn" id="optionsBtn" title="オプション">
-        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="2"/><circle cx="10" cy="3" r="2"/><circle cx="10" cy="17" r="2"/></svg>
-        <span>オプション</span>
-        <span class="action-shortcut">⌘,</span>
       </button>
     </div>
   </aside>
@@ -849,10 +919,53 @@ kbd{
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h14M3 10h10a3 3 0 010 6h-2"/><path d="M13 13l-2 3 2 3" transform="translate(0,-3)"/></svg>
         <span>折り返し</span>
       </button>
+      <button class="tool-btn primary-tool" onclick="FileOps.download()" title="保存 (⌘S)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14v3h12v-3M10 3v10M6 9l4 4 4-4" stroke="white"/></svg>
+        <span>保存</span>
+      </button>
+
+      <div class="toolbar-desktop-extra">
+        <div class="toolbar-sep"></div>
+        <select class="toolbar-ext-select" id="toolbarExt" title="ファイルの種類">
+          <option value=".html">.html</option>
+          <option value=".txt">.txt</option>
+          <option value=".js">.js</option>
+          <option value=".css">.css</option>
+          <option value=".json">.json</option>
+          <option value=".md">.md</option>
+          <option value=".xml">.xml</option>
+          <option value=".svg">.svg</option>
+          <option value=".py">.py</option>
+        </select>
+        <div class="toolbar-sep"></div>
+        <button class="tool-btn" id="tbHighlight" title="シンタックスハイライト">
+          <span>Aa</span>
+        </button>
+        <button class="tool-btn" id="tbGutter" title="行番号">
+          <span>#</span>
+        </button>
+        <button class="tool-btn" id="tbPairs" title="括弧・引用符の自動補完">
+          <span>()</span>
+        </button>
+        <button class="tool-btn" id="tbLint" title="構文エラーのリアルタイムチェック">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3l8 14H2z"/><line x1="10" y1="8" x2="10" y2="12"/><circle cx="10" cy="14.5" r="0.6" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <div class="toolbar-sep"></div>
+        <button class="tool-btn" id="themeToggleBtn" title="配色テーマ切り替え">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="6"/><path d="M10 4a6 6 0 000 12z" fill="currentColor" stroke="none"/></svg>
+          <span id="themeToggleLabel">自動</span>
+        </button>
+        <div class="font-stepper" title="文字サイズ">
+          <button class="tool-btn" id="fontDec">−</button>
+          <span class="font-stepper-value" id="fontStepperValue">13.5</span>
+          <button class="tool-btn" id="fontInc">＋</button>
+        </div>
+      </div>
+
       <div class="toolbar-right">
-        <button class="tool-btn primary-tool" onclick="FileOps.download()" title="保存">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14v3h12v-3M10 3v10M6 9l4 4 4-4" stroke="white"/></svg>
-          <span>保存</span>
+        <button class="tool-btn" id="optionsBtn" title="その他 (⌘,)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="2"/><circle cx="10" cy="3" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+          <span>その他</span>
         </button>
       </div>
     </div>
@@ -863,6 +976,15 @@ kbd{
         <div class="current-line" id="currentLine"></div>
         <div class="highlight" id="highlight" aria-hidden="true"></div>
         <textarea id="editor" placeholder="ここにコードやテキストを入力..." spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="エディタ"></textarea>
+        <div class="error-ruler" id="errorRuler" aria-hidden="true"><div class="viewport-indicator" id="viewportIndicator"></div></div>
+        <div class="edge-indicator top" id="edgeIndicatorTop" title="上に隠れているエラーへ移動">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5-5 5 5"/></svg>
+          <span id="edgeCountTop"></span>
+        </div>
+        <div class="edge-indicator bottom" id="edgeIndicatorBottom" title="下に隠れているエラーへ移動">
+          <span id="edgeCountBottom"></span>
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 8l5 5 5-5"/></svg>
+        </div>
       </div>
     </div>
 
@@ -870,6 +992,7 @@ kbd{
       <span class="status-item" id="statusChars">0 文字</span>
       <span class="status-item opt" id="statusLines">1 行</span>
       <span class="status-item right btn" id="statusCursor" title="カーソル位置">Ln 1, Col 1</span>
+      <span class="status-item btn error" id="statusErrors" style="display:none" title="次のエラー行へ移動 (F8)"></span>
       <span class="status-item btn opt" id="statusIndent" title="インデント幅を切り替え">スペース: 4</span>
       <span class="status-item btn opt" id="statusWrap" title="折り返し (Alt+Z)">折り返し: オフ</span>
       <span class="status-item btn lang" id="statusLang" title="言語（拡張子で決まります）">HTML</span>
@@ -897,13 +1020,13 @@ kbd{
 
 <div class="drawer" id="drawer">
   <div class="drawer-header">
-    <span class="drawer-title">オプション</span>
+    <span class="drawer-title" id="drawerTitle">オプション</span>
     <button class="icon-btn" onclick="closeDrawer()" aria-label="閉じる">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/></svg>
     </button>
   </div>
   <div class="drawer-body">
-    <div class="drawer-section">
+    <div class="drawer-section drawer-section-file">
       <div class="drawer-section-label">ファイル設定</div>
       <div class="field-group">
         <div class="row">
@@ -929,7 +1052,7 @@ kbd{
       </div>
     </div>
 
-    <div class="drawer-section">
+    <div class="drawer-section drawer-section-editor">
       <div class="drawer-section-label">エディタ</div>
       <div class="field" style="margin-bottom:12px">
         <label class="field-label">配色テーマ</label>
@@ -952,6 +1075,7 @@ kbd{
       <div class="toggle-row"><span>行番号</span><button class="switch" id="swGutter" aria-label="行番号"></button></div>
       <div class="toggle-row"><span>行の折り返し</span><button class="switch" id="swWrap" aria-label="行の折り返し"></button></div>
       <div class="toggle-row"><span>括弧・引用符の自動補完</span><button class="switch" id="swPairs" aria-label="自動補完"></button></div>
+      <div class="toggle-row"><span>構文エラーのリアルタイムチェック</span><button class="switch" id="swLint" aria-label="構文エラーチェック"></button></div>
     </div>
 
     <div class="drawer-section">
@@ -1031,6 +1155,13 @@ const statusCursor = $('statusCursor');
 const statusIndent = $('statusIndent');
 const statusWrap   = $('statusWrap');
 const statusLang   = $('statusLang');
+const statusErrors = $('statusErrors');
+const errorRuler   = $('errorRuler');
+const viewportIndicator = $('viewportIndicator');
+const edgeIndicatorTop    = $('edgeIndicatorTop');
+const edgeIndicatorBottom = $('edgeIndicatorBottom');
+const edgeCountTop    = $('edgeCountTop');
+const edgeCountBottom = $('edgeCountBottom');
 const overlay      = $('overlay');
 const drawer       = $('drawer');
 const mobileTabs   = $('mobileTabs');
@@ -1059,6 +1190,7 @@ const prefs = {
   gutter: true,
   wrap: false,
   pairs: true,
+  lint: true,
   indent: 4
 };
 
@@ -1069,6 +1201,7 @@ const LANG_LABEL = {
   html:'HTML', xml:'XML', css:'CSS', js:'JavaScript',
   json:'JSON', md:'Markdown', py:'Python', text:'プレーンテキスト'
 };
+const THEME_LABEL = { auto:'自動', light:'ライト', dark:'ダーク' };
 
 function langFromExt(ext) {
   switch ((ext || '').toLowerCase()) {
@@ -1648,6 +1781,161 @@ const Highlighter = (() => {
   return { tokenize, renderLines, codeMask, esc, VOID_TAGS };
 })();
 
+/* ═══════Lint — 軽量な構文エラー検出（括弧の対応・タグの対応・文字列の閉じ忘れ）══════ */
+const Lint = (() => {
+  const OPENERS = { '(': ')', '[': ']', '{': '}' };
+  const CLOSERS = { ')': '(', ']': '[', '}': '{' };
+
+  function bracketErrors(tokens) {
+    const errors = [];
+    const stack = [];
+    let offset = 0;
+    for (const [type, text] of tokens) {
+      if (type === 'punct' || type === 'op') {
+        for (let k = 0; k < text.length; k++) {
+          const ch = text[k];
+          const pos = offset + k;
+          if (OPENERS[ch]) { stack.push({ ch, pos }); }
+          else if (CLOSERS[ch]) {
+            if (!stack.length) {
+              errors.push({ pos, msg: '対応する開き括弧のない「' + ch + '」' });
+            } else {
+              const top = stack.pop();
+              if (OPENERS[top.ch] !== ch) {
+                errors.push({ pos: top.pos, msg: '「' + top.ch + '」の閉じ方が正しくありません（「' + ch + '」で閉じられています）' });
+              }
+            }
+          }
+        }
+      }
+      offset += text.length;
+    }
+    stack.forEach(o => errors.push({ pos: o.pos, msg: '閉じられていない「' + o.ch + '」' }));
+    return errors;
+  }
+
+  function stringErrors(tokens) {
+    const errors = [];
+    let offset = 0;
+    for (const [type, text] of tokens) {
+      if (type === 'string') {
+        const m = /^[a-zA-Z]{0,2}("""|'''|"|')/.exec(text);
+        if (m) {
+          const q = m[1];
+          let bad = text.length < q.length * 2 || !text.endsWith(q);
+          if (!bad && q.length === 1) {
+            let bs = 0, i2 = text.length - 2;
+            while (i2 >= 0 && text[i2] === '\\') { bs++; i2--; }
+            bad = (bs % 2) === 1;
+          }
+          if (bad) errors.push({ pos: offset, msg: '閉じられていない文字列' });
+        }
+      }
+      offset += text.length;
+    }
+    return errors;
+  }
+
+  function invalidTokenErrors(tokens) {
+    const errors = [];
+    let offset = 0;
+    for (const [type, text] of tokens) {
+      if (type === 'invalid') errors.push({ pos: offset, msg: '無効な文字「' + text + '」' });
+      offset += text.length;
+    }
+    return errors;
+  }
+
+  function htmlErrors(tokens, isXml) {
+    const errors = [];
+    const stack = [];
+    let offset = 0, i = 0;
+    while (i < tokens.length) {
+      const [type, text] = tokens[i];
+      if (type === 'punct' && (text === '<' || text === '</')) {
+        const closing = text === '</';
+        const tagStart = offset;
+        const nameTok = tokens[i + 1];
+        const name = (nameTok && nameTok[0] === 'tag') ? nameTok[1] : null;
+        let k = i + 1 + (name ? 1 : 0);
+        let localOffset = offset + text.length + (name ? name.length : 0);
+        let selfClose = false;
+        while (k < tokens.length) {
+          const [tt, tv] = tokens[k];
+          localOffset += tv.length;
+          if (tt === 'punct' && tv === '>') { k++; break; }
+          if (tt === 'punct' && tv === '/>') { selfClose = true; k++; break; }
+          k++;
+        }
+        if (name) {
+          const lname = name.toLowerCase();
+          if (closing) {
+            let found = -1;
+            for (let s = stack.length - 1; s >= 0; s--) if (stack[s].name === lname) { found = s; break; }
+            if (found === -1) {
+              errors.push({ pos: tagStart, msg: '対応する開始タグのない終了タグ「</' + name + '>」' });
+            } else {
+              for (let s = stack.length - 1; s > found; s--) {
+                errors.push({ pos: stack[s].pos, msg: '閉じられていないタグ「<' + stack[s].orig + '>」' });
+              }
+              stack.length = found;
+            }
+          } else if (!selfClose && !(!isXml && Highlighter.VOID_TAGS.has(lname))) {
+            stack.push({ name: lname, orig: name, pos: tagStart });
+          }
+        }
+        offset = localOffset;
+        i = k;
+        continue;
+      }
+      offset += text.length;
+      i++;
+    }
+    stack.forEach(o => errors.push({ pos: o.pos, msg: '閉じられていないタグ「<' + o.orig + '>」' }));
+    return errors;
+  }
+
+  function run(code, language) {
+    if (!code || language === 'text' || language === 'md') return [];
+    if (code.length > BIG_LIMIT) return [];
+    let tokens;
+    try { tokens = Highlighter.tokenize(code, language); } catch (e) { return []; }
+    let errors = bracketErrors(tokens).concat(stringErrors(tokens));
+    if (language === 'json') errors = errors.concat(invalidTokenErrors(tokens));
+    if (language === 'html' || language === 'xml') errors = errors.concat(htmlErrors(tokens, language === 'xml'));
+    errors.sort((a, b) => a.pos - b.pos);
+    return errors;
+  }
+
+  function buildLineStarts(code) {
+    const starts = [0];
+    for (let i = 0; i < code.length; i++) if (code.charCodeAt(i) === 10) starts.push(i + 1);
+    return starts;
+  }
+  function lineAt(starts, pos) {
+    let lo = 0, hi = starts.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (starts[mid] <= pos) lo = mid; else hi = mid - 1;
+    }
+    return lo;
+  }
+
+  /** エラーを行番号（0始まり）ごとにまとめる */
+  function toLineErrors(code, errors) {
+    const starts = buildLineStarts(code);
+    const map = new Map();
+    for (const e of errors) {
+      const line = lineAt(starts, Math.min(e.pos, code.length));
+      if (!map.has(line)) map.set(line, []);
+      map.get(line).push(e.msg);
+    }
+    return map;
+  }
+
+  return { run, toLineErrors };
+})();
+
 /* ═══════Renderer — ハイライト層、行番号、現在行══════ */
 const Render = (() => {
   let queued = false;
@@ -1668,6 +1956,7 @@ const Render = (() => {
     paintGutter(lineCount);
     syncScroll();
     updateCursor();
+    ErrorMonitor.update(code);
   }
 
   function paintGutter(count) {
@@ -1754,7 +2043,156 @@ const Render = (() => {
     requestAnimationFrame(() => { queued = false; paint(); });
   }
 
-  return { paint, schedule, syncScroll, updateCursor, alignGutter, positionCurrentLine };
+  return { paint, schedule, syncScroll, updateCursor, alignGutter, positionCurrentLine, lineIndexAt, getLineCount: () => lineCount };
+})();
+
+/* ═══════ErrorMonitor — 構文エラーのリアルタイム監視・可視化══════ */
+const ErrorMonitor = (() => {
+  let errorLines = [];
+  let lineMessages = new Map();
+
+  function lineStartOffset(code, line) {
+    if (line <= 0) return 0;
+    let count = 0, i = 0;
+    while (i < code.length && count < line) { if (code.charCodeAt(i) === 10) count++; i++; }
+    return i;
+  }
+
+  function clearMarks() {
+    const gls = gutter.children, cls = highlight.children;
+    for (let i = 0; i < gls.length; i++) gls[i].classList.remove('error');
+    for (let i = 0; i < cls.length; i++) { cls[i].classList.remove('error-line'); cls[i].removeAttribute('title'); }
+  }
+
+  function paintMarks() {
+    const gls = gutter.children, cls = highlight.children;
+    errorLines.forEach(line => {
+      const msg = (lineMessages.get(line) || []).join(' / ');
+      if (gls[line]) { gls[line].classList.add('error'); gls[line].title = msg; }
+      if (cls[line]) { cls[line].classList.add('error-line'); cls[line].title = msg; }
+    });
+  }
+
+  function updateRuler() {
+    if (!errorRuler) return;
+    Array.from(errorRuler.querySelectorAll('.error-tick')).forEach(t => t.remove());
+    const total = Math.max(1, Render.getLineCount());
+    errorLines.forEach(line => {
+      const tick = document.createElement('div');
+      tick.className = 'error-tick';
+      tick.style.top = Math.min(99, (line / total) * 100) + '%';
+      tick.title = (lineMessages.get(line) || [])[0] || '';
+      tick.addEventListener('click', () => goToLine(line));
+      errorRuler.appendChild(tick);
+    });
+    updateViewportIndicator();
+  }
+
+  function updateViewportIndicator() {
+    if (!viewportIndicator) return;
+    const sh = editor.scrollHeight || 1;
+    const ch = editor.clientHeight || 0;
+    const st = editor.scrollTop || 0;
+    viewportIndicator.style.top = Math.min(100, (st / sh) * 100) + '%';
+    viewportIndicator.style.height = Math.max(3, Math.min(100, (ch / sh) * 100)) + '%';
+  }
+
+  function updateEdgeIndicators() {
+    if (!errorLines.length || !prefs.lint) {
+      edgeIndicatorTop.classList.remove('show');
+      edgeIndicatorBottom.classList.remove('show');
+      return;
+    }
+    const viewTop = editor.scrollTop, viewBottom = viewTop + editor.clientHeight;
+    let above = 0, below = 0;
+    errorLines.forEach(line => {
+      const el = highlight.children[line];
+      if (!el) return;
+      if (el.offsetTop + el.offsetHeight < viewTop) above++;
+      else if (el.offsetTop > viewBottom) below++;
+    });
+    edgeIndicatorTop.classList.toggle('show', above > 0);
+    edgeIndicatorBottom.classList.toggle('show', below > 0);
+    if (above > 0) edgeCountTop.textContent = above + '件';
+    if (below > 0) edgeCountBottom.textContent = below + '件';
+  }
+
+  function updateStatusBar() {
+    if (!statusErrors) return;
+    if (!prefs.lint || !errorLines.length) { statusErrors.style.display = 'none'; return; }
+    statusErrors.style.display = '';
+    const shown = errorLines.slice(0, 3).map(l => l + 1).join(', ');
+    const more = errorLines.length > 3 ? '…' : '';
+    statusErrors.textContent = '⚠ ' + errorLines.length + '件（行 ' + shown + more + '）';
+  }
+
+  function goToLine(line) {
+    const code = editor.value;
+    const start = lineStartOffset(code, line);
+    let end = code.indexOf('\n', start); if (end === -1) end = code.length;
+    editor.focus();
+    editor.setSelectionRange(start, end);
+    Render.updateCursor();
+    const el = highlight.children[line];
+    if (el) editor.scrollTop = Math.max(0, el.offsetTop - editor.clientHeight / 2 + el.offsetHeight / 2);
+    Render.syncScroll();
+    const msgs = lineMessages.get(line) || [];
+    if (msgs[0]) showToast('行 ' + (line + 1) + ': ' + msgs[0], 'danger');
+  }
+
+  function jumpNext(dir) {
+    if (!prefs.lint || !errorLines.length) { showToast('構文エラーは見つかりません', 'success'); return; }
+    const curLine = Render.lineIndexAt(editor.selectionStart);
+    let target;
+    if (dir > 0) {
+      target = errorLines.find(l => l > curLine);
+      if (target === undefined) target = errorLines[0];
+    } else {
+      const rev = errorLines.slice().reverse();
+      target = rev.find(l => l < curLine);
+      if (target === undefined) target = errorLines[errorLines.length - 1];
+    }
+    goToLine(target);
+  }
+
+  function jumpNearestAbove() {
+    const viewTop = editor.scrollTop;
+    for (let i = errorLines.length - 1; i >= 0; i--) {
+      const el = highlight.children[errorLines[i]];
+      if (el && el.offsetTop + el.offsetHeight < viewTop) { goToLine(errorLines[i]); return; }
+    }
+  }
+  function jumpNearestBelow() {
+    const viewBottom = editor.scrollTop + editor.clientHeight;
+    for (let i = 0; i < errorLines.length; i++) {
+      const el = highlight.children[errorLines[i]];
+      if (el && el.offsetTop > viewBottom) { goToLine(errorLines[i]); return; }
+    }
+  }
+
+  function update(code) {
+    clearMarks();
+    if (!prefs.lint) {
+      errorLines = []; lineMessages = new Map();
+      updateRuler(); updateEdgeIndicators(); updateStatusBar();
+      return;
+    }
+    const v = code === undefined ? editor.value : code;
+    const errs = Lint.run(v, lang);
+    lineMessages = Lint.toLineErrors(v, errs);
+    errorLines = Array.from(lineMessages.keys()).sort((a, b) => a - b);
+    paintMarks();
+    updateRuler();
+    updateEdgeIndicators();
+    updateStatusBar();
+  }
+
+  function onScroll() {
+    updateViewportIndicator();
+    updateEdgeIndicators();
+  }
+
+  return { update, onScroll, jumpNext, jumpNearestAbove, jumpNearestBelow };
 })();
 
 function updateStatus() {
@@ -2109,8 +2547,15 @@ const Prefs = {
     $('swGutter').classList.toggle('on', prefs.gutter);
     $('swWrap').classList.toggle('on', prefs.wrap);
     $('swPairs').classList.toggle('on', prefs.pairs);
+    $('swLint').classList.toggle('on', prefs.lint);
     document.querySelectorAll('#themeSeg button').forEach(b => b.classList.toggle('on', b.dataset.theme === prefs.theme));
     document.querySelectorAll('#fontSeg button').forEach(b => b.classList.toggle('on', parseFloat(b.dataset.fs) === prefs.fontSize));
+    $('tbHighlight').classList.toggle('on', prefs.highlight);
+    $('tbGutter').classList.toggle('on', prefs.gutter);
+    $('tbPairs').classList.toggle('on', prefs.pairs);
+    $('tbLint').classList.toggle('on', prefs.lint);
+    $('themeToggleLabel').textContent = THEME_LABEL[prefs.theme] || '自動';
+    $('fontStepperValue').textContent = prefs.fontSize;
   },
   set(key, value) {
     prefs[key] = value;
@@ -2121,6 +2566,10 @@ const Prefs = {
   toggle(key) { this.set(key, !prefs[key]); },
   toggleWrap() { this.toggle('wrap'); },
   cycleIndent() { this.set('indent', prefs.indent === 2 ? 4 : prefs.indent === 4 ? 8 : 2); },
+  cycleTheme() {
+    const order = ['auto', 'light', 'dark'];
+    this.set('theme', order[(order.indexOf(prefs.theme) + 1) % order.length]);
+  },
   zoom(delta) {
     const next = Math.min(24, Math.max(10, Math.round((prefs.fontSize + delta) * 2) / 2));
     this.set('fontSize', next);
@@ -2274,6 +2723,7 @@ function loadTab() {
   editor.value = tab.content;
   drawerName.value = tab.name;
   drawerExt.value = tab.extension;
+  $('toolbarExt').value = tab.extension;
   setLang(tab.extension);
   editor.scrollTop = 0;
   editor.scrollLeft = 0;
@@ -2286,6 +2736,7 @@ function updateTitleBar() {
   const tab = tabs[current];
   const label = tab ? tab.name + tab.extension : '';
   if (mobileTitle) mobileTitle.textContent = label;
+  document.title = (tab && tab.modified ? '\u25CF ' : '') + (label || 'Notes') + (label ? ' \u2014 Notes' : '');
 }
 
 function addTab(name = 'Untitled', content = '', ext = '.html') {
@@ -2505,10 +2956,11 @@ const Data = {
 /* ══════Panels══════ */
 function showDrawer() {
   const tab = tabs[current];
-  if (tab) { drawerName.value = tab.name; drawerExt.value = tab.extension; }
+  if (tab) { drawerName.value = tab.name; drawerExt.value = tab.extension; $('toolbarExt').value = tab.extension; }
   const desktop = !isMobile();
   drawer.classList.toggle('popover', desktop);
   overlay.classList.toggle('popover-mode', desktop);
+  $('drawerTitle').textContent = desktop ? 'その他' : 'オプション';
   if (desktop) positionPopover();
   showOverlay();
   drawer.classList.add('open');
@@ -2557,6 +3009,7 @@ editor.addEventListener('input', () => {
 
 editor.addEventListener('keydown', Editor.onKeyDown);
 editor.addEventListener('scroll', Render.syncScroll, { passive: true });
+editor.addEventListener('scroll', () => ErrorMonitor.onScroll(), { passive: true });
 editor.addEventListener('click', Render.updateCursor);
 editor.addEventListener('keyup', Render.updateCursor);
 editor.addEventListener('select', Render.updateCursor);
@@ -2571,6 +3024,16 @@ drawerName.addEventListener('input', () => {
   if (tab) { tab.name = drawerName.value; renderTabs(); persist(); }
 });
 drawerExt.addEventListener('change', () => {
+  const tab = tabs[current];
+  if (tab) {
+    tab.extension = drawerExt.value;
+    $('toolbarExt').value = drawerExt.value;
+    setLang(tab.extension);
+    renderTabs(); persist(); Render.paint();
+  }
+});
+$('toolbarExt').addEventListener('change', () => {
+  drawerExt.value = $('toolbarExt').value;
   const tab = tabs[current];
   if (tab) {
     tab.extension = drawerExt.value;
@@ -2594,16 +3057,31 @@ statusWrap.addEventListener('click', () => Prefs.toggleWrap());
 statusIndent.addEventListener('click', () => Prefs.cycleIndent());
 statusLang.addEventListener('click', () => showDrawer());
 statusCursor.addEventListener('click', () => editor.focus());
+statusErrors.addEventListener('click', () => ErrorMonitor.jumpNext(1));
+
+// エラー上下インジケーター
+edgeIndicatorTop.addEventListener('click', () => ErrorMonitor.jumpNearestAbove());
+edgeIndicatorBottom.addEventListener('click', () => ErrorMonitor.jumpNearestBelow());
 
 // オプションパンネル
 $('swHighlight').addEventListener('click', () => Prefs.toggle('highlight'));
 $('swGutter').addEventListener('click', () => Prefs.toggle('gutter'));
 $('swWrap').addEventListener('click', () => Prefs.toggle('wrap'));
 $('swPairs').addEventListener('click', () => Prefs.toggle('pairs'));
+$('swLint').addEventListener('click', () => Prefs.toggle('lint'));
 document.querySelectorAll('#themeSeg button').forEach(b =>
   b.addEventListener('click', () => Prefs.set('theme', b.dataset.theme)));
 document.querySelectorAll('#fontSeg button').forEach(b =>
   b.addEventListener('click', () => Prefs.set('fontSize', parseFloat(b.dataset.fs))));
+
+// PC ツールバー — オプション項目
+$('tbHighlight').addEventListener('click', () => Prefs.toggle('highlight'));
+$('tbGutter').addEventListener('click', () => Prefs.toggle('gutter'));
+$('tbPairs').addEventListener('click', () => Prefs.toggle('pairs'));
+$('tbLint').addEventListener('click', () => Prefs.toggle('lint'));
+$('themeToggleBtn').addEventListener('click', () => Prefs.cycleTheme());
+$('fontDec').addEventListener('click', () => Prefs.zoom(-0.5));
+$('fontInc').addEventListener('click', () => Prefs.zoom(0.5));
 
 // サイドバー　調節
 (function initResizer() {
@@ -2639,6 +3117,7 @@ window.addEventListener('resize', () => {
   if (drawer.classList.contains('open') && drawer.classList.contains('popover')) positionPopover();
   Render.alignGutter();
   Render.positionCurrentLine();
+  ErrorMonitor.onScroll();
 });
 window.addEventListener('scroll', closeContextMenu, true);
 
@@ -2652,6 +3131,7 @@ document.addEventListener('keydown', e => {
   if (mod && e.key === '-') { e.preventDefault(); Prefs.zoom(-1); }
   if (mod && e.key === '0') { e.preventDefault(); Prefs.set('fontSize', 13.5); }
   if (e.altKey && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); Prefs.toggleWrap(); }
+  if (e.key === 'F8') { e.preventDefault(); ErrorMonitor.jumpNext(e.shiftKey ? -1 : 1); }
   if (mod && e.key === 'Tab') {
     e.preventDefault();
     const next = e.shiftKey ? (current === 0 ? tabs.length - 1 : current - 1) : (current + 1) % tabs.length;
