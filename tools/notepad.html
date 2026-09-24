@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Notes</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='3' width='22' height='2.4' rx='1.2' fill='%235bc8ea'/%3E%3Crect x='3.4' y='6.2' width='17.2' height='2' rx='1' fill='%235bc8ea'/%3E%3Crect x='5.3' y='8.4' width='2.3' height='12.4' fill='%235bc8ea'/%3E%3Crect x='16.4' y='8.4' width='2.3' height='12.4' fill='%235bc8ea'/%3E%3Crect x='4.3' y='12.6' width='15.4' height='1.6' fill='%235bc8ea'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='3' width='22' height='2.4' rx='1.2' fill='%232b6cb0'/%3E%3Crect x='3.4' y='6.2' width='17.2' height='2' rx='1' fill='%232b6cb0'/%3E%3Crect x='5.3' y='8.4' width='2.3' height='12.4' fill='%232b6cb0'/%3E%3Crect x='16.4' y='8.4' width='2.3' height='12.4' fill='%232b6cb0'/%3E%3Crect x='4.3' y='12.6' width='15.4' height='1.6' fill='%232b6cb0'/%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -253,7 +253,7 @@ body{
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
 }
-.logo-mark svg{width:22px;height:22px;fill:#5bc8ea}
+.logo-mark svg{width:22px;height:22px;fill:#2b6cb0}
 
 .logo-text{
   font-size:13px;font-weight:600;
@@ -891,6 +891,9 @@ kbd{
 
   <main id="mainContent">
     <div class="top-bar">
+      <button class="icon-btn top-bar-logo" onclick="location.href='/'" title="ホームへ" aria-label="ホームへ移動">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="22" height="2.4" rx="1.2"/><rect x="3.4" y="6.2" width="17.2" height="2" rx="1"/><rect x="5.3" y="8.4" width="2.3" height="12.4"/><rect x="16.4" y="8.4" width="2.3" height="12.4"/><rect x="4.3" y="12.6" width="15.4" height="1.6"/></svg></div>
+      </button>
       <button class="icon-btn" onclick="toggleMobileTabs()" title="タブ" aria-label="タブ一覧">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="16" height="3" rx="1"/><rect x="2" y="9" width="12" height="3" rx="1"/><rect x="2" y="14" width="14" height="3" rx="1"/></svg>
       </button>
