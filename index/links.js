@@ -13,7 +13,7 @@ const LINKS = [
     { id: 11, title: 'frame　opener', desc: 'フレームオープナー', url: '/tools/opener.html', category: 'tools' },
     { id: 12, title: 'truck game', desc: 'トロッコゲーム', url: '/truck/index.html', category: 'extra' },
     { id: 13, title: 'camera', desc: 'カメラ', url: '/tools/camera.html', category: 'tools' },
-    { id: 14, title: 'truck game', desc: 'トロッコゲーム', url: '/truck/index.html', category: 'extra' },
+    { id: 14, title: 'nodemaster', desc: 'ノードゲーム', url: '/play/nodemaster.html', category: 'design' },
     { id: 15, title: 'musicvisualizer', desc: 'ミュージックビジュアライザー', url: '/tools/musicvisualizer.html', category: 'design' },
     { id: 16, title: 'percentencodingconverter', desc: 'パーセントエンドコンバータ', url: '/tools/percentencodingconverter.html', category: 'tools' },
     { id: 17, title: 'shader', desc: 'シェーダー', url: '/tools/shader.html', category: 'design' },
