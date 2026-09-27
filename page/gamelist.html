@@ -1,97 +1,111 @@
 <!DOCTYPE html>
-<html lang="ja" data-theme="auto">
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>オノゴロ | ゲーム一覧</title>
-<link rel="stylesheet" href="/page/list.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>オノゴロ | ゲームコレクション</title>
+  <link rel="stylesheet" href="/page/list.css">
+  <!-- Google Fonts: Inter & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<nav class="nav">
-  <span class="nav-logo"><a href="/" style="color:inherit">オノゴロ</a></span>
-  <div class="nav-right">
-    <a href="/"><img src="https://counter.256server.com/@:ms05" alt="アクセスカウンタ" class="counter-img"></a>
-    <button class="theme-btn" id="themeBtn" title="テーマ切替">◑</button>
-  </div>
-</nav>
-
-<main class="main">
-
-  <div class="page-header">
-    <h1 class="page-title">ゲームコレクション</h1>
-    <p class="page-subtitle">暇つぶしにどうぞなゲーム一覧</p>
-  </div>
-
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="search-wrap">
-      <span class="search-icon">⌕</span>
-      <input type="text" class="search-input" id="searchInput" placeholder="検索...">
-    </div>
-    <div class="filter-group">
-      <button class="tab-btn active" data-filter="all">すべて</button>
-      <button class="tab-btn" data-filter="favorites">お気に入り</button>
+<!-- Navigation -->
+<header class="nav-header">
+  <div class="nav-container">
+    <a href="/" class="brand-logo">
+      <span class="logo-mark">O</span>
+      <span class="logo-text">オノゴロ</span>
+    </a>
+    <div class="nav-actions">
+      <a href="/" class="counter-badge" title="アクセスカウンター">
+        <img src="https://counter.256server.com/@:ms05" alt="Counter" class="counter-img">
+      </a>
     </div>
   </div>
+</header>
 
-  <!-- Stats -->
-  <div class="stats-bar">
-    <span><span class="stat-val" id="totalCount">0</span>ゲーム</span>
-    <span><span class="stat-val" id="favCount">0</span>お気に入り</span>
-  </div>
+<main class="main-content">
 
-  <!-- Favorites compact list -->
-  <section class="fav-section hidden" id="favSection">
-    <p class="section-label">お気に入り</p>
-    <div class="fav-list" id="favList"></div>
+  <!-- Hero Header -->
+  <section class="hero-section">
+    <div class="hero-text">
+      <h1 class="hero-title">ゲームコレクション</h1>
+      <p class="hero-subtitle">暇つぶしに最適なミニゲームと便利なツール群</p>
+    </div>
   </section>
 
-  <!-- All tools grid -->
-  <section class="tools-section">
-    <p class="section-label" id="mainLabel">すべてのゲーム</p>
+  <!-- Controls Bar (Search + Tabs) -->
+  <section class="controls-section">
+    <div class="search-bar">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="searchInput" class="search-input" placeholder="ゲームやツールを検索... (Ctrl + K)">
+      <span class="search-shortcut">⌘K</span>
+    </div>
+
+    <div class="filter-controls">
+      <div class="tab-segment">
+        <button class="tab-btn active" data-filter="all">すべて</button>
+        <button class="tab-btn" data-filter="favorites">
+          <span class="star-icon">★</span> お気に入り
+        </button>
+      </div>
+      <div class="tag-chips" id="tagChips">
+        <!-- JSでタグが自動生成されます -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-number" id="totalCount">0</span>
+      <span class="stat-label">アイテム</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <span class="stat-number" id="favCount">0</span>
+      <span class="stat-label">お気に入り</span>
+    </div>
+  </div>
+
+  <!-- Favorites Quick Bar -->
+  <section class="fav-section hidden" id="favSection">
+    <h2 class="section-heading">お気に入りクイックアクセス</h2>
+    <div class="fav-grid" id="favList"></div>
+  </section>
+
+  <!-- Main Tools Grid -->
+  <section class="grid-section">
+    <h2 class="section-heading" id="mainLabel">すべてのコレクション</h2>
     <div class="tools-grid" id="toolsGrid">
-      <div class="empty"><p class="empty-text">読み込み中...</p></div>
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>コンテンツを読み込み中...</p>
+      </div>
     </div>
   </section>
 
 </main>
 
 <script>
-// JSONファイルのパス（必要に応じてパスを調整してください）
 const TOOLS_JSON_PATH = '/page/games.json'; 
 let TOOLS = [];
-
-/* STATE */
 let favorites = [];
 let currentFilter = 'all';
+let selectedTag = null;
 let searchQuery = '';
 
-/* THEME */
-const themeBtn = document.getElementById('themeBtn');
-const html = document.documentElement;
+/* OS Theme Listener */
+const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+localStorage.removeItem('theme');
 
-function getSystemTheme() {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
-function applyTheme(theme) {
-  html.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme);
-  themeBtn.textContent = theme === 'dark' ? '○' : '●';
-}
-
-function initTheme() {
-  const stored = localStorage.getItem('theme');
-  applyTheme(stored || getSystemTheme());
-}
-
-themeBtn.addEventListener('click', () => {
-  const current = html.getAttribute('data-theme');
-  applyTheme(current === 'dark' ? 'light' : 'dark');
-});
-
-/* FAVORITES */
+/* Favorites Storage */
 function loadFavorites() {
   try {
     favorites = JSON.parse(localStorage.getItem('toolFavorites') || '[]');
@@ -112,33 +126,65 @@ function toggleFavorite(id) {
   render();
 }
 
-/* TOOL DATA LOADING (JSON) */
+/* Load JSON */
 async function loadTools() {
   try {
     const res = await fetch(TOOLS_JSON_PATH, { cache: 'no-store' });
-    if (!res.ok) throw new Error('games.json の取得に失敗しました (' + res.status + ')');
-    
-    // res.json() で直接JavaScriptのオブジェクト配列として読み込む
+    if (!res.ok) throw new Error('データ取得エラー');
     TOOLS = await res.json();
+    renderTags();
   } catch (err) {
     console.error(err);
-    document.getElementById('toolsGrid').innerHTML =
-      '<div class="empty"><p class="empty-text">ゲームデータの読み込みに失敗しました</p></div>';
-    document.getElementById('mainLabel').textContent = 'すべての記事';
-    document.getElementById('totalCount').textContent = '0';
+    document.getElementById('toolsGrid').innerHTML = `
+      <div class="empty-state">
+        <p class="empty-title">データを読み込めませんでした</p>
+        <p class="empty-desc">ネットワーク接続またはファイルパスを確認してください</p>
+      </div>`;
     return;
   }
   render();
 }
 
-/* FILTER */
+/* Dynamic Tags */
+function renderTags() {
+  const tagSet = new Set();
+  TOOLS.forEach(t => t.tags.forEach(tag => tagSet.add(tag)));
+  const tagChips = document.getElementById('tagChips');
+  
+  tagChips.innerHTML = Array.from(tagSet).map(tag => `
+    <button class="chip-btn" data-tag="${tag}">#${tag}</button>
+  `).join('');
+
+  tagChips.querySelectorAll('.chip-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const tag = e.currentTarget.dataset.tag;
+      if (selectedTag === tag) {
+        selectedTag = null;
+        e.currentTarget.classList.remove('active');
+      } else {
+        tagChips.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+        selectedTag = tag;
+        e.currentTarget.classList.add('active');
+      }
+      render();
+    });
+  });
+}
+
+/* Filter Logic */
 function getFiltered() {
   let list = TOOLS;
+
   if (currentFilter === 'favorites') {
     list = list.filter(t => favorites.includes(t.id));
   }
+
+  if (selectedTag) {
+    list = list.filter(t => t.tags.includes(selectedTag));
+  }
+
   if (searchQuery) {
-    const q = searchQuery;
+    const q = searchQuery.toLowerCase();
     list = list.filter(t =>
       t.name.toLowerCase().includes(q) ||
       t.desc.toLowerCase().includes(q) ||
@@ -148,7 +194,7 @@ function getFiltered() {
   return list;
 }
 
-/* RENDER */
+/* Render UI */
 function renderFavSection() {
   const favItems = TOOLS.filter(t => favorites.includes(t.id));
   const section = document.getElementById('favSection');
@@ -161,11 +207,11 @@ function renderFavSection() {
   section.classList.remove('hidden');
 
   list.innerHTML = favItems.map(t => `
-    <div class="fav-row" data-url="${t.url}" tabindex="0" role="link" aria-label="${t.name}を開く">
-      <span class="fav-row-left"></span>
-      <span class="fav-row-name">${t.name}</span>
-      <span class="fav-row-link">開く</span>
-      <button class="fav-row-remove" data-id="${t.id}" title="お気に入りを外す">✕</button>
+    <div class="fav-card" data-url="${t.url}" tabindex="0">
+      <div class="fav-card-content">
+        <span class="fav-title">${t.name}</span>
+      </div>
+      <button class="fav-remove-btn" data-id="${t.id}" title="お気に入りを解除">✕</button>
     </div>
   `).join('');
 }
@@ -176,34 +222,39 @@ function renderToolsGrid() {
   const label = document.getElementById('mainLabel');
 
   if (currentFilter === 'favorites') {
-    label.textContent = 'お気に入り';
-  } else if (searchQuery) {
+    label.textContent = 'お気に入りリスト';
+  } else if (searchQuery || selectedTag) {
     label.textContent = '検索結果';
   } else {
-    label.textContent = 'すべてのゲーム';
+    label.textContent = 'すべてのコレクション';
   }
 
   if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty"><p class="empty-text">該当するゲームが見つかりません</p></div>`;
+    grid.innerHTML = `
+      <div class="empty-state">
+        <p class="empty-title">該当するコンテンツがありません</p>
+        <p class="empty-desc">検索ワードやフィルター条件を変更してみてください</p>
+      </div>`;
     return;
   }
 
   grid.innerHTML = filtered.map(t => {
     const isFav = favorites.includes(t.id);
-    const tags = t.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+    const tags = t.tags.map(tag => `<span class="tag-badge">#${tag}</span>`).join('');
     return `
-      <div class="tool-card" data-url="${t.url}" tabindex="0" role="link" aria-label="${t.name}を開く">
-        <div class="tool-card-accent"></div>
-        <div class="tool-body">
-          <div class="tool-header">
-            <h3 class="tool-name">${t.name}</h3>
-            <button class="fav-toggle ${isFav ? 'active' : ''}" data-id="${t.id}" title="${isFav ? 'お気に入りを外す' : 'お気に入りに追加'}">${isFav ? '★' : '☆'}</button>
-          </div>
-          <p class="tool-desc">${t.desc}</p>
-          <div class="tool-tags">${tags}</div>
-          <span class="tool-link">開く</span>
+      <article class="tool-card" data-url="${t.url}" tabindex="0">
+        <div class="card-header">
+          <h3 class="card-title">${t.name}</h3>
+          <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${t.id}" title="${isFav ? 'お気に入り解除' : 'お気に入り追加'}">
+            ${isFav ? '★' : '☆'}
+          </button>
         </div>
-      </div>
+        <p class="card-desc">${t.desc}</p>
+        <div class="card-footer">
+          <div class="card-tags">${tags}</div>
+          <span class="card-arrow">→</span>
+        </div>
+      </article>
     `;
   }).join('');
 }
@@ -221,10 +272,18 @@ function render() {
   renderStats();
 }
 
-/* EVENTS */
+/* Event Listeners */
 document.getElementById('searchInput').addEventListener('input', e => {
-  searchQuery = e.target.value.toLowerCase().trim();
+  searchQuery = e.target.value.trim();
   render();
+});
+
+// Shortcut Ctrl+K / Cmd+K
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+  }
 });
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -237,47 +296,34 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 document.addEventListener('click', e => {
-  const favBtn = e.target.closest('.fav-toggle');
+  const favBtn = e.target.closest('.fav-btn');
   if (favBtn) {
     e.preventDefault();
     toggleFavorite(parseInt(favBtn.dataset.id));
     return;
   }
-  const removeBtn = e.target.closest('.fav-row-remove');
+  const removeBtn = e.target.closest('.fav-remove-btn');
   if (removeBtn) {
+    e.preventDefault();
     toggleFavorite(parseInt(removeBtn.dataset.id));
     return;
   }
-  const card = e.target.closest('.tool-card');
+  const card = e.target.closest('.tool-card, .fav-card');
   if (card && card.dataset.url) {
     window.location.href = card.dataset.url;
-    return;
-  }
-  const favRow = e.target.closest('.fav-row');
-  if (favRow && favRow.dataset.url) {
-    window.location.href = favRow.dataset.url;
   }
 });
 
 document.addEventListener('keydown', e => {
-  if (e.key !== 'Enter' && e.key !== ' ') return;
-  if (e.target.closest('.fav-toggle') || e.target.closest('.fav-row-remove')) return;
-
-  const card = e.target.closest('.tool-card');
+  if (e.key !== 'Enter') return;
+  if (e.target.closest('.fav-btn') || e.target.closest('.fav-remove-btn')) return;
+  const card = e.target.closest('.tool-card, .fav-card');
   if (card && card.dataset.url) {
-    e.preventDefault();
     window.location.href = card.dataset.url;
-    return;
-  }
-  const favRow = e.target.closest('.fav-row');
-  if (favRow && favRow.dataset.url) {
-    e.preventDefault();
-    window.location.href = favRow.dataset.url;
   }
 });
 
-/* INIT */
-initTheme();
+/* Init */
 loadFavorites();
 loadTools();
 </script>
