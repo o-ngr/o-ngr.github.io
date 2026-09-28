@@ -378,6 +378,29 @@ body{
 .action-btn.options-btn.open{background:var(--accent-dim);color:var(--accent)}
 .action-btn.options-btn.open svg{opacity:1}
 
+/* アクセスカウンター */
+.counter-box{
+  margin-top:6px;padding:10px 4px 2px;
+  border-top:1px solid var(--border-2);
+  display:flex;flex-direction:column;gap:6px;
+}
+.counter-label{
+  font-size:10px;font-weight:500;letter-spacing:0.06em;
+  color:var(--text-3);padding:0 6px;
+}
+.counter-slot{padding:0 6px}
+.access-counter-img{
+  display:block;width:100%;max-width:180px;height:auto;
+  aspect-ratio:180/54;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  box-shadow:var(--shadow-sm);
+  opacity:0.92;transition:opacity var(--transition);
+}
+.access-counter-img:hover{opacity:1}
+.sidebar.collapsed .counter-box{display:none}
+
 .action-shortcut{
   margin-left:auto;font-size:10px;color:var(--text-3);
   font-family:var(--font-mono);letter-spacing:0;
@@ -886,6 +909,12 @@ kbd{
         <span>新規タブ</span>
         <span class="action-shortcut">⌘T</span>
       </button>
+      <div class="counter-box">
+        <span class="counter-label">アクセスカウンター</span>
+        <div class="counter-slot" id="counterSlotDesktop">
+          <img id="accessCounter" class="access-counter-img" src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="180" height="54">
+        </div>
+      </div>
     </div>
   </aside>
 
@@ -1016,6 +1045,10 @@ kbd{
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
       新規タブ
     </button>
+    <div class="counter-box">
+      <span class="counter-label">アクセスカウンター</span>
+      <div class="counter-slot" id="counterSlotMobile"></div>
+    </div>
   </div>
 </div>
 
@@ -3188,6 +3221,20 @@ function init() {
   Render.paint();
   editor.focus();
 }
+
+// アクセスカウンター：画像は1つだけ。PC/モバイルで表示側のスロットへ移動（二重カウント防止）
+(function placeCounter() {
+  const img = $('accessCounter');
+  if (!img) return;
+  const mq = window.matchMedia('(max-width:768px)');
+  const place = () => {
+    const slot = $(mq.matches ? 'counterSlotMobile' : 'counterSlotDesktop');
+    if (slot && img.parentNode !== slot) slot.appendChild(img);
+  };
+  place();
+  if (mq.addEventListener) mq.addEventListener('change', place);
+  else if (mq.addListener) mq.addListener(place);
+})();
 
 init();
 
