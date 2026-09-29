@@ -227,7 +227,7 @@ body{
   transition:width 0.16s cubic-bezier(0.4,0,0.2,1);
 }
 .sidebar.no-transition{transition:none}
-.sidebar.collapsed{width:56px}
+.sidebar.collapsed{width:44px}
 
 .sidebar-resizer{
   position:absolute;
@@ -249,7 +249,14 @@ body{
   flex-shrink:0;
   gap:8px;
 }
-.sidebar.collapsed .sidebar-logo{padding:0;justify-content:center}
+.sidebar.collapsed .sidebar-logo{
+  padding:0;justify-content:center;
+  flex-direction:column;gap:1px;
+}
+.sidebar.collapsed .sidebar-collapse-btn{width:24px;height:14px;border-radius:4px}
+.sidebar.collapsed .sidebar-collapse-btn svg{width:11px;height:11px}
+.sidebar.collapsed .tab-list{padding:8px 6px}
+.sidebar.collapsed .sidebar-bottom{padding:10px 6px}
 .sidebar.collapsed .logo-text{display:none}
 
 .logo-mark{
@@ -357,7 +364,11 @@ a.logo-mark:active{opacity:0.7}
   transition:opacity var(--transition),background var(--transition),color var(--transition);
   cursor:pointer;
 }
-.sidebar.collapsed .tab-close{display:none}
+.sidebar.collapsed .tab-close{
+  position:absolute;inset:0;width:auto;height:auto;margin:auto;
+  border-radius:var(--radius-sm);background:var(--tab-hover);
+}
+.sidebar.collapsed .tab-close svg{width:11px;height:11px}
 .tab-close:hover{background:var(--border);color:var(--text)}
 .tab-close svg{width:10px;height:10px}
 
@@ -691,8 +702,8 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;ove
   top:auto;right:auto;height:auto;
   max-height:min(620px,80vh);width:320px;max-width:320px;
   border:1px solid var(--border);border-radius:var(--radius-lg);
-  transform:scale(0.96) translateY(4px);opacity:0;
-  transform-origin:bottom left;
+  transform:scale(0.96) translateY(-4px);opacity:0;
+  transform-origin:top right;
   transition:transform 0.16s cubic-bezier(0.4,0,0.2,1),opacity 0.14s ease;
   box-shadow:var(--shadow-lg);
 }
@@ -3047,11 +3058,16 @@ function closeDrawer() {
   hideOverlay();
 }
 function positionPopover() {
+  // ツールバー右端の「その他」ボタンの真下に、右端をそろえて表示
   const r = optionsBtn.getBoundingClientRect();
-  drawer.style.left = (r.right + 10) + 'px';
-  drawer.style.bottom = (window.innerHeight - r.bottom) + 'px';
-  drawer.style.top = 'auto';
+  const w = Math.min(320, window.innerWidth - 16);
+  const left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8));
+  const top = r.bottom + 8;
+  drawer.style.left = left + 'px';
+  drawer.style.top = top + 'px';
+  drawer.style.bottom = 'auto';
   drawer.style.right = 'auto';
+  drawer.style.maxHeight = Math.max(200, Math.min(620, window.innerHeight - top - 12)) + 'px';
 }
 function toggleMobileTabs() {
   if (mobileTabs.classList.contains('open')) closeMobileTabs();
