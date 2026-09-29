@@ -227,7 +227,8 @@ body{
   transition:width 0.16s cubic-bezier(0.4,0,0.2,1);
 }
 .sidebar.no-transition{transition:none}
-.sidebar.collapsed{width:44px}
+/* 最小化時: ロゴマークのセル(バー高さと同じ正方形)に幅をそろえる。リサイズ由来のインライン幅より優先 */
+.sidebar.collapsed{width:var(--bar-h)!important}
 
 .sidebar-resizer{
   position:absolute;
@@ -249,14 +250,7 @@ body{
   flex-shrink:0;
   gap:8px;
 }
-.sidebar.collapsed .sidebar-logo{
-  padding:0;justify-content:center;
-  flex-direction:column;gap:1px;
-}
-.sidebar.collapsed .sidebar-collapse-btn{width:24px;height:14px;border-radius:4px}
-.sidebar.collapsed .sidebar-collapse-btn svg{width:11px;height:11px}
-.sidebar.collapsed .tab-list{padding:8px 6px}
-.sidebar.collapsed .sidebar-bottom{padding:10px 6px}
+.sidebar.collapsed .sidebar-logo{padding:0;justify-content:center}
 .sidebar.collapsed .logo-text{display:none}
 
 .logo-mark{
@@ -289,8 +283,7 @@ a.logo-mark:active{opacity:0.7}
 }
 .sidebar-collapse-btn:hover{background:var(--tab-hover);color:var(--text)}
 .sidebar-collapse-btn svg{width:13px;height:13px;transition:transform 0.2s ease}
-.sidebar.collapsed .sidebar-collapse-btn{margin-left:0}
-.sidebar.collapsed .sidebar-collapse-btn svg{transform:rotate(180deg)}
+.sidebar.collapsed .sidebar-collapse-btn{display:none}
 
 .tab-list{
   flex:1;overflow-y:auto;overflow-x:hidden;
@@ -314,7 +307,6 @@ a.logo-mark:active{opacity:0.7}
   left:-6px;top:6px;bottom:6px;width:3px;
   border-radius:0 3px 3px 0;background:var(--accent);
 }
-.sidebar.collapsed .tab-item.active::before{left:0}
 .tab-item.modified .tab-dot{background:var(--warning)}
 
 .tab-item.dragging{opacity:0.4}
@@ -364,11 +356,7 @@ a.logo-mark:active{opacity:0.7}
   transition:opacity var(--transition),background var(--transition),color var(--transition);
   cursor:pointer;
 }
-.sidebar.collapsed .tab-close{
-  position:absolute;inset:0;width:auto;height:auto;margin:auto;
-  border-radius:var(--radius-sm);background:var(--tab-hover);
-}
-.sidebar.collapsed .tab-close svg{width:11px;height:11px}
+.sidebar.collapsed .tab-close{display:none}
 .tab-close:hover{background:var(--border);color:var(--text)}
 .tab-close svg{width:10px;height:10px}
 
@@ -396,6 +384,8 @@ a.logo-mark:active{opacity:0.7}
 .action-btn.add-tab{color:var(--accent);font-weight:500}
 .action-btn.add-tab:hover{background:var(--accent-dim);color:var(--accent)}
 .action-btn.add-tab svg{opacity:1}
+.action-btn.expand-btn{display:none}
+.sidebar.collapsed .action-btn.expand-btn{display:flex}
 .action-btn.options-btn.open{background:var(--accent-dim);color:var(--accent)}
 .action-btn.options-btn.open svg{opacity:1}
 
@@ -708,7 +698,10 @@ main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;ove
   box-shadow:var(--shadow-lg);
 }
 .drawer.popover.open{transform:scale(1) translateY(0);opacity:1}
-.drawer.popover .drawer-header{border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.drawer.popover .drawer-header{height:var(--bar-h);padding:0 8px 0 16px;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.drawer.popover .icon-btn{width:28px;height:28px}
+.drawer.popover .icon-btn svg{width:14px;height:14px}
+.drawer.popover .drawer-body{padding:14px 16px 16px}
 /* PC ではファイル設定・エディタ設定を上部ツールバーに集約するため、ポップオーバー表示時は非表示にする */
 .drawer.popover .drawer-section-file,
 .drawer.popover .drawer-section-editor{display:none}
@@ -937,6 +930,10 @@ button:focus-visible,a:focus-visible,select:focus-visible,.switch:focus-visible{
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/></svg>
         <span>新規タブ</span>
         <span class="action-shortcut">⌘T</span>
+      </button>
+      <button class="action-btn expand-btn" id="sidebarExpandBtn" title="サイドバーを開く" aria-label="サイドバーを開く">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5l5 5-5 5"/></svg>
+        <span>サイドバーを開く</span>
       </button>
       <div class="counter-box">
         <span class="counter-label">アクセスカウンター</span>
@@ -2707,7 +2704,7 @@ function loadSidebarPrefs() {
 function saveSidebarPrefs() {
   try {
     localStorage.setItem(SIDEBAR_KEY, JSON.stringify({
-      width: sidebar.classList.contains('collapsed') ? null : parseInt(sidebar.style.width) || 220,
+      width: parseInt(sidebar.style.width) || 220,
       collapsed: sidebar.classList.contains('collapsed')
     }));
   } catch (e) {}
@@ -3047,7 +3044,7 @@ function showDrawer() {
   drawer.classList.toggle('popover', desktop);
   overlay.classList.toggle('popover-mode', desktop);
   $('drawerTitle').textContent = desktop ? 'その他' : 'オプション';
-  if (desktop) positionPopover();
+  if (desktop) positionPopover(); else resetPopoverPosition();
   showOverlay();
   drawer.classList.add('open');
   optionsBtn.classList.add('open');
@@ -3058,16 +3055,20 @@ function closeDrawer() {
   hideOverlay();
 }
 function positionPopover() {
-  // ツールバー右端の「その他」ボタンの真下に、右端をそろえて表示
   const r = optionsBtn.getBoundingClientRect();
-  const w = Math.min(320, window.innerWidth - 16);
-  const left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8));
-  const top = r.bottom + 8;
+  const m = 8;
+  const w = Math.min(320, window.innerWidth - m * 2);
+  const left = Math.max(m, Math.min(r.right - w, window.innerWidth - w - m));
+  const top = r.bottom + 6;
+  drawer.style.width = w + 'px';
   drawer.style.left = left + 'px';
   drawer.style.top = top + 'px';
-  drawer.style.bottom = 'auto';
   drawer.style.right = 'auto';
-  drawer.style.maxHeight = Math.max(200, Math.min(620, window.innerHeight - top - 12)) + 'px';
+  drawer.style.bottom = 'auto';
+  drawer.style.maxHeight = Math.min(620, Math.max(200, window.innerHeight - top - m)) + 'px';
+}
+function resetPopoverPosition() {
+  ['left', 'top', 'right', 'bottom', 'width', 'maxHeight'].forEach(k => { drawer.style[k] = ''; });
 }
 function toggleMobileTabs() {
   if (mobileTabs.classList.contains('open')) closeMobileTabs();
@@ -3142,6 +3143,7 @@ optionsBtn.addEventListener('click', () => {
   if (drawer.classList.contains('open')) closeDrawer(); else showDrawer();
 });
 $('sidebarCollapseBtn').addEventListener('click', toggleSidebarCollapse);
+$('sidebarExpandBtn').addEventListener('click', toggleSidebarCollapse);
 
 // ステータスバー
 statusWrap.addEventListener('click', () => Prefs.toggleWrap());
