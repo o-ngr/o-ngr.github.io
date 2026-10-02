@@ -1,305 +1,163 @@
 <!DOCTYPE html>
-<html lang="ja" data-theme="auto">
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>オノゴロ | 記事一覧</title>
-<link rel="stylesheet" href="/page/list.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Onogoro 記事一覧ページ">
+  <meta property="og:title" content="Onogoro | 記事一覧">
+  <meta property="og:description" content="Onogoroの公開中記事一覧です。">
+  <meta property="og:type" content="website">
+  <title>O-ngr | 記事一覧</title>
+  
+  <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("contextmenu", e => e.preventDefault());
+    });
+  </script>
+  <link rel="stylesheet" href="/index/style.css">
 </head>
 <body>
 
-<nav class="nav">
-  <span class="nav-logo"><a href="/" style="color:inherit">オノゴロ</a></span>
-  <div class="nav-right">
-    <a href="/"><img src="https://counter.256server.com/@:ms05?theme=moebooru" alt="アクセスカウンタ" class="counter-img"></a>
-    <button class="theme-btn" id="themeBtn" title="テーマ切替">◑</button>
+<!-- ═══ OVERLAY (mobile) ═══ -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+  <a href="/" class="logo" id="logoBtn" style="text-decoration: none; color: inherit;">Articles</a>
+  <div class="search-wrap">
+    <span class="search-icon">&#x2315;</span>
+    <input class="search-input" id="searchInput" type="text" placeholder="記事やタグを検索... ( / でフォーカス)" autocomplete="off">
   </div>
-</nav>
-
-<main class="main">
-
-  <div class="page-header">
-    <h1 class="page-title">記事一覧</h1>
-    <p class="page-subtitle">僕みたいな情弱、鳥頭な人のための一覧</p>
+  <div class="hdr-actions">
+    <button class="hbtn icon-only" id="themeBtn" title="テーマ切替">&#x25D0;</button>
+    <button class="hbtn" id="favPanelBtn" title="お気に入り">&#x2605; お気に入り</button>
   </div>
+</header>
 
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="search-wrap">
-      <span class="search-icon">⌕</span>
-      <input type="text" class="search-input" id="searchInput" placeholder="検索...">
+<!-- ═══ SHELL ═══ -->
+<div class="shell">
+
+  <!-- LEFT SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <span class="sidebar-label">カテゴリ / タグ</span>
+    <button class="nav-btn active" data-tab="all">
+      すべて <span class="nav-count" data-count="all">0</span>
+    </button>
+    <button class="nav-btn" data-tab="tech">
+      技術・開発 <span class="nav-count" data-count="tech">0</span>
+    </button>
+    <button class="nav-btn" data-tab="design">
+      デザイン <span class="nav-count" data-count="design">0</span>
+    </button>
+    <button class="nav-btn" data-tab="column">
+      コラム <span class="nav-count" data-count="column">0</span>
+    </button>
+    <button class="nav-btn" data-tab="other">
+      その他 <span class="nav-count" data-count="other">0</span>
+    </button>
+
+    <div class="sidebar-sep"></div>
+
+    <div class="sort-wrap">
+      <div class="sort-lbl">並び替え</div>
+      <select class="sort-sel" id="sortSel">
+        <option value="recent">新着順</option>
+        <option value="oldest">古い順</option>
+        <option value="title">タイトル順</option>
+      </select>
     </div>
-    <div class="filter-group">
-      <button class="tab-btn active" data-filter="all">すべて</button>
-      <button class="tab-btn" data-filter="favorites">お気に入り</button>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-head">
+      <h1 class="main-title" id="mainTitle">すべての記事</h1>
+      <span class="result-count" id="resultCount"></span>
     </div>
-  </div>
+    <!-- 記事カードが描画されるグリッドエリア -->
+    <div class="grid" id="grid"></div>
+  </main>
 
-  <!-- Stats -->
-  <div class="stats-bar">
-    <span><span class="stat-val" id="totalCount">0</span>記事</span>
-    <span><span class="stat-val" id="favCount">0</span>お気に入り</span>
-  </div>
-
-  <!-- Favorites compact list -->
-  <section class="fav-section hidden" id="favSection">
-    <p class="section-label">お気に入り</p>
-    <div class="fav-list" id="favList"></div>
-  </section>
-
-  <!-- All tools grid -->
-  <section class="tools-section">
-    <p class="section-label" id="mainLabel">すべての記事</p>
-    <div class="tools-grid" id="toolsGrid">
-      <div class="empty"><p class="empty-text">読み込み中...</p></div>
-    </div>
-  </section>
-
-</main>
-
-<script>
-const TOOLS_XML_PATH = '/page/articles.xml';
-let TOOLS = [];
-
-/* STATE */
-let favorites = [];
-let currentFilter = 'all';
-let searchQuery = '';
-
-/* THEME */
-const themeBtn = document.getElementById('themeBtn');
-const html = document.documentElement;
-
-function getSystemTheme() {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
-function applyTheme(theme) {
-  html.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme);
-  themeBtn.textContent = theme === 'dark' ? '○' : '●';
-}
-
-function initTheme() {
-  const stored = localStorage.getItem('theme');
-  applyTheme(stored || getSystemTheme());
-}
-
-themeBtn.addEventListener('click', () => {
-  const current = html.getAttribute('data-theme');
-  applyTheme(current === 'dark' ? 'light' : 'dark');
-});
-
-/* FAVORITES */
-function loadFavorites() {
-  try {
-    favorites = JSON.parse(localStorage.getItem('toolFavorites') || '[]');
-  } catch(e) {
-    favorites = [];
-  }
-}
-
-function saveFavorites() {
-  localStorage.setItem('toolFavorites', JSON.stringify(favorites));
-}
-
-function toggleFavorite(id) {
-  const i = favorites.indexOf(id);
-  if (i > -1) favorites.splice(i, 1);
-  else favorites.push(id);
-  saveFavorites();
-  render();
-}
-
-/* TOOL DATA LOADING (external XML) */
-function text(node, selector) {
-  const el = node.querySelector(selector);
-  return el ? el.textContent.trim() : '';
-}
-
-function parseToolsXML(xmlText) {
-  const xml = new DOMParser().parseFromString(xmlText, 'application/xml');
-  if (xml.querySelector('parsererror')) {
-    throw new Error('articles.xml の解析に失敗しました');
-  }
-  return Array.from(xml.querySelectorAll('tools > tool')).map(node => ({
-    id: parseInt(node.getAttribute('id'), 10),
-    url: text(node, 'url'),
-    name: text(node, 'name'),
-    desc: text(node, 'desc'),
-    tags: Array.from(node.querySelectorAll('tags > tag')).map(t => t.textContent.trim())
-  })).filter(t => !Number.isNaN(t.id) && t.url && t.name);
-}
-
-async function loadTools() {
-  try {
-    const res = await fetch(TOOLS_XML_PATH, { cache: 'no-store' });
-    if (!res.ok) throw new Error('articles.xml の取得に失敗しました (' + res.status + ')');
-    const xmlText = await res.text();
-    TOOLS = parseToolsXML(xmlText);
-  } catch (err) {
-    console.error(err);
-    document.getElementById('toolsGrid').innerHTML =
-      '<div class="empty"><p class="empty-text">記事データの読み込みに失敗しました</p></div>';
-    document.getElementById('mainLabel').textContent = 'すべての記事';
-    document.getElementById('totalCount').textContent = '0';
-    return;
-  }
-  render();
-}
-
-/* FILTER */
-function getFiltered() {
-  let list = TOOLS;
-  if (currentFilter === 'favorites') {
-    list = list.filter(t => favorites.includes(t.id));
-  }
-  if (searchQuery) {
-    const q = searchQuery;
-    list = list.filter(t =>
-      t.name.toLowerCase().includes(q) ||
-      t.desc.toLowerCase().includes(q) ||
-      t.tags.some(tag => tag.toLowerCase().includes(q))
-    );
-  }
-  return list;
-}
-
-/* RENDER */
-function renderFavSection() {
-  const favItems = TOOLS.filter(t => favorites.includes(t.id));
-  const section = document.getElementById('favSection');
-  const list = document.getElementById('favList');
-
-  // お気に入りタブ中 or お気に入りなし → 非表示
-  if (favItems.length === 0 || currentFilter === 'favorites') {
-    section.classList.add('hidden');
-    return;
-  }
-  section.classList.remove('hidden');
-
-  list.innerHTML = favItems.map(t => `
-    <div class="fav-row" data-url="${t.url}" tabindex="0" role="link" aria-label="${t.name}を開く">
-      <span class="fav-row-left"></span>
-      <span class="fav-row-name">${t.name}</span>
-      <span class="fav-row-link">開く</span>
-      <button class="fav-row-remove" data-id="${t.id}" title="お気に入りを外す">✕</button>
-    </div>
-  `).join('');
-}
-
-function renderToolsGrid() {
-  const filtered = getFiltered();
-  const grid = document.getElementById('toolsGrid');
-  const label = document.getElementById('mainLabel');
-
-  if (currentFilter === 'favorites') {
-    label.textContent = 'お気に入り';
-  } else if (searchQuery) {
-    label.textContent = '検索結果';
-  } else {
-    label.textContent = 'すべての記事';
-  }
-
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty"><p class="empty-text">該当する記事が見つかりません</p></div>`;
-    return;
-  }
-
-  grid.innerHTML = filtered.map(t => {
-    const isFav = favorites.includes(t.id);
-    const tags = t.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
-    return `
-      <div class="tool-card" data-url="${t.url}" tabindex="0" role="link" aria-label="${t.name}を開く">
-        <div class="tool-card-accent"></div>
-        <div class="tool-body">
-          <div class="tool-header">
-            <h3 class="tool-name">${t.name}</h3>
-            <button class="fav-toggle ${isFav ? 'active' : ''}" data-id="${t.id}" title="${isFav ? 'お気に入りを外す' : 'お気に入りに追加'}">${isFav ? '★' : '☆'}</button>
-          </div>
-          <p class="tool-desc">${t.desc}</p>
-          <div class="tool-tags">${tags}</div>
-          <span class="tool-link">開く</span>
-        </div>
+  <!-- RIGHT PANEL (desktop) -->
+  <aside class="rpanel" id="rpanel">
+    <div class="rpanel-title">&#x2605; ブックマーク記事</div>
+    <div class="rp-stat" id="rpStat">
+      <div class="rp-stat-item">
+        <span class="rp-stat-num" id="rpCount">0</span>
+        <span class="rp-stat-lbl">保存数</span>
       </div>
-    `;
-  }).join('');
-}
+      <div class="rp-stat-item">
+        <span class="rp-stat-num" id="rpTotal">0</span>
+        <span class="rp-stat-lbl">全記事数</span>
+      </div>
+    </div>
+    <div class="fav-list" id="rpFavList"></div>
+  </aside>
+</div>
 
-function renderStats() {
-  const favCount = TOOLS.filter(t => favorites.includes(t.id)).length;
-  const filtered = getFiltered();
-  document.getElementById('totalCount').textContent = filtered.length;
-  document.getElementById('favCount').textContent = favCount;
-}
+<!-- MOBILE FAV PANEL -->
+<aside class="mpanel" id="mpanel">
+  <div class="mpanel-head">
+    <span class="mpanel-title">&#x2605; ブックマーク</span>
+    <button class="hbtn icon-only" id="mpCloseBtn">&#x00D7;</button>
+  </div>
+  <div class="rp-stat" id="mpStat">
+    <div class="rp-stat-item">
+      <span class="rp-stat-num" id="mpCount">0</span>
+      <span class="rp-stat-lbl">保存数</span>
+    </div>
+  </div>
+  <div class="fav-list" id="mpFavList"></div>
+</aside>
 
-function render() {
-  renderFavSection();
-  renderToolsGrid();
-  renderStats();
-}
+<!-- MOBILE BOTTOM TABS -->
+<div class="mob-tabs" id="mobTabs">
+  <button class="mob-tab active" data-tab="all">すべて</button>
+  <button class="mob-tab" data-tab="tech">技術</button>
+  <button class="mob-tab" data-tab="design">デザイン</button>
+  <button class="mob-tab" data-tab="column">コラム</button>
+</div>
 
-/* EVENTS */
-document.getElementById('searchInput').addEventListener('input', e => {
-  searchQuery = e.target.value.toLowerCase().trim();
-  render();
-});
-
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', e => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    e.currentTarget.classList.add('active');
-    currentFilter = e.currentTarget.dataset.filter;
-    render();
-  });
-});
-
-// イベント委任: お気に入りトグル・削除・カード/行全体のクリックで開く
-document.addEventListener('click', e => {
-  const favBtn = e.target.closest('.fav-toggle');
-  if (favBtn) {
-    e.preventDefault();
-    toggleFavorite(parseInt(favBtn.dataset.id));
-    return;
-  }
-  const removeBtn = e.target.closest('.fav-row-remove');
-  if (removeBtn) {
-    toggleFavorite(parseInt(removeBtn.dataset.id));
-    return;
-  }
-  const card = e.target.closest('.tool-card');
-  if (card && card.dataset.url) {
-    window.location.href = card.dataset.url;
-    return;
-  }
-  const favRow = e.target.closest('.fav-row');
-  if (favRow && favRow.dataset.url) {
-    window.location.href = favRow.dataset.url;
-  }
-});
-
-// キーボード操作: フォーカスしたカード/行で Enter または Space を押すと開く
-document.addEventListener('keydown', e => {
-  if (e.key !== 'Enter' && e.key !== ' ') return;
-  if (e.target.closest('.fav-toggle') || e.target.closest('.fav-row-remove')) return;
-
-  const card = e.target.closest('.tool-card');
-  if (card && card.dataset.url) {
-    e.preventDefault();
-    window.location.href = card.dataset.url;
-    return;
-  }
-  const favRow = e.target.closest('.fav-row');
-  if (favRow && favRow.dataset.url) {
-    e.preventDefault();
-    window.location.href = favRow.dataset.url;
-  }
-});
-
-/* INIT */
-initTheme();
-loadFavorites();
-loadTools();
-</script>
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <span class="footer-logo">O-ngr</span>
+      <p class="ft">記事・ブログ一覧ページ</p>
+    </div>
+    <div>
+      <img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="180" height="54" style="display:block;margin-bottom:.8rem">
+      <p class="ft">カウンターを使わせていただいている <a href="https://256server.com" target="_blank">256さん</a>ありがとうございます</p>
+    </div>
+    <div>
+      <p class="ft-title">ショートカット</p>
+      <p class="ft">
+        / — 検索フォーカス<br>
+        Esc — パネルを閉じる
+      </p>
+    </div>
+    <div>
+      <p class="ft-title">情報</p>
+      <p class="ft">
+        <a href="/info/privacypolicy.html">プライバシーポリシー</a><br>
+        <a href="/info/termsofuse.html">利用規約</a>
+      </p>
+    </div>
+    <div>
+      <p class="ft-title">Copyright</p>
+      <p class="ft">
+        &copy; 2025 o-ngr — <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>
+      </p>
+    </div>
+  </div>
+</footer>
+  
+<script src="/page/articles.js"></script>
+<script src="/index/script.js"></script>
 </body>
 </html>
