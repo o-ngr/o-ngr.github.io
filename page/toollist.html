@@ -49,13 +49,13 @@
       すべて <span class="nav-count" data-count="all">0</span>
     </button>
     <button class="nav-btn" data-tab="stg">
-      弾幕STG <span class="nav-count" data-count="stg">0</span>
+      プログラミング <span class="nav-count" data-count="programming">0</span>
     </button>
     <button class="nav-btn" data-tab="action">
-      アクション <span class="nav-count" data-count="action">0</span>
+      デザイン <span class="nav-count" data-count="design">0</span>
     </button>
     <button class="nav-btn" data-tab="puzzle">
-      パズル <span class="nav-count" data-count="puzzle">0</span>
+      遊び <span class="nav-count" data-count="extra">0</span>
     </button>
     <button class="nav-btn" data-tab="other">
       その他 <span class="nav-count" data-count="other">0</span>
@@ -76,16 +76,16 @@
   <!-- MAIN -->
   <main class="main">
     <div class="main-head">
-      <h1 class="main-title" id="mainTitle">すべてのゲーム</h1>
+      <h1 class="main-title" id="mainTitle">すべてのツール</h1>
       <span class="result-count" id="resultCount"></span>
     </div>
-    <!-- ゲームカードが描画されるグリッドエリア -->
+    <!-- ツールカードが描画されるグリッドエリア -->
     <div class="grid" id="grid"></div>
   </main>
 
   <!-- RIGHT PANEL (desktop) -->
   <aside class="rpanel" id="rpanel">
-    <div class="rpanel-title">&#x2605; お気に入りゲーム</div>
+    <div class="rpanel-title">&#x2605; お気に入りツール</div>
     <div class="rp-stat" id="rpStat">
       <div class="rp-stat-item">
         <span class="rp-stat-num" id="rpCount">0</span>
@@ -93,7 +93,7 @@
       </div>
       <div class="rp-stat-item">
         <span class="rp-stat-num" id="rpTotal">0</span>
-        <span class="rp-stat-lbl">総ゲーム数</span>
+        <span class="rp-stat-lbl">総ツール数</span>
       </div>
     </div>
     <div class="fav-list" id="rpFavList"></div>
@@ -118,9 +118,9 @@
 <!-- MOBILE BOTTOM TABS -->
 <div class="mob-tabs" id="mobTabs">
   <button class="mob-tab active" data-tab="all">すべて</button>
-  <button class="mob-tab" data-tab="stg">STG</button>
-  <button class="mob-tab" data-tab="action">アクション</button>
-  <button class="mob-tab" data-tab="puzzle">パズル</button>
+  <button class="mob-tab" data-tab="programming">プログラミング</button>
+  <button class="mob-tab" data-tab="design">デザイン</button>
+  <button class="mob-tab" data-tab="extra">遊び</button>
 </div>
 
 <!-- ═══ FOOTER ═══ -->
@@ -128,7 +128,7 @@
   <div class="footer-inner">
     <div>
       <span class="footer-logo">O-ngr</span>
-      <p class="ft">ゲーム作品公開ページ</p>
+      <p class="ft">ツール公開ページ</p>
     </div>
     <div>
       <img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="180" height="54" style="display:block;margin-bottom:.8rem">
@@ -157,7 +157,7 @@
   </div>
 </footer>
   
-<script src="/page/games.js"></script>
+<script src="/page/tools.js"></script>
 <script src="/index/script.js"></script>
 </body>
 </html>
