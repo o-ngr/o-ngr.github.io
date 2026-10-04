@@ -2,7 +2,7 @@
   "type": "bubble",
   "hero": {
     "type": "image",
-    "url": "https://o-ngr.github.io/image/ms0101-image.png",
+    "url": "https://o-ngr.github.io/image/o-ngr-image.png",
     "size": "full",
     "aspectRatio": "20:13",
     "aspectMode": "cover",
