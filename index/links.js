@@ -7,7 +7,7 @@ const LINKS = [
     { id: 5, title: 'Notepad app', desc: '高機能なメモ帳', url: '/tools/notepad.html', category: 'tools' },
     { id: 6, title: 'Source code viewer', desc: 'ソースコードを確認', url: '/tools/sauceview.html', category: 'tools' },
     { id: 7, title: 'Proxy', desc: 'プロキシ通信が可能', url: '/tools/proxy.html', category: 'tools' },
-    { id: 8, title: 'Link collection', desc: 'ショートカット一覧 (外部)', url: 'https://a-b-c.3do1.jp/', category: 'tools' },
+    { id: 8, title: 'Link collection', desc: 'ショートカット一覧 (外部)', url: 'https://o-ngr.3do1.jp/', category: 'tools' },
     { id: 9, title: 'Link collection 2', desc: 'ショートカット一覧', url: '/page/links.html', category: 'tools' },
     { id: 10, title: 'Feeder open chat', desc: 'オープンチャット', url: 'https://www2.x-feeder.info/ms05', category: 'tools' },
     { id: 11, title: 'frame　opener', desc: 'フレームオープナー', url: '/tools/opener.html', category: 'tools' },
