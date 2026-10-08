@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>レイマーチ・バンド | o-ngr</title>
+<style>
+:root{--bg:#F6F3F0;--bg2:#EFE9E5;--bg3:#E6DED9;--surface:#fff;--t1:#1C1310;--t2:#6B5650;--t3:#A3908A;--accent:#B3392C;--accent-h:#9E3125;--accent-tint:rgba(179,57,44,.12);--line:rgba(0,0,0,.08);--line-strong:rgba(0,0,0,.16);--r-sm:5px;--tr:.16s cubic-bezier(.4,0,.2,1)}
+body.dark{--bg:#0B0908;--bg2:#131010;--bg3:#1A1616;--surface:#1C1818;--t1:#EFE7E4;--t2:#A6928D;--t3:#695A56;--line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.16)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html,body{height:100%;width:100%}body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--bg);color:var(--t1);line-height:1.6;height:100vh;height:100dvh;display:flex;flex-direction:column;padding-top:56px;overflow:hidden}button,input{font:inherit}button{cursor:pointer}:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ui-header{position:fixed;top:0;left:0;right:0;height:56px;z-index:200;display:flex;align-items:center;gap:1rem;padding:0 1.25rem;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}.ui-header__title{font-size:.8rem;font-weight:700;letter-spacing:.12em;color:var(--t2);text-transform:uppercase}.ui-header__actions{margin-left:auto;display:flex;align-items:center;gap:.5rem}.ui-iconbtn{height:36px;min-width:36px;padding:0 .8rem;background:transparent;border:1px solid var(--line);border-radius:var(--r-sm);color:var(--t2);font-size:.85rem;transition:var(--tr)}.ui-iconbtn:hover{color:var(--t1);border-color:var(--line-strong)}
+.ui-shell{flex:1;min-height:0;display:grid;grid-template-columns:260px minmax(0,1fr) 280px}.ui-sidebar,.ui-detail{min-height:0;overflow-y:auto;background:var(--bg2);padding:1.1rem 1rem;display:flex;flex-direction:column;gap:1rem}.ui-sidebar{border-right:1px solid var(--line)}.ui-detail{border-left:1px solid var(--line)}.ui-main{position:relative;min-width:0;min-height:0;display:flex;flex-direction:column}.ui-main__head{display:flex;align-items:center;gap:.5rem;padding:.6rem 1rem;min-height:48px;border-bottom:1px solid var(--line);flex-shrink:0}.ui-main__title{font-size:.82rem;color:var(--t2);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.ui-toggle{display:none;flex-shrink:0}.ui-stage{position:relative;flex:1;min-height:0;overflow:hidden;background:#0a0a1a;isolation:isolate}.ui-stage canvas#glcanvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:grab}.ui-stage canvas#glcanvas:active{cursor:grabbing}
+.ui-drawer-head{display:none;align-items:center;justify-content:space-between;margin-bottom:.2rem}.ui-group{display:flex;flex-direction:column;gap:.45rem}.ui-group__label{font-size:.7rem;font-weight:700;letter-spacing:.1em;color:var(--t3)}.ui-group__head{display:flex;justify-content:space-between;align-items:baseline;font-size:.78rem;color:var(--t2)}.ui-group__value{color:var(--t1);font-weight:700;font-variant-numeric:tabular-nums}.ui-slider{width:100%;accent-color:var(--accent)}.row{display:grid;grid-template-columns:76px minmax(0,1fr) 38px;align-items:center;gap:7px;font-size:.78rem;color:var(--t2);margin:2px 0 8px}.row input{width:100%;min-width:0;margin:0}.row .v{text-align:right;color:var(--t1);font-variant-numeric:tabular-nums;font-size:.72rem}.ui-section{border-top:1px solid var(--line-strong);padding-top:.8rem}.ui-section-title{font-size:.7rem;font-weight:700;letter-spacing:.12em;color:var(--t3);margin-bottom:.6rem}.shapes{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}.colors{display:flex;justify-content:space-between;gap:.6rem}.wbox{display:flex;flex-direction:column;align-items:center;gap:.35rem;min-width:0;font-size:.72rem;color:var(--t2);width:50%}.wbox canvas{width:min(110px,100%);height:auto;aspect-ratio:1;cursor:crosshair;touch-action:none}.wbox input{width:100%;max-width:110px;margin:0}.checks{display:flex;flex-direction:column;gap:.45rem;margin-top:.2rem;font-size:.8rem;color:var(--t2)}.checks label{display:flex;gap:.5rem;align-items:center}.btns{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-top:.65rem}.ui-btn,button[data-shape],.btns button{min-height:36px;padding:.35rem .5rem;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--line-strong);border-radius:var(--r-sm);color:var(--t2);font-size:.78rem;transition:var(--tr);text-align:center}.ui-btn:hover,button[data-shape]:hover,.btns button:hover{border-color:var(--accent);color:var(--accent)}button.on,.ui-btn.is-active{border-color:var(--accent);color:var(--accent);background:var(--accent-tint)}button.reset{grid-column:1/-1;background:var(--accent);border-color:var(--accent);color:white;font-weight:700}.help{color:var(--t3);font-size:.72rem;line-height:1.8;margin-top:.7rem}.ui-status{font-size:.75rem;color:var(--t3);text-align:center}.ui-footer{flex-shrink:0;height:32px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border-top:1px solid var(--line);font-size:.72rem;color:var(--t3)}.ui-footer a{color:var(--accent);text-decoration:none}.ui-footer a:hover{text-decoration:underline}
+pre.shader-log{position:absolute;z-index:6;left:12px;bottom:12px;max-width:min(560px,80%);max-height:40%;overflow:auto;background:rgba(45,8,8,.9);color:#ffb0a8;padding:10px;border:1px solid #7a3029;border-radius:var(--r-sm);font-size:12px;white-space:pre-wrap}
+.ui-overlay{position:fixed;top:56px;left:0;right:0;bottom:32px;z-index:240;background:rgba(0,0,0,.55);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .25s ease}.ui-overlay.is-open{opacity:1;pointer-events:auto}
+/* コンテンツのみ全画面 */
+#stage:fullscreen{width:100vw;height:100vh;background:#0a0a1a}#stage:fullscreen #glcanvas{width:100%;height:100%}
+/* Hキー：表示領域を広げ、描画コンテンツ以外を隠す */
+body.ui-immersive{padding-top:0}body.ui-immersive .ui-header,body.ui-immersive .ui-sidebar,body.ui-immersive .ui-detail,body.ui-immersive .ui-main__head,body.ui-immersive .ui-footer{display:none!important}body.ui-immersive .ui-shell{grid-template-columns:minmax(0,1fr)}body.ui-immersive .ui-main{grid-column:1/-1}body.ui-immersive .ui-stage{position:fixed;inset:0;z-index:300}
+@media(max-width:1100px){.ui-header{padding:0 1rem}.ui-shell{grid-template-columns:1fr}.ui-toggle{display:inline-flex}.ui-drawer-head{display:flex}.ui-sidebar,.ui-detail{position:fixed;top:56px;bottom:32px;z-index:250;width:min(300px,88vw);transition:transform .25s ease;box-shadow:0 10px 28px rgba(0,0,0,.25)}.ui-sidebar{left:0;transform:translateX(-100%);border-right:1px solid var(--line)}.ui-detail{right:0;transform:translateX(100%);border-left:1px solid var(--line)}.ui-sidebar.is-open,.ui-detail.is-open{transform:translateX(0)}.ui-main__head{padding:.45rem .65rem;min-height:44px}.ui-main__title{font-size:.75rem}.ui-overlay{top:56px}.ui-stage{min-height:0}}
+@media(max-width:520px){.ui-header__title{font-size:.72rem}.ui-btn{font-size:.72rem;padding-inline:.35rem}.row{grid-template-columns:70px minmax(0,1fr) 34px}.ui-sidebar,.ui-detail{padding:1rem .85rem}}
+</style>
+</head>
+<body>
+<header class="ui-header"><h1 class="ui-header__title">淤能碁呂 / Raymarched Band</h1><div class="ui-header__actions"><button class="ui-iconbtn" id="themeBtn" type="button" title="テーマ切替" aria-label="テーマ切替">◐</button></div></header>
+<div class="ui-shell">
+<nav class="ui-sidebar" id="sidebar"><div class="ui-drawer-head"><span class="ui-group__label">操作パネル</span><button class="ui-iconbtn" type="button" data-close aria-label="閉じる">×</button></div>
+<div class="ui-group"><span class="ui-group__label">PARAMETERS</span>
+<div class="row"><label for="speed">Speed</label><input id="speed" type="range" min="0" max="3" step="0.01" value="1"><span class="v" id="speedV"></span></div>
+<div class="row"><label for="scale">Scale</label><input id="scale" type="range" min="0.5" max="6" step="0.01" value="2"><span class="v" id="scaleV"></span></div>
+<div class="row"><label for="intensity">Intensity</label><input id="intensity" type="range" min="0" max="2" step="0.01" value="1"><span class="v" id="intensityV"></span></div>
+<div class="row"><label for="quality">Quality</label><input id="quality" type="range" min="0.5" max="1" step="0.1" value="0.85"><span class="v" id="qualityV"></span></div>
+<div class="row"><label for="highlight">ハイライト</label><input id="highlight" type="range" min="0" max="2" step="0.01" value="0.8"><span class="v" id="highlightV"></span></div>
+<div class="row"><label for="vignette">周辺減光</label><input id="vignette" type="range" min="0" max="1" step="0.01" value="0.45"><span class="v" id="vignetteV"></span></div></div>
+<div class="ui-section"><div class="ui-section-title">SHAPE</div><div class="shapes"><button data-shape="0" class="on" type="button">二重リボン</button><button data-shape="1" type="button">メビウス</button><button data-shape="2" type="button">螺旋</button><button data-shape="3" type="button">波シート</button><button data-shape="4" type="button">花びら</button></div></div>
+<div class="ui-section"><div class="ui-section-title">VIEW / EXPORT</div><div class="btns"><button id="btnView" type="button">視点リセット</button><button id="btnPng" type="button">PNG保存 (S)</button><button id="btnFull" type="button">全画面 (F)</button><button id="btnHide" type="button">UI非表示 (H)</button><button class="reset" id="btnReset" type="button">すべての設定を初期化</button></div><p class="help">ドラッグ：回転 / ホイール・ピンチ：拡大縮小<br>ダブルクリック：視点リセット<br>Space：一時停止 / H：UI非表示<br>F：コンテンツ全画面 / S：PNG保存 / R：視点リセット</p></div>
+<div class="ui-status" id="status">WebGLシェーダーを初期化中</div></nav>
+<main class="ui-main"><div class="ui-main__head"><button class="ui-btn ui-toggle" id="sidebarToggle" type="button">操作パネル</button><button class="ui-btn ui-toggle" id="detailToggle" type="button">カラー設定</button><span class="ui-main__title" id="mainTitle">リアルタイム WebGL 2 レンダリング</span></div>
+<div class="ui-stage" id="stage"><canvas id="glcanvas" aria-label="リボン・シェーダー描画領域"></canvas><pre id="log" class="shader-log" style="display:none"></pre></div></main>
+<aside class="ui-detail" id="detail"><div class="ui-drawer-head"><span class="ui-group__label">カラー設定</span><button class="ui-iconbtn" type="button" data-close aria-label="閉じる">×</button></div>
+<div class="ui-group"><span class="ui-group__label">COLOR</span><div class="colors"><div class="wbox"><canvas id="wheelShape" width="110" height="110"></canvas><span>シェイプ</span><input id="vShape" type="range" min="0" max="1" step="0.01" value="1" aria-label="シェイプ明度"></div><div class="wbox"><canvas id="wheelBg" width="110" height="110"></canvas><span>背景</span><input id="vBg" type="range" min="0" max="1" step="0.01" value="0.04" aria-label="背景明度"></div></div></div>
+<div class="ui-section"><div class="ui-section-title">PLAYBACK</div><div class="checks"><label><input type="checkbox" id="autoRot" checked> 自動回転</label><label><input type="checkbox" id="pauseChk"> 一時停止 (Space)</label></div></div>
+<div class="ui-section"><div class="ui-section-title">ABOUT</div><p class="help">リボン状の立体をリアルタイムで描画するフラグメントシェーダー作品です。形状、色、動き、描画品質を調整できます。</p></div></aside>
+</div><div class="ui-overlay" id="overlay"></div>
+<footer class="ui-footer">© 2026 o-ngr · Shader by ms0101 · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a></footer>
+<script>
+// テンプレート共通のテーマ・ドロワー制御
+(function(){
+ const themeKey='o-ngr-theme';
+ const themeBtn=document.getElementById('themeBtn');
+ const sidebar=document.getElementById('sidebar'),detail=document.getElementById('detail'),overlay=document.getElementById('overlay');
+ const sidebarToggle=document.getElementById('sidebarToggle'),detailToggle=document.getElementById('detailToggle');
+ const panels={sidebar:{el:sidebar,btn:sidebarToggle},detail:{el:detail,btn:detailToggle}};
+ function closeAllPanels(){Object.values(panels).forEach(p=>{p.el.classList.remove('is-open');p.btn.classList.remove('is-active')});overlay.classList.remove('is-open')}
+ function togglePanel(name){const p=panels[name],open=!p.el.classList.contains('is-open');closeAllPanels();if(open){p.el.classList.add('is-open');p.btn.classList.add('is-active');overlay.classList.add('is-open')}}
+ sidebarToggle.addEventListener('click',()=>togglePanel('sidebar'));detailToggle.addEventListener('click',()=>togglePanel('detail'));overlay.addEventListener('click',closeAllPanels);document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeAllPanels));
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAllPanels()});
+ function applyTheme(mode){document.body.classList.toggle('dark',mode==='dark');try{localStorage.setItem(themeKey,mode)}catch(e){}}
+ try{applyTheme(localStorage.getItem(themeKey)==='dark'?'dark':'light')}catch(e){applyTheme('light')}
+ themeBtn.addEventListener('click',()=>applyTheme(document.body.classList.contains('dark')?'light':'dark'));
+ window.OngrLayout={closeAllPanels,togglePanel,applyTheme};
+})();
+</script>
+<script>
+
+const canvas=document.getElementById("glcanvas");
+const gl=canvas.getContext("webgl2",{antialias:true,preserveDrawingBuffer:true});
+const logEl=document.getElementById("log");
+if(!gl){showLog("このブラウザーでは WebGL2 を利用できません。");throw new Error("WebGL2 not supported");}
+
+/* ---------- 既定値 ---------- */
+const DEFAULTS={
+  sliders:{speed:1,scale:2,intensity:1,quality:.85,highlight:.8,vignette:.45},
+  shape:0,
+  shapeColor:"#70c6ff",
+  bgColor:"#0a0a1a",
+  vShape:1,
+  vBg:.04,
+  dist:4.2,
+  pitch:.25
+};
+const DIST_MIN=2,DIST_MAX=16;
+
+const vsSource=`#version 300 es
+precision highp float;
+out vec2 v_uv;
+void main(){
+const vec2 pos[3]=vec2[3](vec2(-1.,-1.),vec2(3.,-1.),vec2(-1.,3.));
+vec2 p=pos[gl_VertexID];
+v_uv=.5*(p+1.);
+gl_Position=vec4(p,0.,1.);
+}`;
+
+const fsSource=`#version 300 es
+precision highp float;
+in vec2 v_uv;
+out vec4 outColor;
+uniform float u_time,u_speed,u_scale,u_intensity,u_highlight,u_vignette,u_dist,u_yaw,u_pitch;
+uniform vec2 u_resolution;
+uniform vec3 u_color,u_bg;
+uniform int u_shape,u_steps;
+
+float hash21(vec2 p){
+p=fract(p*vec2(123.34,456.21));
+p+=dot(p,p+78.233);
+return fract(p.x*p.y);
+}
+float noise(vec2 p){
+vec2 i=floor(p),f=fract(p);
+float a=hash21(i),b=hash21(i+vec2(1.,0.)),c=hash21(i+vec2(0.,1.)),d=hash21(i+vec2(1.,1.));
+vec2 u=f*f*(3.-2.*f);
+return mix(mix(a,b,u.x),mix(c,d,u.x),u.y);
+}
+float fbm(vec2 p){
+float v=0.,a=.55;
+for(int i=0;i<5;i++){v+=a*noise(p);p*=2.;a*=.5;}
+return v;
+}
+mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+float sdBox2(vec2 p,vec2 b){
+vec2 d=abs(p)-b;
+return length(max(d,0.))+min(max(d.x,d.y),0.);
+}
+float smin(float a,float b,float k){
+float h=clamp(.5+.5*(b-a)/k,0.,1.);
+return mix(b,a,h)-k*h*(1.-h);
+}
+
+/* 帯状のリボン。twist:断面の回転量 / R:半径 / petal:花びらの振幅 / pitch:螺旋のピッチ(0で無効) */
+float band(vec3 p,float t,float phase,float twist,float R,float petal,float pitch){
+float a=atan(p.z,p.x);
+float r=length(p.xz);
+float n=fbm(vec2(a*u_scale*.6+phase,p.y*u_scale*.5+t*.2))-.5;
+float wave=(sin(a*3.+t*.9+phase)*.2+n*.7)*u_intensity;
+float y=p.y;
+if(pitch>0.){
+y-=pitch*a/6.2831853;
+y=mod(y+pitch*.5,pitch)-pitch*.5;
+}
+float rad=R+petal*cos(5.*a+t*.3);
+vec2 q=vec2(r-rad,y-wave);
+q=rot(a*twist+t*.25+phase)*q;
+return (sdBox2(q,vec2(.36,.03))-.015)*.75;
+}
+
+/* 波打つシート */
+float sheet(vec3 p,float t){
+float h=(sin(p.x*u_scale*.9+t)*.28+sin(p.y*u_scale*1.3-t*.8)*.18+(fbm(p.xy*u_scale*.5+t*.2)-.5)*.6)*u_intensity;
+float d=abs(p.z-h)-.025;
+float bx=sdBox2(p.xy,vec2(1.5,1.1))-.05;
+return max(d,bx)*.7;
+}
+
+float map(vec3 p){
+float t=u_time*u_speed;
+p.yz=rot(.35)*p.yz;
+if(u_shape==0){
+vec3 p2=p;p2.yz=rot(1.5708)*p2.yz;
+return smin(band(p,t,0.,2.,1.25,0.,0.),band(p2,t*.8,1.7,2.,1.25,0.,0.),.15);
+}
+if(u_shape==1){
+return band(p,t,0.,.5,1.3,0.,0.);
+}
+if(u_shape==2){
+vec3 p2=p;p2.xz=-p2.xz;
+return smin(band(p,t,0.,1.,1.1,0.,.9),band(p2,t,2.,1.,1.1,0.,.9),.12);
+}
+if(u_shape==3){
+return sheet(p,t);
+}
+return band(p,t,0.,2.,1.15,.25,0.);
+}
+
+vec3 calcNormal(vec3 p){
+const vec2 e=vec2(.0015,-.0015);
+return normalize(
+e.xyy*map(p+e.xyy)+
+e.yyx*map(p+e.yyx)+
+e.yxy*map(p+e.yxy)+
+e.xxx*map(p+e.xxx));
+}
+vec3 aces(vec3 x){
+return clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);
+}
+
+void main(){
+vec2 uv=v_uv;
+vec2 p=(uv-.5)*vec2(u_resolution.x/u_resolution.y,1.);
+
+/* カメラ: 距離・ヨー・ピッチ */
+vec3 ro=vec3(0.,0.,u_dist);
+ro.yz=rot(u_pitch)*ro.yz;
+ro.xz=rot(u_yaw)*ro.xz;
+vec3 f=normalize(-ro);
+vec3 r=normalize(cross(vec3(0.,1.,0.),f));
+vec3 up=cross(f,r);
+vec3 rd=normalize(f*1.6+p.x*r+p.y*up);
+
+/* レイマーチ */
+float tt=0.;
+bool hit=false;
+vec3 pos=ro;
+float tMax=u_dist+3.;
+for(int i=0;i<128;i++){
+if(i>=u_steps)break;
+pos=ro+rd*tt;
+float h=map(pos);
+if(h<.0015){hit=true;break;}
+tt+=h*.9;
+if(tt>tMax)break;
+}
+
+/* 背景 */
+float bgN=fbm(vec2(p.x*1.5+u_time*.05,p.y*2.+u_time*.03));
+vec3 col=mix(u_bg*.6,u_bg*1.6+.04,smoothstep(.3,.9,bgN)*(.6+.4*sin(p.y*3.+u_time*.2)));
+
+if(hit){
+vec3 n=calcNormal(pos);
+vec3 L1=normalize(vec3(.6,.9,.5));
+vec3 L2=normalize(vec3(-.8,.2,.4));
+vec3 V=-rd;
+float key=max(dot(n,L1),0.);
+float fill=max(dot(n,L2),0.)*.35;
+vec3 H=normalize(L1+V);
+float spec=pow(max(dot(n,H),0.),48.)*u_highlight;
+float fres=pow(1.-max(dot(n,V),0.),3.);
+
+float a=atan(pos.z,pos.x);
+float g=.5+.5*sin(a+pos.y*1.5+u_time*.3);
+vec3 albedo=mix(u_color,mix(u_color,vec3(1.),.35),g);
+
+/* 内部散乱(SSS風) */
+float depth=max(-map(pos-n*.06),0.);
+float trans=exp(-depth*18.);
+float sss=trans*(.3+.7*max(dot(-n,L1),0.));
+
+col=albedo*(key*.9+fill+.12);
+col+=mix(u_color,vec3(1.),.5)*sss*.6;
+col+=fres*mix(u_color,vec3(1.),.6)*.7;
+col+=spec;
+}
+
+/* トーンマッピング + ガンマ */
+col=aces(col);
+col=pow(col,vec3(1./2.2));
+
+/* 周辺減光 + グレイン */
+float vig=smoothstep(.95,.2,length(uv-.5));
+col*=mix(1.-u_vignette,1.,vig);
+float grain=hash21(gl_FragCoord.xy+fract(u_time)*100.)-.5;
+col+=grain*.025;
+
+outColor=vec4(clamp(col,0.,1.),1.);
+}`;
+
+function compile(t,src){
+const s=gl.createShader(t);
+gl.shaderSource(s,src);
+gl.compileShader(s);
+if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){
+const log=gl.getShaderInfoLog(s);showLog("Shader compile error:\n"+log);
+throw new Error(log);
+}
+return s;
+}
+function showLog(m){logEl.style.display="block";logEl.textContent=m;}
+
+/* ---------- 色ユーティリティ ---------- */
+function hsv2rgb(h,s,v){
+const i=Math.floor(h*6),f=h*6-i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s);
+switch(((i%6)+6)%6){
+case 0:return[v,t,p];case 1:return[q,v,p];case 2:return[p,v,t];
+case 3:return[p,q,v];case 4:return[t,p,v];default:return[v,p,q];
+}
+}
+function rgb2hsv(r,g,b){
+const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;
+let h=0;
+if(d>0){
+if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;
+h/=6;if(h<0)h+=1;
+}
+return[h,mx===0?0:d/mx,mx];
+}
+function hexToRgb(hex){
+return[parseInt(hex.slice(1,3),16)/255,parseInt(hex.slice(3,5),16)/255,parseInt(hex.slice(5,7),16)/255];
+}
+
+/* ---------- カラーサークル ---------- */
+function makeWheel(canvasId,vId,onChange){
+const cv=document.getElementById(canvasId),ctx=cv.getContext("2d");
+const W=cv.width,R=W/2-3,cx=W/2,cy=W/2;
+const img=ctx.createImageData(W,W);
+for(let y=0;y<W;y++)for(let x=0;x<W;x++){
+const dx=x+.5-cx,dy=y+.5-cy,d=Math.hypot(dx,dy)/R,i=(y*W+x)*4;
+if(d<=1){
+const h=(Math.atan2(dy,dx)/(2*Math.PI)+1)%1;
+const c=hsv2rgb(h,d,1);
+img.data.set([c[0]*255,c[1]*255,c[2]*255,255],i);
+}else img.data[i+3]=0;
+}
+let h=0,s=0,v=1;
+const vEl=document.getElementById(vId);
+function draw(){
+ctx.clearRect(0,0,W,W);
+ctx.putImageData(img,0,0);
+const a=h*2*Math.PI,rr=s*R;
+const mx=cx+Math.cos(a)*rr,my=cy+Math.sin(a)*rr;
+ctx.beginPath();ctx.arc(mx,my,5,0,Math.PI*2);
+ctx.lineWidth=2;ctx.strokeStyle="#000";ctx.stroke();
+ctx.lineWidth=1;ctx.strokeStyle="#fff";ctx.stroke();
+}
+function emit(){onChange(hsv2rgb(h,s,v));draw();}
+function pick(e){
+const r=cv.getBoundingClientRect();
+const x=(e.clientX-r.left)*(W/r.width)-cx,y=(e.clientY-r.top)*(W/r.height)-cy;
+s=Math.min(1,Math.hypot(x,y)/R);
+h=((Math.atan2(y,x)/(2*Math.PI))+1)%1;
+emit();
+}
+let dragging=false;
+cv.addEventListener("pointerdown",e=>{dragging=true;cv.setPointerCapture(e.pointerId);pick(e);});
+cv.addEventListener("pointermove",e=>{if(dragging)pick(e);});
+cv.addEventListener("pointerup",()=>dragging=false);
+cv.addEventListener("pointercancel",()=>dragging=false);
+vEl.addEventListener("input",()=>{v=parseFloat(vEl.value);emit();});
+return{
+setRGB(rgb,val){[h,s,v]=rgb2hsv(rgb[0],rgb[1],rgb[2]);if(val!==undefined)v=val;vEl.value=v;emit();},
+};
+}
+
+let shapeRGB=hexToRgb(DEFAULTS.shapeColor);
+let bgRGB=hexToRgb(DEFAULTS.bgColor);
+const shapeWheel=makeWheel("wheelShape","vShape",c=>{shapeRGB=c;});
+const bgWheel=makeWheel("wheelBg","vBg",c=>{bgRGB=c;});
+
+/* ---------- スライダー ---------- */
+const SLIDERS=["speed","scale","intensity","quality","highlight","vignette"];
+const sliderEl={};
+const S={};
+for(const id of SLIDERS){
+sliderEl[id]=document.getElementById(id);
+const lbl=document.getElementById(id+"V");
+const upd=()=>{lbl.textContent=parseFloat(sliderEl[id].value).toFixed(2);};
+sliderEl[id].addEventListener("input",upd);
+upd();
+S[id]=parseFloat(sliderEl[id].value);
+}
+const qualityEl=sliderEl.quality;
+const autoRotEl=document.getElementById("autoRot");
+const pauseEl=document.getElementById("pauseChk");
+
+/* ---------- 形状 ---------- */
+let shape=DEFAULTS.shape;
+const shapeBtns=[...document.querySelectorAll("[data-shape]")];
+function setShape(i){
+shape=i;
+shapeBtns.forEach(b=>b.classList.toggle("on",+b.dataset.shape===i));
+}
+shapeBtns.forEach(b=>b.addEventListener("click",()=>setShape(+b.dataset.shape)));
+
+/* ---------- 視点（ドラッグ回転 / ズーム） ---------- */
+let yaw=0,pitch=DEFAULTS.pitch,dist=DEFAULTS.dist,distS=DEFAULTS.dist;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function resetView(){yaw=0;pitch=DEFAULTS.pitch;dist=DEFAULTS.dist;}
+
+const pointers=new Map();
+let lastPinch=0;
+canvas.addEventListener("pointerdown",e=>{
+canvas.setPointerCapture(e.pointerId);
+pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+lastPinch=0;
+});
+canvas.addEventListener("pointermove",e=>{
+const prev=pointers.get(e.pointerId);
+if(!prev)return;
+const cur={x:e.clientX,y:e.clientY};
+pointers.set(e.pointerId,cur);
+if(pointers.size===1){
+yaw+=(cur.x-prev.x)*.008;
+pitch=clamp(pitch+(cur.y-prev.y)*.008,-1.45,1.45);
+}else if(pointers.size>=2){
+const[a,b]=[...pointers.values()];
+const d=Math.hypot(a.x-b.x,a.y-b.y);
+if(lastPinch>0&&d>0)dist=clamp(dist*lastPinch/d,DIST_MIN,DIST_MAX);
+lastPinch=d;
+}
+});
+const endPointer=e=>{pointers.delete(e.pointerId);lastPinch=0;};
+canvas.addEventListener("pointerup",endPointer);
+canvas.addEventListener("pointercancel",endPointer);
+canvas.addEventListener("wheel",e=>{
+e.preventDefault();
+dist=clamp(dist*Math.exp(e.deltaY*.0012),DIST_MIN,DIST_MAX);
+},{passive:false});
+canvas.addEventListener("dblclick",resetView);
+
+/* ---------- 一時停止・PNG・全画面・UI ---------- */
+let paused=false;
+let tAcc=0,lastN=null;
+function setPaused(v){paused=v;pauseEl.checked=v;}
+pauseEl.addEventListener("change",()=>setPaused(pauseEl.checked));
+
+function savePng(){
+canvas.toBlob(b=>{
+const a=document.createElement("a");
+a.href=URL.createObjectURL(b);
+a.download="ribbon-"+Date.now()+".png";
+a.click();
+setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+},"image/png");
+}
+function toggleFull(){
+if(!document.fullscreenElement)document.getElementById("stage").requestFullscreen?.();
+else document.exitFullscreen?.();
+}
+function toggleUI(){document.body.classList.toggle("ui-immersive");}
+
+document.getElementById("btnView").addEventListener("click",resetView);
+document.getElementById("btnPng").addEventListener("click",savePng);
+document.getElementById("btnFull").addEventListener("click",toggleFull);
+document.getElementById("btnHide").addEventListener("click",toggleUI);
+
+addEventListener("keydown",e=>{
+if(e.target.tagName==="INPUT"&&e.target.type==="range")return;
+const k=e.key.toLowerCase();
+if(k===" "){e.preventDefault();setPaused(!paused);}
+else if(k==="h")toggleUI();
+else if(k==="f")toggleFull();
+else if(k==="s")savePng();
+else if(k==="r")resetView();
+});
+
+/* ---------- 初期化 ---------- */
+function resetAll(){
+for(const id of SLIDERS){
+sliderEl[id].value=DEFAULTS.sliders[id];
+sliderEl[id].dispatchEvent(new Event("input"));
+}
+setShape(DEFAULTS.shape);
+shapeWheel.setRGB(hexToRgb(DEFAULTS.shapeColor),DEFAULTS.vShape);
+bgWheel.setRGB(hexToRgb(DEFAULTS.bgColor),DEFAULTS.vBg);
+resetView();distS=dist;
+autoRotEl.checked=true;
+setPaused(false);
+}
+document.getElementById("btnReset").addEventListener("click",resetAll);
+
+/* ---------- WebGL ---------- */
+try{
+const vs=compile(gl.VERTEX_SHADER,vsSource);
+const fs=compile(gl.FRAGMENT_SHADER,fsSource);
+const program=gl.createProgram();
+gl.attachShader(program,vs);
+gl.attachShader(program,fs);
+gl.linkProgram(program);
+if(!gl.getProgramParameter(program,gl.LINK_STATUS)){
+const log=gl.getProgramInfoLog(program);showLog("Program link error:\n"+log);throw new Error(log);
+}
+gl.useProgram(program);
+
+const U={};
+for(const n of["u_time","u_speed","u_scale","u_intensity","u_highlight","u_vignette","u_dist","u_yaw","u_pitch","u_resolution","u_color","u_bg","u_shape","u_steps"])
+U[n]=gl.getUniformLocation(program,n);
+
+const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+
+function qualityToSteps(q){
+if(q<.6)return 40;
+if(q<.8)return 64;
+if(q<.95)return 96;
+return 128;
+}
+
+
+const DPR_CAP=1.75;
+    function resize(){
+      const rect=document.getElementById("stage").getBoundingClientRect();
+      const dpr=Math.min(devicePixelRatio||1,DPR_CAP),s=S.quality;
+      const w=Math.max(1,Math.floor(rect.width*dpr*s)),h=Math.max(1,Math.floor(rect.height*dpr*s));
+      if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h);}
+    }
+    addEventListener("resize",resize);
+    new ResizeObserver(resize).observe(document.getElementById("stage"));
+
+const smooth=(c,t,k=.12)=>c+(t-c)*k;
+
+function render(n){
+resize();
+const dt=lastN===null?0:Math.min(.1,(n-lastN)*.001);
+lastN=n;
+if(!paused){
+tAcc+=dt;
+if(autoRotEl.checked&&pointers.size===0)yaw+=dt*.25;
+}
+for(const id of SLIDERS)S[id]=smooth(S[id],parseFloat(sliderEl[id].value));
+distS=smooth(distS,dist,.15);
+const steps=qualityToSteps(S.quality);
+
+gl.viewport(0,0,canvas.width,canvas.height);
+gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);
+gl.useProgram(program);
+gl.uniform1f(U.u_time,tAcc);
+gl.uniform2f(U.u_resolution,canvas.width,canvas.height);
+gl.uniform1f(U.u_speed,S.speed);
+gl.uniform1f(U.u_scale,S.scale);
+gl.uniform1f(U.u_intensity,S.intensity);
+gl.uniform1f(U.u_highlight,S.highlight);
+gl.uniform1f(U.u_vignette,S.vignette);
+gl.uniform1f(U.u_dist,distS);
+gl.uniform1f(U.u_yaw,yaw);
+gl.uniform1f(U.u_pitch,pitch);
+gl.uniform3f(U.u_color,shapeRGB[0],shapeRGB[1],shapeRGB[2]);
+gl.uniform3f(U.u_bg,bgRGB[0],bgRGB[1],bgRGB[2]);
+gl.uniform1i(U.u_shape,shape);
+gl.uniform1i(U.u_steps,steps);
+gl.drawArrays(gl.TRIANGLES,0,3);
+
+requestAnimationFrame(render);
+}
+
+/* 初期値の反映 */
+resetAll();
+requestAnimationFrame(render);
+}catch(e){
+if(!logEl.textContent)showLog(String(e));
+console.error(e);
+}
+
+</script>
+</body></html>
