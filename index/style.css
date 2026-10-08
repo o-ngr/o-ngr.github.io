@@ -1,7 +1,8 @@
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    TOKENS
-   赤(朱)を主役に一色運用。金は「お気に入り」専用のレア色として温存し、
-   線は極細のヘアラインに統一して情報の密度を上げる。
+   和モダン
+   朱メイン一色運用。金レア色、
+   線は極細のヘアラインに統一
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 :root {
   --red:      #B3392C;
@@ -53,9 +54,9 @@ body.light {
   --shadow-md: 0 10px 28px rgba(0,0,0,.10);
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/* ━━━━━━━━━━━━━━━━
    RESET & BASE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+━━━━━━━━━━━━━━━━━━━ */
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
 html { scroll-behavior:smooth; font-size:16px; }
 body {
@@ -69,9 +70,9 @@ body {
 }
 :focus-visible { outline:2px solid var(--red); outline-offset:2px; }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/* ━━━━━━━━━━━━━━━━
    HEADER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+━━━━━━━━━━━━━━━━━━━ */
 .hdr {
   position:fixed;
   top:0; left:0; right:0;
@@ -154,13 +155,13 @@ body {
 .hbtn.icon-only { width:38px; padding:0; justify-content:center; }
 
 /* favPanelBtn は右パネルが隠れる幅(モバイル/タブレット)でのみ表示。
-   PCでは常時表示の rpanel があるため不要。 */
+   PCでは常時表示の rpanel 有りなので不要。 */
 #favPanelBtn { display:none; }
 @media(max-width:1100px) { #favPanelBtn { display:flex; } }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/* ━━━━━━━━━━━━━━━━
    LAYOUT SHELL
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+━━━━━━━━━━━━━━━━━━━ */
 .shell {
   display:grid;
   grid-template-columns:216px 1fr 272px;
@@ -169,9 +170,9 @@ body {
   min-height:100vh;
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/* ━━━━━━━━━━━━━━━
    LEFT SIDEBAR
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+━━━━━━━━━━━━━━━━━━ */
 .sidebar {
   position:sticky;
   top:60px;
@@ -251,8 +252,7 @@ body {
 .sort-sel:hover { border-color:var(--line-strong); }
 .sort-sel:focus { outline:none; border-color:var(--red); }
 
-/* CTA — サイドバー最上部に配置し、最も視線が集まる位置で訴求する。
-   常時点滅ではなく、静的な質感（罫線+小さな印）で「新作」を落ち着いて伝える。 */
+/* CTA — サイドバー最上部 */
 .cta-wrap { padding:0 1.3rem 1.1rem; }
 .cta-link {
   display:block;
@@ -286,7 +286,7 @@ body {
 }
 .cta-sub { font-size:.7rem; font-weight:500; font-family:'Noto Sans JP',sans-serif; opacity:.85; display:block; margin-top:.25rem; letter-spacing:.02em; }
 
-/* モバイル用CTA（メインカラム上部）は通常非表示。700px以下でのみ表示する。 */
+/* モバイル用CTA（メインカラム上部）は通常非表示。700px以下でのみ表示 */
 .mobile-cta { display:none; }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -620,12 +620,23 @@ body {
   .mobile-cta { display:block; padding:0 0 1.1rem; }
 }
 
-/* Scrollbar */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCROLLBAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* Firefox / 標準仕様（Chrome 121+ も対応） */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+/* WebKit / Blink（Safari など標準プロパティ未対応のブラウザ向け） */
 ::-webkit-scrollbar { width:4px; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--line-strong); border-radius:2px; }
 
-/* Mobile bottom nav (tabs) */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MOBILE BOTTOM NAV (tabs)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .mob-tabs {
   display:none;
   position:fixed;
