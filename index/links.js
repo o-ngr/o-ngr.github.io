@@ -18,4 +18,5 @@ const LINKS = [
     { id: 16, title: 'percentencodingconverter', desc: 'パーセントエンドコンバータ', url: '/tools/percentencodingconverter.html', category: 'tools' },
     { id: 17, title: 'shader', desc: 'シェーダー', url: '/tools/shader.html', category: 'design' },
     { id: 18, title: 'Raymarched Band', desc: 'レイマーチ・バンド', url: '/tools/Raymarched Band.html', category: 'design' },
+    { id: 19, title: 'mediaplayer', desc: 'メディアプレーヤ', url: '/tools/mediaplayer.html', category: 'tools' },
 ];
