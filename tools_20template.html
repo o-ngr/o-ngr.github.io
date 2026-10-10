@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/image/favicon.svg">
+<title>Tool Template</title>
+<style>
+/* ━━ TOKENS（ライト基本。ツール固有の色はここだけ変更） ━━ */
+:root {
+  --bg:#F6F3F0; --bg2:#EFE9E5; --bg3:#E6DED9;
+  --surface:#FFFFFF;
+  --t1:#1C1310; --t2:#6B5650; --t3:#A3908A;
+  --accent:#B3392C; --accent-h:#9E3125; --accent-tint:rgba(179,57,44,0.12);
+  --line:rgba(0,0,0,0.08); --line-strong:rgba(0,0,0,0.16);
+  --r-sm:5px;
+  --tr:.16s cubic-bezier(.4,0,.2,1);
+}
+body.dark {
+  --bg:#0B0908; --bg2:#131010; --bg3:#1A1616;
+  --surface:#1C1818;
+  --t1:#EFE7E4; --t2:#A6928D; --t3:#695A56;
+  --line:rgba(255,255,255,0.08); --line-strong:rgba(255,255,255,0.16);
+}
+
+/* ━━ RESET & BASE ━━ */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html, body { height:100%; }
+body {
+  font-family:'Noto Sans JP', sans-serif;
+  background:var(--bg); color:var(--t1);
+  line-height:1.6;
+  height:100vh; height:100dvh;
+  display:flex; flex-direction:column;
+  padding-top:56px;
+  overflow:hidden;
+}
+:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+/* ━━ HEADER ━━ */
+.ui-header {
+  position:fixed; top:0; left:0; right:0; height:56px; z-index:200;
+  display:flex; align-items:center; gap:1rem; padding:0 1.25rem;
+  background:color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.ui-header__title {
+  font-size:.8rem; font-weight:700; letter-spacing:.12em;
+  color:var(--t2); text-transform:uppercase;
+}
+.ui-header__actions { margin-left:auto; display:flex; align-items:center; gap:.5rem; }
+.ui-iconbtn {
+  height:36px; min-width:36px; padding:0 .8rem;
+  background:transparent; border:1px solid var(--line);
+  border-radius:var(--r-sm); color:var(--t2); cursor:pointer;
+  font:inherit; font-size:.85rem; transition:var(--tr);
+}
+.ui-iconbtn:hover { color:var(--t1); border-color:var(--line-strong); }
+
+/* アクセスカウンター スタイル */
+.access-counter {
+  display:block;
+  height:auto;
+}
+.counter-pc { display:inline-block; }
+.counter-sp { display:none; text-align:center; margin-top:auto; padding-top:.5rem; }
+
+/* ━━ SHELL ━━ */
+.ui-shell {
+  flex:1; min-height:0;
+  display:grid;
+  grid-template-columns:240px 1fr 272px;
+}
+.ui-sidebar, .ui-detail {
+  min-height:0; overflow-y:auto;
+  background:var(--bg2);
+  padding:1.25rem 1rem;
+  display:flex; flex-direction:column; gap:1.1rem;
+}
+.ui-sidebar { border-right:1px solid var(--line); }
+.ui-detail  { border-left:1px solid var(--line); }
+.ui-main {
+  position:relative; min-width:0; min-height:0;
+  display:flex; flex-direction:column;
+}
+
+/* ━━ DRAWER HEAD（オーバーレイ時のみ表示） ━━ */
+.ui-drawer-head {
+  display:none; align-items:center; justify-content:space-between;
+  margin-bottom:.2rem;
+}
+.ui-drawer-close { height:32px; min-width:32px; padding:0 .6rem; }
+
+/* ━━ GROUP（スライダー・ボタンを共通で束ねる） ━━ */
+.ui-group { display:flex; flex-direction:column; gap:.4rem; }
+.ui-group__label {
+  font-size:.7rem; font-weight:700; letter-spacing:.1em; color:var(--t3);
+}
+.ui-group__head {
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:.78rem; color:var(--t2);
+}
+.ui-group__value {
+  color:var(--t1); font-weight:700; font-variant-numeric:tabular-nums;
+}
+.ui-slider { width:100%; accent-color:var(--accent); }
+.ui-slider:disabled { opacity:.35; }
+.ui-hint { font-size:.8rem; color:var(--t3); line-height:1.8; }
+.ui-status { font-size:.78rem; color:var(--t2); text-align:center; }
+
+/* ━━ BUTTONS ━━ */
+.ui-btn-row  { display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; }
+.ui-btn-grid { display:grid; grid-template-columns:1fr 1fr; gap:.4rem; }
+.ui-btn {
+  height:36px; padding:0 .5rem;
+  display:flex; align-items:center; justify-content:center;
+  background:transparent; border:1px solid var(--line-strong);
+  border-radius:var(--r-sm); color:var(--t2);
+  font:inherit; font-size:.8rem; font-weight:500;
+  cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  transition:var(--tr);
+}
+.ui-btn:hover { border-color:var(--accent); color:var(--accent); }
+.ui-btn:active { opacity:.7; }
+.ui-btn.is-active { border-color:var(--accent); color:var(--accent); background:var(--accent-tint); }
+.ui-btn--primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
+.ui-btn--primary:hover { background:var(--accent-h); color:#fff; }
+.ui-btn:disabled { opacity:.35; cursor:default; }
+.ui-btn:disabled:hover { border-color:var(--line-strong); color:var(--t2); }
+.ui-span-full { grid-column:1/-1; }
+input[type=file] { display:none; }
+
+/* ━━ MAIN HEAD ━━ */
+.ui-main__head {
+  display:flex; align-items:center; gap:.5rem;
+  padding:.6rem 1rem; min-height:48px;
+  border-bottom:1px solid var(--line);
+  flex-shrink:0;
+}
+.ui-main__title {
+  font-size:.82rem; color:var(--t2);
+  min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+}
+/* パネル開閉ボタン（デスクトップでは非表示） */
+.ui-toggle { display:none; flex-shrink:0; }
+
+/* ━━ STAGE（ツール本体の描画領域） ━━ */
+.ui-stage { position:relative; flex:1; min-height:0; overflow:hidden; }
+.ui-stage__canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+.ui-stage.is-dragging { outline:1px dashed var(--accent); outline-offset:-8px; }
+
+/* ━━ OVERLAY（ドロワー表示時の背景） ━━ */
+.ui-overlay {
+  position:fixed; top:56px; left:0; right:0; bottom:0; z-index:240;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(2px);
+  opacity:0; pointer-events:none;
+  transition:opacity .25s ease;
+}
+.ui-overlay.is-open { opacity:1; pointer-events:auto; }
+
+/* ━━ FOOTER ━━ */
+.ui-footer {
+  flex-shrink:0; height:32px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bg2); border-top:1px solid var(--line);
+  font-size:.72rem; color:var(--t3);
+}
+.ui-footer a { color:var(--accent); text-decoration:none; }
+.ui-footer a:hover { text-decoration:underline; }
+
+/* ━━ RESPONSIVE ━━ */
+/* 1100px以下：操作パネル（左）・詳細設定（右）はスライドインのドロワー */
+@media (max-width:1100px) {
+  .ui-header { padding:0 1rem; }
+  .ui-shell { grid-template-columns:1fr; }
+  .ui-toggle { display:inline-flex; }
+  .ui-drawer-head { display:flex; }
+  .ui-sidebar, .ui-detail {
+    position:fixed; top:56px; bottom:32px; z-index:250;
+    width:min(280px, 86vw);
+    transition:transform .25s ease;
+    box-shadow:0 10px 28px rgba(0,0,0,.25);
+  }
+  .ui-sidebar { left:0;  transform:translateX(-100%); border-right:1px solid var(--line); }
+  .ui-detail  { right:0; transform:translateX(100%);  border-left:1px solid var(--line); }
+  .ui-sidebar.is-open, .ui-detail.is-open { transform:translateX(0); }
+
+  /* モバイル時のアクセスカウンター表示切替 */
+  .counter-pc { display:none; }
+  .counter-sp { display:block; }
+}
+</style>
+</head>
+<body>
+
+<header class="ui-header">
+  <h1 class="ui-header__title">Tool Template</h1>
+  <div class="ui-header__actions">
+    <!-- PC用アクセスカウンター -->
+    <img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="180" height="54" class="access-counter counter-pc">
+    <button class="ui-iconbtn" id="themeBtn" type="button" title="テーマ切替">◐</button>
+  </div>
+</header>
+
+<div class="ui-shell">
+
+  <!-- SIDEBAR：スライダー・ボタン類（ツールの操作系はすべてここに置く） -->
+  <nav class="ui-sidebar" id="sidebar">
+    <div class="ui-drawer-head">
+      <span class="ui-group__label">操作パネル</span>
+      <button class="ui-iconbtn ui-drawer-close" type="button" data-close>×</button>
+    </div>
+
+    <div class="ui-group">
+      <span class="ui-group__label">サンプル：スライダー</span>
+      <div class="ui-group__head">
+        <label for="sizeSlider">サイズ</label>
+        <output class="ui-group__value" data-out="size"></output>
+      </div>
+      <input class="ui-slider" type="range" id="sizeSlider" data-param="size" min="10" max="200" step="1">
+    </div>
+
+    <div class="ui-group">
+      <span class="ui-group__label">サンプル：ボタン</span>
+      <div class="ui-btn-grid">
+        <button class="ui-btn" type="button" data-toggle="showGrid">グリッド</button>
+        <button class="ui-btn" type="button" id="resetBtn">初期値</button>
+      </div>
+    </div>
+
+    <div class="ui-status" id="status">準備完了</div>
+
+    <!-- モバイル用アクセスカウンター（操作パネル最下） -->
+    <div class="counter-sp">
+      <img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="180" height="54" class="access-counter" style="margin:0 auto;">
+    </div>
+  </nav>
+
+  <!-- MAIN：ツール本体 -->
+  <main class="ui-main">
+    <div class="ui-main__head">
+      <button class="ui-btn ui-toggle" id="sidebarToggle" type="button">操作パネル</button>
+      <button class="ui-btn ui-toggle" id="detailToggle" type="button">詳細設定</button>
+      <span class="ui-main__title" id="mainTitle">コンテンツ</span>
+    </div>
+
+    <div class="ui-stage" id="stage">
+      <canvas class="ui-stage__canvas" id="canvas"></canvas>
+    </div>
+  </main>
+
+  <!-- DETAIL：詳細設定（必要に応じて .ui-group を追加） -->
+  <aside class="ui-detail" id="detail">
+    <div class="ui-drawer-head">
+      <span class="ui-group__label">詳細設定</span>
+      <button class="ui-iconbtn ui-drawer-close" type="button" data-close>×</button>
+    </div>
+
+    <div class="ui-group">
+      <span class="ui-group__label">詳細</span>
+      <p class="ui-hint">ここに詳細設定を配置します</p>
+    </div>
+  </aside>
+
+</div>
+
+<div class="ui-overlay" id="overlay"></div>
+
+<footer class="ui-footer">
+  © 2026 o-ngr — <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
+</footer>
+
+<script>
+(function () {
+  /* ━━ ツールごとに変更する設定 ━━ */
+  const TOOL_ID   = 'tool';          // 保存キーの接頭辞（例: 'stg' → 'stg-size'）
+  const THEME_KEY = 'o-ngr-theme';   // 全ツール共通
+  const DEFAULTS  = { size: 80, showGrid: false };
+
+  /* ━━ 状態 ━━ */
+  const params = { ...DEFAULTS };
+
+  // ツール側が差し込むフック
+  const hooks = {
+    onParamChange: null,   // (key, value) => void
+    onResize: null         // (width, height) => void
+  };
+
+  /* ━━ 要素 ━━ */
+  const sidebar = document.getElementById('sidebar');
+  const detail = document.getElementById('detail');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const detailToggle = document.getElementById('detailToggle');
+  const overlay = document.getElementById('overlay');
+  const stage = document.getElementById('stage');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const statusEl = document.getElementById('status');
+  const mainTitleEl = document.getElementById('mainTitle');
+
+  /* ━━ 保存（キーは「ツール名-設定名」） ━━ */
+  const storage = {
+    key(name) { return TOOL_ID + '-' + name; },
+    read(name) {
+      try {
+        const raw = localStorage.getItem(this.key(name));
+        return raw === null ? undefined : JSON.parse(raw);
+      } catch (e) { return undefined; }
+    },
+    write(name, value) {
+      try { localStorage.setItem(this.key(name), JSON.stringify(value)); } catch (e) {}
+    }
+  };
+
+  function loadParams() {
+    Object.keys(DEFAULTS).forEach(key => {
+      const saved = storage.read(key);
+      if (saved !== undefined) params[key] = saved;
+    });
+  }
+
+  // 値の変更はすべてここを通す（保存・フック呼び出しを一箇所に集約）
+  function setParam(key, value) {
+    params[key] = value;
+    storage.write(key, value);
+    if (hooks.onParamChange) hooks.onParamChange(key, value);
+  }
+
+  function resetParams() {
+    Object.keys(DEFAULTS).forEach(key => setParam(key, DEFAULTS[key]));
+    syncControls();
+  }
+
+  function setStatus(text) { statusEl.textContent = text; }
+  function setTitle(text) { mainTitleEl.textContent = text; }
+
+  /* ━━ テーマ ━━ */
+  const theme = {
+    current() { return document.body.classList.contains('dark') ? 'dark' : 'light'; },
+    apply(mode) { document.body.classList.toggle('dark', mode === 'dark'); },
+    toggle() {
+      const next = this.current() === 'dark' ? 'light' : 'dark';
+      this.apply(next);
+      try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+    }
+  };
+
+  /* ━━ パネル開閉（オーバーレイ方式・同時に一つだけ開く） ━━ */
+  const panels = {
+    sidebar: { el: sidebar, btn: sidebarToggle },
+    detail:  { el: detail,  btn: detailToggle }
+  };
+
+  function closeAllPanels() {
+    let wasOpen = false;
+    Object.values(panels).forEach(p => {
+      if (p.el.classList.contains('is-open')) wasOpen = true;
+      p.el.classList.remove('is-open');
+      p.btn.classList.remove('is-active');
+    });
+    overlay.classList.remove('is-open');
+    return wasOpen;
+  }
+
+  function togglePanel(name) {
+    const target = panels[name];
+    const willOpen = !target.el.classList.contains('is-open');
+    closeAllPanels();
+    if (willOpen) {
+      target.el.classList.add('is-open');
+      target.btn.classList.add('is-active');
+      overlay.classList.add('is-open');
+    }
+  }
+
+  sidebarToggle.addEventListener('click', () => togglePanel('sidebar'));
+  detailToggle.addEventListener('click', () => togglePanel('detail'));
+  overlay.addEventListener('click', closeAllPanels);
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', closeAllPanels);
+  });
+
+  /* ━━ コントロールの配線 ━━ */
+  // data-param：スライダーを params に結びつける。出力は data-out="key" で指定
+  document.querySelectorAll('.ui-slider[data-param]').forEach(input => {
+    input.addEventListener('input', () => {
+      setParam(input.dataset.param, Number(input.value));
+      syncControls();
+    });
+  });
+
+  // data-toggle：ボタンを真偽値の params に結びつける
+  document.querySelectorAll('[data-toggle]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.toggle;
+      setParam(key, !params[key]);
+      syncControls();
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', resetParams);
+
+  // params の値を画面のコントロールに反映
+  function syncControls() {
+    document.querySelectorAll('.ui-slider[data-param]').forEach(input => {
+      const key = input.dataset.param;
+      input.value = params[key];
+      const out = document.querySelector('[data-out="' + key + '"]');
+      if (out) out.textContent = params[key];
+    });
+    document.querySelectorAll('[data-toggle]').forEach(btn => {
+      btn.classList.toggle('is-active', !!params[btn.dataset.toggle]);
+    });
+  }
+
+  /* ━━ ステージ（キャンバス） ━━ */
+  function fitCanvas() {
+    const rect = stage.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (hooks.onResize) hooks.onResize(rect.width, rect.height);
+  }
+  new ResizeObserver(fitCanvas).observe(stage);
+
+  // CSS変数は body から読む（body.dark の上書きを反映するため）
+  function getColors() {
+    const cs = getComputedStyle(document.body);
+    return {
+      bg: cs.getPropertyValue('--bg').trim(),
+      accent: cs.getPropertyValue('--accent').trim(),
+      line: cs.getPropertyValue('--line-strong').trim()
+    };
+  }
+
+  // サンプル描画：ツール側はこの関数を差し替えて使う
+  function render() {
+    const rect = stage.getBoundingClientRect();
+    const w = rect.width, h = rect.height;
+    const c = getColors();
+
+    ctx.fillStyle = c.bg;
+    ctx.fillRect(0, 0, w, h);
+
+    if (params.showGrid) {
+      ctx.strokeStyle = c.line;
+      ctx.lineWidth = 1;
+      const step = 40;
+      ctx.beginPath();
+      for (let x = 0; x <= w; x += step) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+      for (let y = 0; y <= h; y += step) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = c.accent;
+    ctx.beginPath();
+    ctx.arc(w / 2, h / 2, params.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  hooks.onParamChange = render;
+  hooks.onResize = render;
+
+  /* ━━ キーボード ━━ */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAllPanels();
+  });
+
+  /* ━━ テーマ切替 ━━ */
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    theme.toggle();
+    render();
+  });
+
+  /* ━━ 初期化 ━━ */
+  theme.apply(localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light');
+  loadParams();
+  syncControls();
+  render();
+
+  // 外部（ツール側のコードや将来の拡張）から使えるよう公開する
+  window.UI = { params, setParam, hooks, setStatus, setTitle, togglePanel, closeAllPanels, theme };
+})();
+</script>
+</body>
+</html>
