@@ -3,84 +3,127 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="icon" type="image/svg+xml" href="/image/favicon.svg">
-<title>Tool Template</title>
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F6F3F0">
+<meta name="template-version" content="1.3">
+<meta name="description" content="ツールの説明をここに書く">
+<meta property="og:type" content="website">
+<meta property="og:title" content="O-ngr | Tool Template">
+<meta property="og:description" content="ツールの説明をここに書く">
+<meta property="og:image" content="https://o-ngr.github.io/image/o-ngr-image.png">
+<link rel="icon" type="image/svg+xml" href="https://o-ngr.github.io/image/favicon.svg">
+<title>O-ngr | Tool Template</title>
+
+<!-- テーマの先行適用 -->
+<script>
+(function () {
+  try {
+    var m = (localStorage.getItem('o-ngr-theme') || '').replace(/"/g, '');
+    var dark = m === 'dark' || (m !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (dark) document.documentElement.classList.add('dark');
+  } catch (e) {}
+})();
+</script>
+
 <style>
 /* ━━ TOKENS（ライト基本。ツール固有の色はここだけ変更） ━━ */
 :root {
   --bg:#F6F3F0; --bg2:#EFE9E5; --bg3:#E6DED9;
   --surface:#FFFFFF;
-  --t1:#1C1310; --t2:#6B5650; --t3:#A3908A;
-  --accent:#B3392C; --accent-h:#9E3125; --accent-tint:rgba(179,57,44,0.12);
+  --t1:#1C1310; --t2:#5C4A44; --t3:#75645E;
+  --accent:#A9322A;
+  --accent-solid:#A9322A;
+  --accent-h:#932A23;
+  --accent-tint:rgba(169,50,42,0.12);
   --line:rgba(0,0,0,0.08); --line-strong:rgba(0,0,0,0.16);
+  --track:rgba(0,0,0,0.14);
   --r-sm:5px;
   --tr:.16s cubic-bezier(.4,0,.2,1);
+  --sheet-ease:cubic-bezier(.2,.8,.2,1);
+
+  /* レイアウト寸法（ここだけで管理） */
+  --w-side:240px; --w-detail:272px;
+  --sat:env(safe-area-inset-top,0px);    --sar:env(safe-area-inset-right,0px);
+  --sab:env(safe-area-inset-bottom,0px); --sal:env(safe-area-inset-left,0px);
+  --header-h:calc(56px + var(--sat));
+  --footer-h:calc(40px + var(--sab));
+  --tabbar-h:calc(64px + var(--sab));
 }
-body.dark {
+/* html.dark：先行スクリプト用 / body.dark：既存ツールの body.dark セレクタとの互換 */
+html.dark, body.dark {
   --bg:#0B0908; --bg2:#131010; --bg3:#1A1616;
   --surface:#1C1818;
-  --t1:#EFE7E4; --t2:#A6928D; --t3:#695A56;
+  --t1:#EFE7E4; --t2:#A6928D; --t3:#8F7D78;
+  --accent:#DB5A47;
+  --accent-solid:#B3392C;
+  --accent-h:#C4432F;
+  --accent-tint:rgba(219,90,71,0.12);
   --line:rgba(255,255,255,0.08); --line-strong:rgba(255,255,255,0.16);
+  --track:rgba(255,255,255,0.2);
 }
 
 /* ━━ RESET & BASE ━━ */
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html, body { height:100%; }
+[hidden] { display:none !important; }
+html { height:100%; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 body {
-  font-family:'Noto Sans JP', sans-serif;
+  font-family:system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
   background:var(--bg); color:var(--t1);
   line-height:1.6;
   height:100vh; height:100dvh;
   display:flex; flex-direction:column;
-  padding-top:56px;
+  padding:var(--header-h) var(--sar) 0 var(--sal);
   overflow:hidden;
+  overscroll-behavior:none;
 }
 :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 
 /* ━━ HEADER ━━ */
 .ui-header {
-  position:fixed; top:0; left:0; right:0; height:56px; z-index:200;
-  display:flex; align-items:center; gap:1rem; padding:0 1.25rem;
+  position:fixed; top:0; left:0; right:0; height:var(--header-h); z-index:200;
+  display:flex; align-items:center; gap:1rem;
+  padding:var(--sat) calc(1.25rem + var(--sar)) 0 calc(1.25rem + var(--sal));
   background:color-mix(in srgb, var(--bg) 92%, transparent);
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
 }
-.counter-link {
+.logo-link {
   display:inline-flex; align-items:center; justify-content:center;
   flex:0 0 36px; width:36px; height:36px;
   border-radius:var(--r-sm); text-decoration:none;
 }
 .site-logo { display:block; width:36px; height:36px; object-fit:contain; }
 .ui-header__title {
+  min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
   font-size:.8rem; font-weight:700; letter-spacing:.12em;
   color:var(--t2); text-transform:uppercase;
 }
-.ui-header__actions { margin-left:auto; display:flex; align-items:center; gap:.5rem; }
+.ui-header__actions { margin-left:auto; display:flex; align-items:center; gap:.5rem; flex-shrink:0; }
 .ui-iconbtn {
   height:36px; min-width:36px; padding:0 .8rem;
+  display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
   background:transparent; border:1px solid var(--line);
   border-radius:var(--r-sm); color:var(--t2); cursor:pointer;
-  font:inherit; font-size:.85rem; transition:var(--tr);
+  font:inherit; font-size:.85rem; white-space:nowrap;
+  transition:var(--tr); touch-action:manipulation;
 }
 .ui-iconbtn:hover { color:var(--t1); border-color:var(--line-strong); }
+.ui-iconbtn svg { flex:0 0 auto; }
 
-/* アクセスカウンター スタイル */
-.access-counter {
-  display:block;
-  height:auto;
-}
-.counter-pc { display:inline-block; }
-.counter-sp { display:none; text-align:center; margin-top:auto; padding-top:.5rem; }
-
-/* ━━ SHELL ━━ */
+/* ━━ SHELL（デスクトップ：3カラム） ━━ */
 .ui-shell {
   flex:1; min-height:0;
   display:grid;
-  grid-template-columns:240px 1fr 272px;
+  grid-template-columns:var(--w-side) minmax(0,1fr) var(--w-detail);
 }
+/* 詳細パネルが不要なツール：.ui-shell に --no-detail を付けるだけで右パネルとタブが消える */
+.ui-shell--no-detail { grid-template-columns:var(--w-side) minmax(0,1fr); }
+.ui-shell--no-detail .ui-detail,
+.ui-shell--no-detail [data-panel-toggle="detail"] { display:none !important; }
+
 .ui-sidebar, .ui-detail {
-  min-height:0; overflow-y:auto;
+  min-height:0; overflow-y:auto; overscroll-behavior:contain;
   background:var(--bg2);
   padding:1.25rem 1rem;
   display:flex; flex-direction:column; gap:1.1rem;
@@ -92,12 +135,9 @@ body {
   display:flex; flex-direction:column;
 }
 
-/* ━━ DRAWER HEAD（オーバーレイ時のみ表示） ━━ */
-.ui-drawer-head {
-  display:none; align-items:center; justify-content:space-between;
-  margin-bottom:.2rem;
-}
-.ui-drawer-close { height:32px; min-width:32px; padding:0 .6rem; }
+/* ━━ SHEET HEAD（モバイルのシートでのみ表示） ━━ */
+.ui-sheet-head { display:none; }
+.ui-tabbar { display:none; }
 
 /* ━━ GROUP（スライダー・ボタンを共通で束ねる） ━━ */
 .ui-group { display:flex; flex-direction:column; gap:.4rem; }
@@ -111,10 +151,32 @@ body {
 .ui-group__value {
   color:var(--t1); font-weight:700; font-variant-numeric:tabular-nums;
 }
-.ui-slider { width:100%; accent-color:var(--accent); }
-.ui-slider:disabled { opacity:.35; }
 .ui-hint { font-size:.8rem; color:var(--t3); line-height:1.8; }
 .ui-status { font-size:.78rem; color:var(--t2); text-align:center; }
+
+/* ━━ SLIDER（--p は JS が入力値に合わせて更新する：塗りつぶし位置） ━━ */
+.ui-slider {
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:28px; background:transparent; cursor:pointer; --p:50%;
+}
+.ui-slider::-webkit-slider-runnable-track {
+  height:4px; border-radius:2px;
+  background:linear-gradient(to right, var(--accent-solid) var(--p), var(--track) var(--p));
+}
+.ui-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none;
+  width:20px; height:20px; margin-top:-8px; border-radius:50%;
+  background:var(--accent-solid); border:2px solid var(--surface);
+  box-shadow:0 1px 3px rgba(0,0,0,.35);
+}
+.ui-slider::-moz-range-track { height:4px; border-radius:2px; background:var(--track); }
+.ui-slider::-moz-range-progress { height:4px; border-radius:2px; background:var(--accent-solid); }
+.ui-slider::-moz-range-thumb {
+  width:16px; height:16px; border-radius:50%;
+  background:var(--accent-solid); border:2px solid var(--surface);
+  box-shadow:0 1px 3px rgba(0,0,0,.35);
+}
+.ui-slider:disabled { opacity:.35; }
 
 /* ━━ BUTTONS ━━ */
 .ui-btn-row  { display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; }
@@ -126,17 +188,17 @@ body {
   border-radius:var(--r-sm); color:var(--t2);
   font:inherit; font-size:.8rem; font-weight:500;
   cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  transition:var(--tr);
+  transition:var(--tr); touch-action:manipulation;
 }
 .ui-btn:hover { border-color:var(--accent); color:var(--accent); }
 .ui-btn:active { opacity:.7; }
 .ui-btn.is-active { border-color:var(--accent); color:var(--accent); background:var(--accent-tint); }
-.ui-btn--primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
-.ui-btn--primary:hover { background:var(--accent-h); color:#fff; }
+.ui-btn--primary { background:var(--accent-solid); border-color:var(--accent-solid); color:#fff; font-weight:700; }
+.ui-btn--primary:hover { background:var(--accent-h); border-color:var(--accent-h); color:#fff; }
 .ui-btn:disabled { opacity:.35; cursor:default; }
 .ui-btn:disabled:hover { border-color:var(--line-strong); color:var(--t2); }
 .ui-span-full { grid-column:1/-1; }
-input[type=file] { display:none; }
+.ui-file { display:none; }
 
 /* ━━ MAIN HEAD ━━ */
 .ui-main__head {
@@ -149,120 +211,239 @@ input[type=file] { display:none; }
   font-size:.82rem; color:var(--t2);
   min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
 }
-/* パネル開閉ボタン（デスクトップでは非表示） */
-.ui-toggle { display:none; flex-shrink:0; }
 
 /* ━━ STAGE（ツール本体の描画領域） ━━ */
-.ui-stage { position:relative; flex:1; min-height:0; overflow:hidden; }
+.ui-stage {
+  position:relative; flex:1; min-height:0; overflow:hidden;
+  touch-action:none; user-select:none; -webkit-user-select:none;
+  -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent;
+}
 .ui-stage__canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
 .ui-stage.is-dragging { outline:1px dashed var(--accent); outline-offset:-8px; }
 
-/* ━━ OVERLAY（ドロワー表示時の背景） ━━ */
-.ui-overlay {
-  position:fixed; top:56px; left:0; right:0; bottom:0; z-index:240;
-  background:rgba(0,0,0,.55);
-  backdrop-filter:blur(2px);
-  opacity:0; pointer-events:none;
-  transition:opacity .25s ease;
-}
-.ui-overlay.is-open { opacity:1; pointer-events:auto; }
-
 /* ━━ FOOTER ━━ */
 .ui-footer {
-  flex-shrink:0; height:32px;
-  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; height:var(--footer-h); padding-bottom:var(--sab);
+  display:flex; align-items:center; justify-content:center; gap:.9rem;
   background:var(--bg2); border-top:1px solid var(--line);
   font-size:.72rem; color:var(--t3);
 }
 .ui-footer a { color:var(--accent); text-decoration:none; }
 .ui-footer a:hover { text-decoration:underline; }
+.access-counter { display:block; height:28px; width:auto; }
+/* デスクトップ：アクセスカウンターは右パネル（詳細なしのツールでは左パネル）の最下部に置く */
+.ui-sidebar > .access-counter,
+.ui-detail  > .access-counter {
+  flex:0 0 auto; margin-top:auto; align-self:center;
+}
 
-/* ━━ RESPONSIVE ━━ */
-/* 1100px以下：操作パネル（左）・詳細設定（右）はスライドインのドロワー */
-@media (max-width:1100px) {
-  .ui-header { padding:0 1rem; }
-  .ui-shell { grid-template-columns:1fr; }
-  .ui-toggle { display:inline-flex; }
-  .ui-drawer-head { display:flex; }
-  .ui-sidebar, .ui-detail {
-    position:fixed; top:56px; bottom:32px; z-index:250;
-    width:min(280px, 86vw);
-    transition:transform .25s ease;
-    box-shadow:0 10px 28px rgba(0,0,0,.25);
+/* ═══════════════════════════════════════════════════════════
+   MOBILE（スマホアプリ型）
+   縦：上部アプリバー ＋ 全面キャンバス ＋ ボトムシート ＋ ボトムタブバー
+   横：左のナビレール ＋ キャンバス ＋ 右のサイドシート
+   ※ 条件は JS の NARROW_QUERY と揃える
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width:900px), (max-height:520px) and (pointer:coarse) {
+  :root { --header-h:calc(48px + var(--sat)); }
+
+  .ui-header { gap:.75rem; padding-left:calc(.9rem + var(--sal)); padding-right:calc(.9rem + var(--sar)); }
+  .ui-iconbtn__label { display:none; }
+  #themeBtn { width:40px; height:40px; padding:0; border-color:transparent; border-radius:50%; }
+
+  .ui-shell { display:flex; flex-direction:column; position:relative; }
+  .ui-main { order:0; flex:1 1 0; }
+
+  .ui-main__head {
+    position:absolute; top:8px; left:10px; right:10px; z-index:3;
+    min-height:0; padding:0; border:0; background:none; pointer-events:none;
   }
-  .ui-sidebar { left:0;  transform:translateX(-100%); border-right:1px solid var(--line); }
-  .ui-detail  { right:0; transform:translateX(100%);  border-left:1px solid var(--line); }
-  .ui-sidebar.is-open, .ui-detail.is-open { transform:translateX(0); }
+  .ui-main__title {
+    padding:2px 10px; border-radius:999px;
+    background:color-mix(in srgb, var(--bg) 78%, transparent); color:var(--t1);
+  }
+  .ui-main__title:empty { display:none; }
 
-  /* モバイル時のアクセスカウンター表示切替 */
-  .counter-pc { display:none; }
-  .counter-sp { display:block; }
+  /* ── ボトムシート ── */
+  .ui-sidebar, .ui-detail {
+    order:1; flex:0 0 auto; position:relative; z-index:5;
+    height:0; padding:0; overflow:hidden;
+    background:var(--surface);
+    border:0; border-radius:16px 16px 0 0;
+    box-shadow:0 -6px 20px rgba(0,0,0,.14);
+    gap:1.1rem;
+    visibility:hidden;
+    transition:height .28s var(--sheet-ease), visibility 0s linear .28s;
+  }
+  .ui-sidebar.is-open, .ui-detail.is-open {
+    visibility:visible; overflow-y:auto;
+    transition:height .28s var(--sheet-ease), visibility 0s;
+  }
+  .ui-sidebar.is-dragging, .ui-detail.is-dragging,
+  .ui-shell.no-anim .ui-sidebar, .ui-shell.no-anim .ui-detail { transition:none !important; }
+  .ui-sidebar::after, .ui-detail::after { content:""; flex:0 0 1rem; }  /* 下の余白（高さ0でも潰れないよう padding ではなく要素で確保） */
+
+  /* シートの中身の左右余白。タブレットでは中央に寄せて読みやすい幅に */
+  .ui-sidebar > :not(.ui-sheet-head), .ui-detail > :not(.ui-sheet-head) {
+    margin-inline:max(1rem, calc((100% - 560px) / 2));
+  }
+
+  /* シートの頭：つまみ・タイトル・閉じる（ドラッグで高さ変更・タップで切替） */
+  .ui-sheet-head {
+    position:sticky; top:0; z-index:2; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    min-height:56px; padding:14px max(1rem, calc((100% - 560px) / 2)) 0;
+    background:var(--surface);
+    touch-action:none; cursor:grab;
+  }
+  .ui-sheet-grabber {
+    position:absolute; top:8px; left:50%; width:36px; height:4px; margin-left:-18px;
+    border-radius:2px; background:color-mix(in srgb, var(--t3) 55%, transparent);
+  }
+  .ui-sheet-head .ui-group__label { font-size:.85rem; letter-spacing:.04em; color:var(--t1); }
+  .ui-sheet-close { width:40px; min-width:40px; height:40px; padding:0; border:0; border-radius:50%; background:var(--bg2); font-size:1.1rem; }
+
+  /* フッター（コピーライト・カウンター）はシートの一番下に移る */
+  .ui-footer.in-sheet {
+    height:auto; padding:.75rem 0 0; margin-top:auto;
+    flex-direction:column; gap:.5rem;
+    background:none; border-top:1px solid var(--line);
+  }
+
+  /* ── ボトムタブバー ── */
+  .ui-tabbar {
+    display:flex; order:2; flex:0 0 auto; position:relative; z-index:6;
+    height:var(--tabbar-h); padding:6px .5rem var(--sab);
+    background:var(--bg2); border-top:1px solid var(--line);
+  }
+  .ui-tab {
+    flex:1; min-width:64px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    background:none; border:0; color:var(--t2);
+    font:inherit; font-size:.72rem; font-weight:600; line-height:1.2;
+    cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+  }
+  .ui-tab__icon {
+    display:flex; align-items:center; justify-content:center;
+    width:56px; height:30px; border-radius:15px;
+    transition:background var(--tr), color var(--tr);
+  }
+  .ui-tab:active .ui-tab__icon { background:var(--bg3); }
+  .ui-tab[aria-expanded="true"] { color:var(--t1); }
+  .ui-tab[aria-expanded="true"] .ui-tab__icon { background:var(--accent-tint); color:var(--accent); }
+
+  /* 操作しやすい大きさに */
+  .ui-btn, .ui-iconbtn { height:44px; }
+  .ui-iconbtn { min-width:44px; }
+  #themeBtn, .ui-sheet-close { height:40px; }
+  .ui-slider { height:40px; }
+  .ui-slider::-webkit-slider-thumb { width:24px; height:24px; margin-top:-10px; }
+  .ui-slider::-moz-range-thumb { width:20px; height:20px; }
+
+  /* オーバーレイ（TOOL_CONFIG.sheet:'overlay'）：キャンバスを押し上げず、上に重ねる */
+  body.sheet-overlay .ui-sidebar, body.sheet-overlay .ui-detail {
+    position:absolute; left:0; right:0; bottom:var(--tabbar-h);
+  }
+
+  /* ── 横向きスマホ：タブバーは左のレール、シートは右のサイドシート ── */
+  @media (orientation:landscape) and (max-height:520px) {
+    .ui-shell { flex-direction:row; }
+    .ui-tabbar {
+      order:-1; flex-direction:column; justify-content:center; gap:.25rem;
+      width:calc(76px + var(--sal)); height:auto; margin-left:calc(-1 * var(--sal));
+      padding:6px .25rem 6px var(--sal);
+      border-top:0; border-right:1px solid var(--line);
+    }
+    .ui-tab { flex:0 0 auto; min-width:0; padding:.35rem 0; }
+    .ui-sidebar, .ui-detail {
+      align-self:stretch; height:auto; width:0;
+      border-radius:0; box-shadow:none; border-left:1px solid var(--line);
+      transition:width .28s var(--sheet-ease), visibility 0s linear .28s;
+    }
+    .ui-sidebar.is-open, .ui-detail.is-open {
+      width:min(320px, 46vw);
+      transition:width .28s var(--sheet-ease), visibility 0s;
+    }
+    .ui-sidebar > :not(.ui-sheet-head), .ui-detail > :not(.ui-sheet-head) { margin-inline:1rem; }
+    .ui-sheet-head { padding-inline:1rem; cursor:default; touch-action:auto; }
+    .ui-sheet-grabber { display:none; }
+    body.sheet-overlay .ui-sidebar, body.sheet-overlay .ui-detail {
+      left:auto; right:0; top:0; bottom:0;
+    }
+  }
+}
+
+/* 動きを減らす設定 */
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    transition-duration:.01ms !important; transition-delay:0s !important;
+    animation-duration:.01ms !important;
+  }
 }
 </style>
 </head>
 <body>
 
 <header class="ui-header">
-  <a class="counter-link" href="/" aria-label="トップページ"><img src="/image/favicon.svg" alt="" class="site-logo" width="36" height="36"></a>
+  <a class="logo-link" href="/" aria-label="トップページ"><img src="https://o-ngr.github.io/image/favicon.svg" alt="" class="site-logo" width="36" height="36" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 36 36%27%3E%3Crect width=%2736%27 height=%2736%27 rx=%278%27 fill=%27%23A9322A%27/%3E%3C/svg%3E'"></a>
   <h1 class="ui-header__title">Tool Template</h1>
   <div class="ui-header__actions">
-    <!-- PC用アクセスカウンター -->
-    <img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="113" height="36" class="access-counter counter-pc">
+    <button class="ui-iconbtn" id="themeBtn" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+      <span class="ui-iconbtn__label" id="themeLabel">テーマ：自動</span>
+    </button>
   </div>
 </header>
 
-<div class="ui-shell">
+<div class="ui-shell"><!-- 詳細パネルが不要なら class="ui-shell ui-shell--no-detail" -->
 
-  <!-- SIDEBAR：スライダー・ボタン類（ツールの操作系はすべてここに置く） -->
-  <nav class="ui-sidebar" id="sidebar">
-    <div class="ui-drawer-head">
+  <!-- SIDEBAR：スライダー・ボタン類（デスクトップ＝左カラム / モバイル＝「操作」シート） -->
+  <aside class="ui-sidebar" id="sidebar" aria-label="操作パネル">
+    <div class="ui-sheet-head">
+      <span class="ui-sheet-grabber" aria-hidden="true"></span>
       <span class="ui-group__label">操作パネル</span>
-      <button class="ui-iconbtn ui-drawer-close" type="button" data-close>×</button>
+      <button class="ui-iconbtn ui-sheet-close" type="button" data-close aria-label="操作パネルを閉じる">×</button>
     </div>
 
     <div class="ui-group">
       <span class="ui-group__label">サンプル：スライダー</span>
       <div class="ui-group__head">
         <label for="sizeSlider">サイズ</label>
-        <output class="ui-group__value" data-out="size"></output>
+        <output class="ui-group__value" for="sizeSlider" data-out="size"></output>
       </div>
-      <input class="ui-slider" type="range" id="sizeSlider" data-param="size" min="10" max="200" step="1">
+      <!-- min / max / step は TOOL_CONFIG.params から自動で設定される -->
+      <input class="ui-slider" type="range" id="sizeSlider" data-param="size">
     </div>
 
     <div class="ui-group">
       <span class="ui-group__label">サンプル：ボタン</span>
       <div class="ui-btn-grid">
-        <button class="ui-btn" type="button" data-toggle="showGrid">グリッド</button>
+        <button class="ui-btn" type="button" data-toggle="showGrid" aria-pressed="false">グリッド</button>
         <button class="ui-btn" type="button" id="resetBtn">初期値</button>
+        <button class="ui-btn ui-span-full" type="button" data-open-files>ファイルを開く</button>
+        <input class="ui-file" type="file" id="fileInput" multiple><!-- accept="audio/*" などを必要に応じて -->
       </div>
     </div>
 
-    <div class="ui-status" id="status">準備完了</div>
-
-    <!-- モバイル用アクセスカウンター（操作パネル最下） -->
-    <div class="counter-sp">
-      <img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="113" height="36" class="access-counter" style="margin:0 auto;">
-    </div>
-  </nav>
+    <div class="ui-status" id="status" role="status" aria-live="polite">準備完了</div>
+  </aside>
 
   <!-- MAIN：ツール本体 -->
-  <main class="ui-main">
+  <main class="ui-main" id="main">
     <div class="ui-main__head">
-      <button class="ui-btn ui-toggle" id="sidebarToggle" type="button">操作パネル</button>
-      <button class="ui-btn ui-toggle" id="detailToggle" type="button">詳細設定</button>
       <span class="ui-main__title" id="mainTitle">コンテンツ</span>
     </div>
 
     <div class="ui-stage" id="stage">
-      <canvas class="ui-stage__canvas" id="canvas"></canvas>
+      <canvas class="ui-stage__canvas" id="canvas" role="img" aria-label="ツールの描画領域"></canvas>
     </div>
   </main>
 
-  <!-- DETAIL：詳細設定（必要に応じて .ui-group を追加） -->
-  <aside class="ui-detail" id="detail">
-    <div class="ui-drawer-head">
+  <!-- DETAIL：詳細設定（デスクトップ＝右カラム / モバイル＝「詳細」シート。必要に応じて .ui-group を追加） -->
+  <aside class="ui-detail" id="detail" aria-label="詳細設定">
+    <div class="ui-sheet-head">
+      <span class="ui-sheet-grabber" aria-hidden="true"></span>
       <span class="ui-group__label">詳細設定</span>
-      <button class="ui-iconbtn ui-drawer-close" type="button" data-close>×</button>
+      <button class="ui-iconbtn ui-sheet-close" type="button" data-close aria-label="詳細設定を閉じる">×</button>
     </div>
 
     <div class="ui-group">
@@ -271,44 +452,92 @@ input[type=file] { display:none; }
     </div>
   </aside>
 
+  <!-- TABBAR：モバイルのみ表示 -->
+  <nav class="ui-tabbar" aria-label="パネルの切り替え">
+    <button class="ui-tab" id="sidebarToggle" type="button" data-panel-toggle="sidebar" aria-controls="sidebar" aria-expanded="false">
+      <span class="ui-tab__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg></span>
+      <span class="ui-tab__label">操作</span>
+    </button>
+    <button class="ui-tab" id="detailToggle" type="button" data-panel-toggle="detail" aria-controls="detail" aria-expanded="false">
+      <span class="ui-tab__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg></span>
+      <span class="ui-tab__label">詳細</span>
+    </button>
+  </nav>
+
 </div>
 
-<div class="ui-overlay" id="overlay"></div>
-
 <footer class="ui-footer">
-  © 2026 o-ngr — <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>
+  <span>© 2026 o-ngr — <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a></span>
+  <img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="113" height="36" class="access-counter" onerror="this.hidden=true">
 </footer>
 
+
+<!-- ═══════════════════════════════════════════════════════
+     ① TOOL CONFIG ― ツールごとに書き換える（パラメータの定義）
+     ═══════════════════════════════════════════════════════ -->
+<script>
+window.TOOL_CONFIG = {
+  id: 'tool',                // 保存キーの接頭辞（ツールごとに必ず変える）
+  sheet: 'push',             // モバイルのシート：'push'＝キャンバスを押し上げる（既定）/ 'overlay'＝キャンバスの上に重ねる
+  params: {                  // 型は default の型で決まる（真偽値 / 数値）。数値は min・max で丸められる
+    size:     { default: 80, min: 10, max: 200, step: 1 },
+    showGrid: { default: false }
+  }
+};
+</script>
+
+<!-- ════════════════════════════════════════════════════════
+     ② COMMON ― テンプレート共通部（基本は触らない）
+     提供するもの：保存つきパラメータ / テーマ / パネル（デスクトップ＝カラム、モバイル＝ボトムシート）/ キャンバス / ファイル受付 / ループ
+     ════════════════════════════════════════════════════════ -->
 <script>
 (function () {
-  /* ━━ ツールごとに変更する設定 ━━ */
-  const TOOL_ID   = 'tool';          // 保存キーの接頭辞（例: 'stg' → 'stg-size'）
-  const DEFAULTS  = { size: 80, showGrid: false };
+  const TEMPLATE_VERSION = '1.3';
+  // ↓ CSS の @media と揃える
+  const NARROW_QUERY = '(max-width:900px), (max-height:520px) and (pointer:coarse)';   // モバイルレイアウト
+  const SIDE_QUERY   = '(orientation:landscape) and (max-height:520px)';                // 横向き＝サイドシート
+  const MAX_DPR = 2;                           // キャンバスの解像度上限
+  const THEME_KEY = 'o-ngr-theme';             // サイト共通キー（ツール名は付けない）
 
-  /* ━━ 状態 ━━ */
-  const params = { ...DEFAULTS };
+  const CONFIG = window.TOOL_CONFIG || { id: 'tool', params: {} };
+  const SPEC = CONFIG.params;
 
-  // ツール側が差し込むフック
-  const hooks = {
-    onParamChange: null,   // (key, value) => void
-    onResize: null         // (width, height) => void
-  };
+  /* ━━ イベント（複数登録できる） ━━
+     'param'(key, value) / 'resize'(w, h) / 'theme'('light'|'dark') / 'files'(File[])
+     'panel'(name|null)  … シートの開閉 / 'layout'('mobile'|'desktop') / 'ready' */
+  const listeners = {};
+  function on(name, fn) {
+    (listeners[name] = listeners[name] || []).push(fn);
+    return () => { listeners[name] = listeners[name].filter(f => f !== fn); };
+  }
+  function emit(name, ...args) {
+    (listeners[name] || []).slice().forEach(fn => {
+      try { fn(...args); } catch (e) { console.error(e); }
+    });
+  }
 
   /* ━━ 要素 ━━ */
-  const sidebar = document.getElementById('sidebar');
-  const detail = document.getElementById('detail');
-  const sidebarToggle = document.getElementById('sidebarToggle');
-  const detailToggle = document.getElementById('detailToggle');
-  const overlay = document.getElementById('overlay');
-  const stage = document.getElementById('stage');
-  const canvas = document.getElementById('canvas');
+  const $ = (id) => document.getElementById(id);
+  const shell = document.querySelector('.ui-shell');
+  const tabbar = document.querySelector('.ui-tabbar');
+  const footer = document.querySelector('.ui-footer');
+  const counter = document.querySelector('.access-counter');
+  const sidebar = $('sidebar'), detail = $('detail');
+  const sidebarToggle = $('sidebarToggle'), detailToggle = $('detailToggle');
+  const stage = $('stage'), canvas = $('canvas');
+  const statusEl = $('status'), mainTitleEl = $('mainTitle');
+  const themeBtn = $('themeBtn'), themeLabel = $('themeLabel'), fileInput = $('fileInput');
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
   const ctx = canvas.getContext('2d');
-  const statusEl = document.getElementById('status');
-  const mainTitleEl = document.getElementById('mainTitle');
+
+  if (CONFIG.sheet === 'overlay') document.body.classList.add('sheet-overlay');
+
+  function setStatus(text) { statusEl.textContent = text; }
+  function setTitle(text) { mainTitleEl.textContent = text; }
 
   /* ━━ 保存（キーは「ツール名-設定名」） ━━ */
   const storage = {
-    key(name) { return TOOL_ID + '-' + name; },
+    key(name) { return CONFIG.id + '-' + name; },
     read(name) {
       try {
         const raw = localStorage.getItem(this.key(name));
@@ -320,139 +549,426 @@ input[type=file] { display:none; }
     }
   };
 
+  /* ━━ パラメータ ━━ */
+  const params = {};
+  Object.keys(SPEC).forEach(k => { params[k] = SPEC[k].default; });
+
+  // 保存値・入力値を仕様に合わせて整える（型違い・範囲外は丸める）
+  function normalize(key, value) {
+    const spec = SPEC[key];
+    if (typeof spec.default === 'boolean') return typeof value === 'boolean' ? value : spec.default;
+    const n = Number(value);
+    if (!Number.isFinite(n)) return spec.default;
+    const lo = spec.min !== undefined ? spec.min : -Infinity;
+    const hi = spec.max !== undefined ? spec.max : Infinity;
+    return Math.min(hi, Math.max(lo, n));
+  }
+
   function loadParams() {
-    Object.keys(DEFAULTS).forEach(key => {
+    Object.keys(SPEC).forEach(key => {
       const saved = storage.read(key);
-      if (saved !== undefined) params[key] = saved;
+      if (saved !== undefined) params[key] = normalize(key, saved);
     });
   }
 
-  // 値の変更はすべてここを通す（保存・フック呼び出しを一箇所に集約）
-  function setParam(key, value) {
-    params[key] = value;
-    storage.write(key, value);
-    if (hooks.onParamChange) hooks.onParamChange(key, value);
+  // 値の変更はすべてここを通す（丸め・保存・通知を一箇所に集約）
+  function setParam(key, value, persist = true) {
+    if (!SPEC[key]) return;
+    const v = normalize(key, value);
+    const changed = params[key] !== v;
+    params[key] = v;
+    if (persist) storage.write(key, v);
+    if (changed) emit('param', key, v);
   }
 
   function resetParams() {
-    Object.keys(DEFAULTS).forEach(key => setParam(key, DEFAULTS[key]));
+    Object.keys(SPEC).forEach(key => setParam(key, SPEC[key].default));
     syncControls();
   }
 
-  function setStatus(text) { statusEl.textContent = text; }
-  function setTitle(text) { mainTitleEl.textContent = text; }
-
-  /* ━━ テーマ ━━ */
-  const theme = {
-    current() { return document.body.classList.contains('dark') ? 'dark' : 'light'; },
-    apply(mode) {
-      document.body.classList.toggle('dark', mode === 'dark');
-      document.documentElement.style.colorScheme = mode;
-    },
-    // ボタンで一時的に切替可能。OS/ブラウザの配色設定が変わると自動追従する。
-    toggle() { this.apply(this.current() === 'dark' ? 'light' : 'dark'); }
-  };
-
-  /* ━━ パネル開閉（オーバーレイ方式・同時に一つだけ開く） ━━ */
-  const panels = {
-    sidebar: { el: sidebar, btn: sidebarToggle },
-    detail:  { el: detail,  btn: detailToggle }
-  };
-
-  function closeAllPanels() {
-    let wasOpen = false;
-    Object.values(panels).forEach(p => {
-      if (p.el.classList.contains('is-open')) wasOpen = true;
-      p.el.classList.remove('is-open');
-      p.btn.classList.remove('is-active');
-    });
-    overlay.classList.remove('is-open');
-    return wasOpen;
-  }
-
-  function togglePanel(name) {
-    const target = panels[name];
-    const willOpen = !target.el.classList.contains('is-open');
-    closeAllPanels();
-    if (willOpen) {
-      target.el.classList.add('is-open');
-      target.btn.classList.add('is-active');
-      overlay.classList.add('is-open');
-    }
-  }
-
-  sidebarToggle.addEventListener('click', () => togglePanel('sidebar'));
-  detailToggle.addEventListener('click', () => togglePanel('detail'));
-  overlay.addEventListener('click', closeAllPanels);
-  document.querySelectorAll('[data-close]').forEach(btn => {
-    btn.addEventListener('click', closeAllPanels);
-  });
-
   /* ━━ コントロールの配線 ━━ */
-  // data-param：スライダーを params に結びつける。出力は data-out="key" で指定
+  // data-param：スライダー。min / max / step は TOOL_CONFIG から設定。出力は data-out="key"
   document.querySelectorAll('.ui-slider[data-param]').forEach(input => {
-    input.addEventListener('input', () => {
-      setParam(input.dataset.param, Number(input.value));
-      syncControls();
-    });
+    const key = input.dataset.param, spec = SPEC[key];
+    if (!spec) return;
+    if (spec.min !== undefined) input.min = spec.min;
+    if (spec.max !== undefined) input.max = spec.max;
+    if (spec.step !== undefined) input.step = spec.step;
+    // ドラッグ中は保存せず、離したとき（change）にだけ保存する
+    input.addEventListener('input', () => { setParam(key, input.value, false); syncControls(); });
+    input.addEventListener('change', () => { storage.write(key, params[key]); });
   });
 
   // data-toggle：ボタンを真偽値の params に結びつける
   document.querySelectorAll('[data-toggle]').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.toggle;
+      if (!SPEC[key]) return;
       setParam(key, !params[key]);
       syncControls();
     });
   });
 
-  document.getElementById('resetBtn').addEventListener('click', resetParams);
+  const resetBtn = $('resetBtn');
+  if (resetBtn) resetBtn.addEventListener('click', resetParams);
 
   // params の値を画面のコントロールに反映
   function syncControls() {
     document.querySelectorAll('.ui-slider[data-param]').forEach(input => {
       const key = input.dataset.param;
+      if (!(key in params)) return;
       input.value = params[key];
+      const min = Number(input.min || 0), max = Number(input.max || 100);
+      const pct = max > min ? ((params[key] - min) / (max - min)) * 100 : 0;
+      input.style.setProperty('--p', pct + '%');
       const out = document.querySelector('[data-out="' + key + '"]');
       if (out) out.textContent = params[key];
     });
     document.querySelectorAll('[data-toggle]').forEach(btn => {
-      btn.classList.toggle('is-active', !!params[btn.dataset.toggle]);
+      const isOn = !!params[btn.dataset.toggle];
+      btn.classList.toggle('is-active', isOn);
+      btn.setAttribute('aria-pressed', String(isOn));
     });
   }
 
-  /* ━━ ステージ（キャンバス） ━━ */
+  /* ━━ 色（CSS変数のキャッシュ。描画側は UI.colors を読むだけ） ━━ */
+  const colors = {};
+  const COLOR_VARS = { bg:'--bg', bg2:'--bg2', surface:'--surface', t1:'--t1', t2:'--t2', accent:'--accent', line:'--line-strong' };
+  function refreshColors() {
+    const cs = getComputedStyle(document.body);   // body.dark / html.dark の上書きを反映
+    Object.keys(COLOR_VARS).forEach(k => { colors[k] = cs.getPropertyValue(COLOR_VARS[k]).trim(); });
+  }
+
+  /* ━━ テーマ（自動 / ライト / ダーク。保存はサイト共通キー） ━━ */
+  const MODES = ['auto', 'light', 'dark'];
+  const MODE_LABEL = { auto: '自動', light: 'ライト', dark: 'ダーク' };
+  const sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function readMode() {
+    try {
+      const m = (localStorage.getItem(THEME_KEY) || '').replace(/"/g, '');
+      return MODES.indexOf(m) >= 0 ? m : 'auto';
+    } catch (e) { return 'auto'; }
+  }
+  let themeMode = readMode();
+
+  function isDark() { return themeMode === 'dark' || (themeMode === 'auto' && sysDark.matches); }
+
+  function applyTheme() {
+    const dark = isDark();
+    document.documentElement.classList.toggle('dark', dark);
+    document.body.classList.toggle('dark', dark);
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+    refreshColors();
+    if (themeMeta) themeMeta.content = colors.bg;
+    themeLabel.textContent = 'テーマ：' + MODE_LABEL[themeMode];
+    themeBtn.setAttribute('aria-label', 'テーマを切り替え（現在：' + MODE_LABEL[themeMode] + '）');
+    emit('theme', dark ? 'dark' : 'light');
+  }
+
+  const theme = {
+    current() { return isDark() ? 'dark' : 'light'; },
+    mode() { return themeMode; },
+    setMode(mode) {
+      if (MODES.indexOf(mode) < 0) return;
+      themeMode = mode;
+      try { localStorage.setItem(THEME_KEY, mode); } catch (e) {}
+      applyTheme();
+    },
+    cycle() { this.setMode(MODES[(MODES.indexOf(themeMode) + 1) % MODES.length]); }
+  };
+
+  themeBtn.addEventListener('click', () => theme.cycle());
+  function onMedia(mq, fn) {
+    if (typeof mq.addEventListener === 'function') mq.addEventListener('change', fn);
+    else if (typeof mq.addListener === 'function') mq.addListener(fn);
+  }
+  onMedia(sysDark, () => { if (themeMode === 'auto') applyTheme(); });   // OS設定に追従（自動のとき）
+  window.addEventListener('storage', (e) => {                            // 他のタブ・他のツールでの変更に追従
+    if (e.key === THEME_KEY) { themeMode = readMode(); applyTheme(); }
+  });
+
+  /* ━━ パネル：デスクトップ＝常時表示のカラム / モバイル＝ボトムシート（横向きはサイドシート） ━━ */
+  const narrow = window.matchMedia(NARROW_QUERY);
+  const sideMQ = window.matchMedia(SIDE_QUERY);
+  const isMobile = () => narrow.matches;
+  const isSide = () => narrow.matches && sideMQ.matches;
+
+  const panels = {};
+  [['sidebar', sidebar, sidebarToggle], ['detail', detail, detailToggle]].forEach(([name, el, btn]) => {
+    if (el && btn) panels[name] = { el, btn };
+  });
+  const openPanelOf = () => Object.keys(panels).find(n => panels[n].el.classList.contains('is-open'));
+
+  // シートの高さ：fit＝中身にあわせる（画面の55%）/ full＝ほぼ全面（画面の90%）
+  let sheetState = 'fit';
+  function snaps(el) {
+    const avail = shell.clientHeight - tabbar.offsetHeight;
+    const content = el.scrollHeight;
+    const fit = Math.round(Math.min(content, Math.max(avail * 0.55, 0)));
+    const full = Math.round(Math.max(fit, Math.min(content, avail * 0.9)));
+    return { fit, full };
+  }
+  function applySheet(el) {
+    if (isSide()) { el.style.height = ''; return; }          // 横向きは幅で開閉
+    el.style.height = snaps(el)[sheetState] + 'px';
+  }
+
+  function deactivate(p) {
+    p.el.classList.remove('is-open', 'is-dragging');
+    p.el.style.height = '';
+    p.btn.setAttribute('aria-expanded', 'false');
+  }
+
+  // 閉じる。開いていたパネルがあれば true。restoreFocus で開いたボタンへフォーカスを戻す
+  function closeAllPanels(restoreFocus) {
+    const name = openPanelOf();
+    Object.values(panels).forEach(deactivate);
+    if (name) {
+      emit('panel', null);
+      if (restoreFocus) panels[name].btn.focus({ preventScroll: true });
+    }
+    return !!name;
+  }
+
+  function openPanel(name) {
+    const p = panels[name];
+    if (!p || !isMobile()) return;
+    const prevName = openPanelOf();
+    if (prevName && prevName !== name) {
+      shell.classList.add('no-anim');
+      deactivate(panels[prevName]);
+    }
+    p.el.classList.add('is-open');
+    p.btn.setAttribute('aria-expanded', 'true');
+    applySheet(p.el);
+    if (prevName && prevName !== name) {
+      requestAnimationFrame(() => requestAnimationFrame(() => shell.classList.remove('no-anim')));
+    }
+    // 表示が反映されてからフォーカスを移す（直後や1フレーム後だと、まだフォーカスできず失敗する）
+    const first = p.el.querySelector('[data-close]');
+    if (first) requestAnimationFrame(() => requestAnimationFrame(() => first.focus({ preventScroll: true })));
+    emit('panel', name);
+  }
+
+  function togglePanel(name) {
+    const p = panels[name];
+    if (!p || !isMobile()) return;
+    if (p.el.classList.contains('is-open')) closeAllPanels(true);
+    else openPanel(name);
+  }
+
+  Object.keys(panels).forEach(name => panels[name].btn.addEventListener('click', () => togglePanel(name)));
+  document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeAllPanels(true)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && closeAllPanels(true)) e.preventDefault();
+  });
+
+  // シートの頭をドラッグして高さを変える。離したときに「閉じる / fit / full」の近い位置へスナップ
+  document.querySelectorAll('.ui-sheet-head').forEach(head => {
+    const el = head.parentElement;
+    let drag = null;
+
+    head.addEventListener('pointerdown', (e) => {
+      if (!isMobile() || isSide() || e.target.closest('[data-close]')) return;
+      drag = {
+        id: e.pointerId, startY: e.clientY, startH: el.offsetHeight,
+        lastY: e.clientY, lastT: e.timeStamp, vUp: 0, moved: false, s: snaps(el)
+      };
+      head.setPointerCapture(e.pointerId);
+      el.classList.add('is-dragging');
+    });
+
+    head.addEventListener('pointermove', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dy = drag.startY - e.clientY;                   // 上に動かすと正
+      if (Math.abs(dy) > 6) drag.moved = true;
+      const dt = e.timeStamp - drag.lastT;
+      if (dt > 0) drag.vUp = 0.7 * drag.vUp + 0.3 * ((drag.lastY - e.clientY) / dt);
+      drag.lastY = e.clientY; drag.lastT = e.timeStamp;
+      if (drag.moved) el.style.height = Math.max(0, Math.min(drag.s.full, drag.startH + dy)) + 'px';
+    });
+
+    function end(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      const d = drag; drag = null;
+      el.classList.remove('is-dragging');
+      if (!d.moved) {                                        // タップ：fit-full
+        if (d.s.full > d.s.fit + 8) sheetState = sheetState === 'fit' ? 'full' : 'fit';
+        applySheet(el);
+        return;
+      }
+      const stale = e.timeStamp - d.lastT > 80;              // 指を止めてから離した場合は勢いなし
+      const proj = el.offsetHeight + (stale ? 0 : d.vUp) * 160;
+      const targets = [[0, 'close'], [d.s.fit, 'fit'], [d.s.full, 'full']];
+      targets.sort((a, b) => Math.abs(a[0] - proj) - Math.abs(b[0] - proj));
+      const pick = targets[0][1];
+      if (pick === 'close') closeAllPanels(false);
+      else { sheetState = pick; applySheet(el); }
+    }
+    head.addEventListener('pointerup', end);
+    head.addEventListener('pointercancel', end);
+  });
+
+  // フッター / アクセスカウンターの配置
+  //  モバイル：フッターごとシートの一番下へ（カウンターはフッター内）
+  //  デスクトップ：カウンター右パネルの最下部へ（詳細なしのツールでは左パネル）
+  function placeFooter() {
+    if (!footer) return;
+    const hasDetail = detail && !shell.classList.contains('ui-shell--no-detail');
+    const host = hasDetail ? detail : sidebar;
+
+    if (isMobile()) {
+      if (counter && counter.parentElement !== footer) footer.appendChild(counter);
+      if (footer.parentElement !== host) host.appendChild(footer);
+      footer.classList.add('in-sheet');
+    } else {
+      if (footer.parentElement !== document.body) shell.after(footer);
+      footer.classList.remove('in-sheet');
+      if (counter && counter.parentElement !== host) host.appendChild(counter);
+    }
+  }
+
+  // レイアウトの切替（回転・ウィンドウサイズ変更）に追従
+  function onLayoutChange() {
+    placeFooter();
+    if (!isMobile()) closeAllPanels(false);
+    else { const n = openPanelOf(); if (n) applySheet(panels[n].el); }
+    emit('layout', isMobile() ? 'mobile' : 'desktop');
+  }
+  onMedia(narrow, onLayoutChange);
+  onMedia(sideMQ, onLayoutChange);
+  let relayoutQueued = false;
+  window.addEventListener('resize', () => {                // URLバーの出入りなどで高さが変わったとき
+    if (relayoutQueued) return;
+    relayoutQueued = true;
+    requestAnimationFrame(() => {
+      relayoutQueued = false;
+      const n = openPanelOf();
+      if (n && isMobile() && !panels[n].el.classList.contains('is-dragging')) applySheet(panels[n].el);
+    });
+  });
+
+  /* ━━ ステージ（キャンバス）。描画側は UI.view の w / h を読む ━━ */
+  const view = { w: 0, h: 0, dpr: 1 };
   function fitCanvas() {
     const rect = stage.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
+    const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    view.w = rect.width; view.h = rect.height; view.dpr = dpr;
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    if (hooks.onResize) hooks.onResize(rect.width, rect.height);
+    emit('resize', view.w, view.h);
   }
-  new ResizeObserver(fitCanvas).observe(stage);
+  // ブラウザのズームやモニター移動による devicePixelRatio の変化にも追従
+  function watchDpr() {
+    const mq = window.matchMedia('(resolution: ' + (window.devicePixelRatio || 1) + 'dppx)');
+    if (typeof mq.addEventListener !== 'function') return;
+    mq.addEventListener('change', () => { fitCanvas(); watchDpr(); }, { once: true });
+  }
 
-  // CSS変数は body から読む（body.dark の上書きを反映するため）
-  function getColors() {
-    const cs = getComputedStyle(document.body);
-    return {
-      bg: cs.getPropertyValue('--bg').trim(),
-      accent: cs.getPropertyValue('--accent').trim(),
-      line: cs.getPropertyValue('--line-strong').trim()
-    };
+  /* ━━ アニメーションループ（必要なツールだけ使う） ━━
+     UI.loop.start((dt, now) => { update(dt); render(); })   dt は秒。タブ復帰時の飛びを防ぐため最大0.1秒 */
+  const loop = {
+    _id: 0, _last: 0,
+    get running() { return this._id !== 0; },
+    start(fn) {
+      this.stop();
+      this._last = performance.now();
+      const tick = (now) => {
+        const dt = Math.min((now - this._last) / 1000, 0.1);
+        this._last = now;
+        fn(dt, now);
+        if (this._id) this._id = requestAnimationFrame(tick);
+      };
+      this._id = requestAnimationFrame(tick);
+    },
+    stop() { if (this._id) cancelAnimationFrame(this._id); this._id = 0; }
+  };
+
+  /* ━━ ファイル受付（ドロップ / ボタン）→ UI.on('files', fn) ━━ */
+  function hasFiles(e) {
+    return !!(e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0);
   }
+  let dragDepth = 0;
+  stage.addEventListener('dragenter', (e) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault(); dragDepth++; stage.classList.add('is-dragging');
+  });
+  stage.addEventListener('dragover', (e) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = 'copy';
+  });
+  stage.addEventListener('dragleave', (e) => {
+    if (!hasFiles(e)) return;
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (!dragDepth) stage.classList.remove('is-dragging');
+  });
+  stage.addEventListener('drop', (e) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault(); dragDepth = 0; stage.classList.remove('is-dragging');
+    emit('files', Array.from(e.dataTransfer.files));
+  });
+  // ステージ外にドロップしてもブラウザがファイルを開いてしまわないように
+  window.addEventListener('dragover', (e) => { if (hasFiles(e)) e.preventDefault(); });
+  window.addEventListener('drop', (e) => { if (hasFiles(e)) e.preventDefault(); });
+
+  function openFiles() { if (fileInput) fileInput.click(); }
+  document.querySelectorAll('[data-open-files]').forEach(btn => btn.addEventListener('click', openFiles));
+  if (fileInput) fileInput.addEventListener('change', () => {
+    const files = Array.from(fileInput.files);
+    fileInput.value = '';                       // 同じファイルをもう一度選べるように
+    if (files.length) emit('files', files);
+  });
+
+  /* ━━ 起動（ツール側スクリプトの読み込み後に実行される） ━━ */
+  let started = false;
+  function start() {
+    if (started) return;
+    started = true;
+    loadParams();
+    syncControls();
+    applyTheme();
+    placeFooter();
+    new ResizeObserver(fitCanvas).observe(stage);
+    watchDpr();
+    fitCanvas();
+    emit('ready');
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+
+  // ツール側のコードから使うAPI
+  window.UI = {
+    version: TEMPLATE_VERSION,
+    params, setParam, resetParams,
+    on, emit,
+    colors, view, ctx, canvas, stage,
+    setStatus, setTitle,
+    togglePanel, closeAllPanels, isMobile,
+    theme, storage, loop, openFiles
+  };
+})();
+</script>
+
+<!-- ════════════════════════════════════════════════════════
+     ③ TOOL ― ツール固有のコード（描画・ロジックはここに書く）
+     読み取り：UI.params / UI.view（w, h）/ UI.colors / UI.ctx / UI.isMobile()
+     受け取り：UI.on('param' | 'resize' | 'theme' | 'files' | 'panel' | 'layout' | 'ready', fn)
+     ════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  const { on, params, view, colors, ctx, setStatus } = UI;
 
   // サンプル描画：ツール側はこの関数を差し替えて使う
   function render() {
-    const rect = stage.getBoundingClientRect();
-    const w = rect.width, h = rect.height;
-    const c = getColors();
+    const w = view.w, h = view.h;
 
-    ctx.fillStyle = c.bg;
+    ctx.fillStyle = colors.bg;
     ctx.fillRect(0, 0, w, h);
 
     if (params.showGrid) {
-      ctx.strokeStyle = c.line;
+      ctx.strokeStyle = colors.line;
       ctx.lineWidth = 1;
       const step = 40;
       ctx.beginPath();
@@ -461,40 +977,21 @@ input[type=file] { display:none; }
       ctx.stroke();
     }
 
-    ctx.fillStyle = c.accent;
+    ctx.fillStyle = colors.accent;
     ctx.beginPath();
-    ctx.arc(w / 2, h / 2, params.size, 0, Math.PI * 2);
+    ctx.arc(w / 2, h / 2, Math.min(params.size, Math.min(w, h) / 2 - 8), 0, Math.PI * 2);
     ctx.fill();
   }
 
-  hooks.onParamChange = render;
-  hooks.onResize = render;
+  on('param', render);
+  on('resize', render);
+  on('theme', render);
+  on('files', (files) => setStatus(files.length + ' 件のファイル：' + files[0].name));
 
-  /* ━━ キーボード ━━ */
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeAllPanels();
-  });
+  // 例：シートが開いている間はゲームを一時停止する
+  // on('panel', (name) => { paused = !!name; });
 
-  /* ━━ ブラウザ/OSの配色設定にリアルタイム追従 ━━ */
-  const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
-  const syncSystemTheme = (event) => {
-    theme.apply(event.matches ? 'dark' : 'light');
-    render();
-  };
-  theme.apply(colorScheme.matches ? 'dark' : 'light');
-  if (typeof colorScheme.addEventListener === 'function') {
-    colorScheme.addEventListener('change', syncSystemTheme);
-  } else if (typeof colorScheme.addListener === 'function') {
-    colorScheme.addListener(syncSystemTheme);
-  }
-
-  /* ━━ 初期化 ━━ */
-  loadParams();
-  syncControls();
-  render();
-
-  // 外部（ツール側のコードや将来の拡張）から使えるよう公開する
-  window.UI = { params, setParam, hooks, setStatus, setTitle, togglePanel, closeAllPanels, theme };
+  // アニメーションが必要な場合：UI.loop.start((dt) => { /* 更新 */ render(); });
 })();
 </script>
 </body>
