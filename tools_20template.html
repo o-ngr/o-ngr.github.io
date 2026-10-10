@@ -46,6 +46,12 @@ body {
   -webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
 }
+.counter-link {
+  display:inline-flex; align-items:center; justify-content:center;
+  flex:0 0 36px; width:36px; height:36px;
+  border-radius:var(--r-sm); text-decoration:none;
+}
+.site-logo { display:block; width:36px; height:36px; object-fit:contain; }
 .ui-header__title {
   font-size:.8rem; font-weight:700; letter-spacing:.12em;
   color:var(--t2); text-transform:uppercase;
@@ -197,6 +203,7 @@ input[type=file] { display:none; }
 <body>
 
 <header class="ui-header">
+  <a class="counter-link" href="/" aria-label="トップページ"><img src="/image/favicon.svg" alt="" class="site-logo" width="36" height="36"></a>
   <h1 class="ui-header__title">Tool Template</h1>
   <div class="ui-header__actions">
     <!-- PC用アクセスカウンター -->
