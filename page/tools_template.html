@@ -208,7 +208,6 @@ input[type=file] { display:none; }
   <div class="ui-header__actions">
     <!-- PC用アクセスカウンター -->
     <img src="https://counter.256server.com/@:ms05" alt="アクセスカウンター" width="113" height="36" class="access-counter counter-pc">
-    <button class="ui-iconbtn" id="themeBtn" type="button" title="テーマ切替">◐</button>
   </div>
 </header>
 
@@ -284,7 +283,6 @@ input[type=file] { display:none; }
 (function () {
   /* ━━ ツールごとに変更する設定 ━━ */
   const TOOL_ID   = 'tool';          // 保存キーの接頭辞（例: 'stg' → 'stg-size'）
-  const THEME_KEY = 'o-ngr-theme';   // 全ツール共通
   const DEFAULTS  = { size: 80, showGrid: false };
 
   /* ━━ 状態 ━━ */
@@ -347,12 +345,12 @@ input[type=file] { display:none; }
   /* ━━ テーマ ━━ */
   const theme = {
     current() { return document.body.classList.contains('dark') ? 'dark' : 'light'; },
-    apply(mode) { document.body.classList.toggle('dark', mode === 'dark'); },
-    toggle() {
-      const next = this.current() === 'dark' ? 'light' : 'dark';
-      this.apply(next);
-      try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
-    }
+    apply(mode) {
+      document.body.classList.toggle('dark', mode === 'dark');
+      document.documentElement.style.colorScheme = mode;
+    },
+    // ボタンで一時的に切替可能。OS/ブラウザの配色設定が変わると自動追従する。
+    toggle() { this.apply(this.current() === 'dark' ? 'light' : 'dark'); }
   };
 
   /* ━━ パネル開閉（オーバーレイ方式・同時に一つだけ開く） ━━ */
@@ -477,14 +475,20 @@ input[type=file] { display:none; }
     if (e.key === 'Escape') closeAllPanels();
   });
 
-  /* ━━ テーマ切替 ━━ */
-  document.getElementById('themeBtn').addEventListener('click', () => {
-    theme.toggle();
+  /* ━━ ブラウザ/OSの配色設定にリアルタイム追従 ━━ */
+  const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
+  const syncSystemTheme = (event) => {
+    theme.apply(event.matches ? 'dark' : 'light');
     render();
-  });
+  };
+  theme.apply(colorScheme.matches ? 'dark' : 'light');
+  if (typeof colorScheme.addEventListener === 'function') {
+    colorScheme.addEventListener('change', syncSystemTheme);
+  } else if (typeof colorScheme.addListener === 'function') {
+    colorScheme.addListener(syncSystemTheme);
+  }
 
   /* ━━ 初期化 ━━ */
-  theme.apply(localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light');
   loadParams();
   syncControls();
   render();
