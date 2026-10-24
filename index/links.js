@@ -20,5 +20,5 @@ const LINKS = [
     { id: 18, title: 'Raymarched Band', desc: 'レイマーチ・バンド', url: '/tools/Raymarched Band.html', category: 'design' },
     { id: 19, title: 'mediaplayer', desc: 'メディアプレーヤ', url: '/tools/mediaplayer.html', category: 'tools' },
     { id: 20, title: 'OGPimage', desc: 'OGP画像', url: '/image/o-ngr-image.png', category: 'design' },
-    { id: 21, title: 'o-ngr favicon', desc: 'オノゴロのファビコン, url: '/https://o-ngr.github.io/image/favicon.ico', category: 'design' },
+    { id: 21, title: 'o-ngr favicon', desc: 'オノゴロのファビコン', url: '/image/favicon.ico', category: 'design' },
 ];
